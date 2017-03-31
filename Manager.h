@@ -8,7 +8,7 @@ class Manager
 {
 private:
   int startManager(const Config & cfg);
-  
+
 public:
   Manager() {};
   Manager(const Config & cfg);

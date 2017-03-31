@@ -16,4 +16,8 @@ using namespace std;
 #define ERROR std::cerr
 #define WARN std::cerr
 
+string& ltrim(std::string& s, const char* t = " \t\n\r\f\v");
+string& rtrim(std::string& s, const char* t = " \t\n\r\f\v");
+string& trim(std::string& s, const char* t = " \t\n\r\f\v");
+
 #endif //_COMMON_H_
