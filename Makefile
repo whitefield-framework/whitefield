@@ -1,5 +1,5 @@
 LIBS=
-CFLAGS=-std=c++11 -Wall -I.
+CFLAGS=-g -std=c++11 -Wall -I.
 BINDIR=bin
 TARGET=$(BINDIR)/whitefield
 # Should be equivalent to your list of C files, if you don't build selectively
@@ -13,7 +13,7 @@ all: $(BINDIR) $(TARGET)
 $(TARGET): $(OBJS)
 	g++ -o $(TARGET) $(OBJS) $(CFLAGS) $(LIBS)
 
-$(BINDIR)/%.o: %.cc
+$(BINDIR)/%.o: %.cc %.h
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 
 $(BINDIR):
