@@ -5,7 +5,6 @@ TARGET=$(BINDIR)/whitefield
 # Should be equivalent to your list of C files, if you don't build selectively
 SRCS=$(wildcard *.cc)
 OBJS=$(addprefix $(BINDIR)/,$(SRCS:.cc=.o))
-#$(addprefix $(BINDIR),$(OBJS))
 #$(info $(OBJS))
 
 all: $(BINDIR) $(TARGET)
@@ -13,7 +12,7 @@ all: $(BINDIR) $(TARGET)
 $(TARGET): $(OBJS)
 	g++ -o $(TARGET) $(OBJS) $(CFLAGS) $(LIBS)
 
-$(BINDIR)/%.o: %.cc %.h
+$(BINDIR)/%.o: %.cc
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 
 $(BINDIR):

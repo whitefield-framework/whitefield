@@ -1,4 +1,5 @@
 Create generic NodeInfo objects and populate the info from wf.cfg
+makefile add header file dependencies
 
 
 Create a separate template for NS3 and Castalia
