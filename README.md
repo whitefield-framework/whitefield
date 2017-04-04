@@ -6,5 +6,6 @@ Typical use of Whitefield:
 1. Interoperability testing of various implementations without having to adapt to NS3 or Castalia based environment.
 2. Large scale interop testing
 3. Provide realistic RF environment by utilizing phy/mac of the proven RF simulators such as NS3/Castalia.
+4. Validate RF phy/mac simulation against each other. For e.g. compare results in NS3 vs Castalia
 
 ![Alt text](https://github.com/nyrahul/whitefield/blob/master/docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
