@@ -5,10 +5,16 @@ class NodeConfig
 {
 	private:
 		string nodeExec;
+		string capFile;
 	public:
 		int setNodeExecutable(const string path)
 		{
 			nodeExec = path;
+			return SUCCESS;
+		};
+		int setNodeCaptureFile(const string path)
+		{
+			capFile = path;
 			return SUCCESS;
 		};
 };
@@ -30,6 +36,9 @@ class Config
 			return SUCCESS;
 		};
 
+		int setNodeExec(const string exec, int beg, int end);
+		int setNodeCapFile(const string path, int beg, int end);
+
 		void clearNodeArray(void)
 		{
 			if(nodeArray) {
@@ -47,6 +56,7 @@ class Config
 		Config() 
 		{
 			nodeArray=NULL;
+			numOfNodes=0;
 		};
 		~Config()
 		{

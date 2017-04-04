@@ -10,7 +10,8 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 	string key=keystr;
 	const char *ptr;
 
-	beg_range = end_range = 0;
+	beg_range = 0;
+	end_range = numOfNodes-1;
 	if(!(ptr=strchr(keystr.c_str(), '['))) return key; //No range specified in the key
 	getline(keyline, key, '[');
 	ptr++;
@@ -26,6 +27,24 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 		return "";
 	}
 	return key;
+}
+
+int Config::setNodeExec(const string exec, int beg, int end)
+{
+	int i;
+	for(i=beg;i<=end;i++) {
+		nodeArray[i].setNodeExecutable(exec);
+	}
+	return SUCCESS;
+}
+
+int Config::setNodeCapFile(const string path, int beg, int end)
+{
+	int i;
+	for(i=beg;i<=end;i++) {
+		nodeArray[i].setNodeCaptureFile(path);
+	}
+	return SUCCESS;
 }
 
 int Config::setConfigurationFromFile(const char *fname)
@@ -49,7 +68,7 @@ int Config::setConfigurationFromFile(const char *fname)
 			if(!getline(is_line, value, '#')) continue;
 			value = trim(value);
 			key = trim(key);
-			getKeyRange(key, beg_range, end_range);
+			key = getKeyRange(key, beg_range, end_range);
 			INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
@@ -58,7 +77,9 @@ int Config::setConfigurationFromFile(const char *fname)
 			} else if(key == "fieldY") {
 				fieldY = stoi(value);
 			} else if(key == "nodeExec") {
-				nodeExec = value;
+				setNodeExec(value, beg_range, end_range);
+			} else if(key == "captureFile") {
+				INFO << key << endl;
 			} else if(key == "deploymentMode") {
 				deploymentMode = value;
 			} else {

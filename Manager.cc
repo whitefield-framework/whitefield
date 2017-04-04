@@ -1,6 +1,7 @@
 #define _MANAGER_CC_
 
 #include <Manager.h>
+#include <Airlink.h>
 
 Manager::Manager(const Config & cfg)
 {
@@ -10,6 +11,7 @@ Manager::Manager(const Config & cfg)
 
 int Manager::startManager(const Config & cfg)
 {
+	Airlink airlink(cfg);
 	return SUCCESS;
 }
 
