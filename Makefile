@@ -1,15 +1,15 @@
 LIBS=
-CFLAGS=-g -std=c++11 -Wall -I.
+CFLAGS=-g -std=c++11 -Wall -Isrc
 BINDIR=bin
 AIRLINK=NS3
 
 TARGET=$(BINDIR)/whitefield
 # Should be equivalent to your list of C files, if you don't build selectively
-SRCS=$(wildcard *.cc)
-SRCS+=$(wildcard $(AIRLINK)/*.cc)
+SRCS=$(wildcard src/*.cc)
+SRCS+=$(wildcard src/$(AIRLINK)/*.cc)
 OBJS=$(addprefix $(BINDIR)/,$(SRCS:.cc=.o))
 #$(info $(OBJS))
-CFLAGS+=-I$(AIRLINK)
+CFLAGS+=-Isrc/$(AIRLINK)
 
 all: $(BINDIR) $(TARGET)
 
@@ -20,7 +20,7 @@ $(BINDIR)/%.o: %.cc
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 
 $(BINDIR):
-	@mkdir -p $(BINDIR)/$(AIRLINK)
+	@mkdir -p $(BINDIR)/src/$(AIRLINK)
 
 clean:
 	@rm -rf $(BINDIR)
