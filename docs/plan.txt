@@ -1,0 +1,13 @@
+[P1]
+- Whitefield manager
+- NS3 based phy/mac
+- Basic graphviz based static visualization
+
+[P2]
+- NS3 ext addressing mode
+- Castalia phy/mac
+- IdealAir phy/mac
+- Advanced runtime visualization
+
+[P3]
+- NS3 RDC
