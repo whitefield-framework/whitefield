@@ -25,6 +25,9 @@ all: $(BINDIR) $(TARGET)
 $(TARGET): $(OBJS)
 	g++ -o $(TARGET) $(OBJS) $(CFLAGS) $(LIBS)
 
+$(BINDIR)/%.o: %.cc %.h
+	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
+
 $(BINDIR)/%.o: %.cc
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 

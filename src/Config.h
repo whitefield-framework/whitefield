@@ -1,33 +1,60 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include <map>
+
 namespace wf {
 	class NodeConfig
 	{
 		private:
 			string nodeExec;
 			string capFile;
+			int channel;
 		public:
-			int setNodeExecutable(const string path)
-			{
+			void setNodeExecutable(const string path) {
 				nodeExec = path;
-				return SUCCESS;
 			};
-			int setNodeCaptureFile(const string path)
-			{
+			void setNodeChannel(const int channel) {
+				this->channel = channel;
+			};
+			void setNodeCaptureFile(const string path) {
 				capFile = path;
-				return SUCCESS;
 			};
 	};
+
+#if 0
+	class NodeSet
+	{
+	private:
+		NodeConfig *nodeArray;
+		int nodeCnt;
+		void clearNodeArray(void)
+		{
+			if(nodeArray) {
+				delete [] nodeArray;
+			}
+			nodeArray = NULL;
+			nodeCnt = 0;
+		};
+	public:
+		int setCount(const int cnt) {
+			nodeArray = new NodeConfig [cnt];
+			nodeCnt = cnt;
+		};
+		NodeSet() {
+			nodeCnt=0;
+		};
+		~NodeSet() {
+		};
+	};
+#endif
 
 	class Config
 	{
 		private:
 			NodeConfig *nodeArray;
-			double fieldX, fieldY;
 			int numOfNodes;
-			string deploymentMode;
-			string nodeExec;
+			std::map<string, string>keyval;
 
 			int setNumberOfNodes(const int value)
 			{
@@ -37,26 +64,25 @@ namespace wf {
 				return SUCCESS;
 			};
 
-			int setNodeExec(const string exec, int beg, int end);
-			int setNodeCapFile(const string path, int beg, int end);
+			int setNodeSetExec(const string exec, int beg, int end);
+			int setNodeSetCapFile(const string path, int beg, int end);
+			int setNodeSetChannel(const int chn, int beg, int end);
 
 			void clearNodeArray(void)
 			{
 				if(nodeArray) {
 					delete [] nodeArray;
 					nodeArray = NULL;
+					numOfNodes = 0;
 				}
 			};
 			string getKeyRange(const string & keystr, int & beg_range, int & end_range);
 
 		public:
-			double getfieldX() { return fieldX; };
-			double getfieldY() { return fieldY; };
-			string getdeploymentMode() { return deploymentMode; };
+			void set(string key, string val) { keyval[key]=val; };
+			string get(string key) { return keyval[key]; };
 			int setConfigurationFromFile(const char *filename);
-			int getNumberOfNodes(void) {
-				return numOfNodes;
-			};
+			int getNumberOfNodes(void) { return numOfNodes; };
 			Config() 
 			{
 				nodeArray=NULL;

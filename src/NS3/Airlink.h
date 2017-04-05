@@ -8,6 +8,7 @@ class Airlink
 {
 private:
 	int startNetwork(wf::Config & cfg);
+	void getAllNodeLocation(void);
 public:
 	Airlink(wf::Config & cfg);
 };

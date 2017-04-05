@@ -29,7 +29,7 @@ string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end
 	return key;
 }
 
-int wf::Config::setNodeExec(const string exec, int beg, int end)
+int wf::Config::setNodeSetExec(const string exec, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -38,7 +38,7 @@ int wf::Config::setNodeExec(const string exec, int beg, int end)
 	return SUCCESS;
 }
 
-int wf::Config::setNodeCapFile(const string path, int beg, int end)
+int wf::Config::setNodeSetCapFile(const string path, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -47,6 +47,14 @@ int wf::Config::setNodeCapFile(const string path, int beg, int end)
 	return SUCCESS;
 }
 
+int wf::Config::setNodeSetChannel(const int channel, int beg, int end)
+{
+	int i;
+	for(i=beg;i<=end;i++) {
+		nodeArray[i].setNodeChannel(channel);
+	}
+	return SUCCESS;
+}
 int wf::Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
@@ -62,11 +70,7 @@ int wf::Config::setConfigurationFromFile(const char *fname)
 		while(getline(infile, line))
 		{
 			istringstream is_line(line);
-			if(!getline(is_line, key, '='))
-			{
-				INFO << line << endl;
-				continue;
-			}
+			if(!getline(is_line, key, '=')) continue;
 			if(key[0] == '#') continue;
 			if(!getline(is_line, value, '#')) continue;
 			value = trim(value);
@@ -75,19 +79,14 @@ int wf::Config::setConfigurationFromFile(const char *fname)
 			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
-			} else if(key == "fieldX") {
-				fieldX = stod(value);
-			} else if(key == "fieldY") {
-				fieldY = stod(value);
+			} else if(key == "nodeChannel") {
+				setNodeSetChannel(stoi(value), beg_range, end_range);
 			} else if(key == "nodeExec") {
-				setNodeExec(value, beg_range, end_range);
+				setNodeSetExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {
-				setNodeCapFile(value, beg_range, end_range);
-			} else if(key == "deploymentMode") {
-				deploymentMode = value;
+				setNodeSetCapFile(value, beg_range, end_range);
 			} else {
-				ERROR << "Not handled key " << key << endl;
-				return FAILURE;
+				set(key, value);
 			}
 		}
 	} catch(exception & e) {
