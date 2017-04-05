@@ -7,8 +7,9 @@
 class Airlink
 {
 private:
+	int startNetwork(wf::Config & cfg);
 public:
-	Airlink(const Config & cfg);
+	Airlink(wf::Config & cfg);
 };
 
 #endif	//	_AIRLINK_H_

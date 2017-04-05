@@ -4,7 +4,7 @@
 #include <Config.h>
 #include <string.h>
 
-string Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
+string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
 {
 	istringstream keyline(keystr);
 	string key=keystr;
@@ -29,7 +29,7 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 	return key;
 }
 
-int Config::setNodeExec(const string exec, int beg, int end)
+int wf::Config::setNodeExec(const string exec, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -38,7 +38,7 @@ int Config::setNodeExec(const string exec, int beg, int end)
 	return SUCCESS;
 }
 
-int Config::setNodeCapFile(const string path, int beg, int end)
+int wf::Config::setNodeCapFile(const string path, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -47,17 +47,20 @@ int Config::setNodeCapFile(const string path, int beg, int end)
 	return SUCCESS;
 }
 
-int Config::setConfigurationFromFile(const char *fname)
+int wf::Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
 	string line, key, value;
-	ifstream infile(fname);
 
 	try
 	{
+		ifstream infile(fname);
+		if(!infile) {
+			ERROR << "Could not open file " << fname << endl;
+			return FAILURE;
+		}
 		while(getline(infile, line))
 		{
-			INFO << line << endl;
 			istringstream is_line(line);
 			if(!getline(is_line, key, '='))
 			{
@@ -69,7 +72,7 @@ int Config::setConfigurationFromFile(const char *fname)
 			value = trim(value);
 			key = trim(key);
 			key = getKeyRange(key, beg_range, end_range);
-			INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
+			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
 			} else if(key == "fieldX") {
@@ -79,7 +82,7 @@ int Config::setConfigurationFromFile(const char *fname)
 			} else if(key == "nodeExec") {
 				setNodeExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {
-				INFO << key << endl;
+				setNodeCapFile(value, beg_range, end_range);
 			} else if(key == "deploymentMode") {
 				deploymentMode = value;
 			} else {

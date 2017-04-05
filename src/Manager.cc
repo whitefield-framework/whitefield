@@ -3,15 +3,19 @@
 #include <Manager.h>
 #include <Airlink.h>
 
-Manager::Manager(const Config & cfg)
+Manager::Manager(wf::Config & cfg)
 {
 	startManager(cfg);
-	INFO << "xyz" << endl;
 }
 
-int Manager::startManager(const Config & cfg)
+int Manager::startManager(wf::Config & cfg)
 {
-	Airlink airlink(cfg);
+	try {
+		Airlink airlink(cfg);
+	} catch (exception & e) {
+		ERROR << "Caught exception " << e.what() << endl;
+		return FAILURE;
+	}
 	return SUCCESS;
 }
 

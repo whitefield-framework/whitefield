@@ -7,11 +7,11 @@
 class Manager
 {
 private:
-  int startManager(const Config & cfg);
+  int startManager(wf::Config & cfg);
 
 public:
   Manager() {};
-  Manager(const Config & cfg);
+  Manager(wf::Config & cfg);
 };
 
 #endif //_MANAGER_H_
