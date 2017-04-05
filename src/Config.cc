@@ -76,9 +76,9 @@ int wf::Config::setConfigurationFromFile(const char *fname)
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
 			} else if(key == "fieldX") {
-				fieldX = stoi(value);
+				fieldX = stod(value);
 			} else if(key == "fieldY") {
-				fieldY = stoi(value);
+				fieldY = stod(value);
 			} else if(key == "nodeExec") {
 				setNodeExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {

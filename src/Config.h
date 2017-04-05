@@ -24,7 +24,7 @@ namespace wf {
 	{
 		private:
 			NodeConfig *nodeArray;
-			int fieldX, fieldY;
+			double fieldX, fieldY;
 			int numOfNodes;
 			string deploymentMode;
 			string nodeExec;
@@ -50,6 +50,9 @@ namespace wf {
 			string getKeyRange(const string & keystr, int & beg_range, int & end_range);
 
 		public:
+			double getfieldX() { return fieldX; };
+			double getfieldY() { return fieldY; };
+			string getdeploymentMode() { return deploymentMode; };
 			int setConfigurationFromFile(const char *filename);
 			int getNumberOfNodes(void) {
 				return numOfNodes;

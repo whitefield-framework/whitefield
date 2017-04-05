@@ -3,4 +3,9 @@
 . ./config.inc
 
 export LD_LIBRARY_PATH=$NS3PATH
-$BINDIR/whitefield $*
+
+if [ "$1" == "gdb" ]; then
+	shift
+	cmdprefix="gdb --args"
+fi
+$cmdprefix $BINDIR/whitefield $*

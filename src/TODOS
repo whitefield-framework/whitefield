@@ -1,7 +1,8 @@
 Create generic NodeInfo objects and populate the info from wf.cfg
 makefile add header file dependencies
+Add system tests mechanism
 
 
-Create a separate template for NS3 and Castalia
+(DONE) Create a separate template for NS3 and Castalia
 NS3 source for creating nodes and the topology ... Castalia <TODO>
  

@@ -17,11 +17,21 @@ int Airlink::startNetwork(wf::Config & cfg)
 
 	MobilityHelper mobility;
 	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+	mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+			"MinX", DoubleValue(.0),
+			"MinY", DoubleValue(.0),
+			"DeltaX", DoubleValue(cfg.getfieldX()),
+			"DeltaY", DoubleValue(cfg.getfieldY()),
+			"GridWidth", UintegerValue(stoi(cfg.getdeploymentMode())),
+			"LayoutType", StringValue("RowFirst"));
 
+	/*
 	Ptr<ListPositionAllocator> nodesPositionAlloc = CreateObject<ListPositionAllocator> ();
 	nodesPositionAlloc->Add (Vector (0.0, 0.0, 0.0));
 	nodesPositionAlloc->Add (Vector (50.0, 0.0, 0.0));
 	mobility.SetPositionAllocator (nodesPositionAlloc);
+	*/
+
 	mobility.Install (nodes);
 
 	NS_LOG_INFO ("Create channels.");
