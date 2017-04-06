@@ -5,6 +5,7 @@
 #include "ns3/mobility-module.h"
 
 #include "AirlineManager.h"
+#include "Airline.h"
 
 using namespace ns3;
 
@@ -46,6 +47,10 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	LrWpanHelper lrWpanHelper;
 	NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
 	lrWpanHelper.AssociateToPan (devContainer, stoi(cfg.get("panID")));
+
+	AirlineHelper airlineApp;
+	ApplicationContainer apps = airlineApp.Install(nodes);
+	apps.Start(Seconds(0.0));
 
 	getAllNodeLocation();
 	Simulator::Run ();

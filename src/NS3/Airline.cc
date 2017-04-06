@@ -1,5 +1,6 @@
 #define	_AIRLINE_CC_
 
+#include "common.h"
 #include "Airline.h"
 #include "ns3/log.h"
 #include "ns3/nstime.h"
@@ -33,9 +34,11 @@ namespace ns3
 	};
 	void Airline::StartApplication()
 	{
+		INFO << "Airline application started\n";
 	};
 	void Airline::StopApplication()
 	{
+		INFO << "Airline application stopped\n";
 	};
 }
 
