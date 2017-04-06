@@ -1,14 +1,14 @@
-#define	_AIRLINK_CC_
+#define	_AIRLINEMANAGER_CC_
 
 #include "ns3/core-module.h"
 #include "ns3/lr-wpan-module.h"
 #include "ns3/mobility-module.h"
 
-#include "Airlink.h"
+#include "AirlineManager.h"
 
 using namespace ns3;
 
-void Airlink::getAllNodeLocation(void)
+void AirlineManager::getAllNodeLocation(void)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
 	for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i) 
@@ -23,7 +23,7 @@ void Airlink::getAllNodeLocation(void)
 	} 
 }
 
-int Airlink::startNetwork(wf::Config & cfg)
+int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	NodeContainer nodes;
 	nodes.Create (cfg.getNumberOfNodes());
@@ -54,8 +54,9 @@ int Airlink::startNetwork(wf::Config & cfg)
 	return SUCCESS;
 }
 
-Airlink::Airlink(wf::Config & cfg)
+AirlineManager::AirlineManager(wf::Config & cfg)
 {
 	startNetwork(cfg);
-	INFO << "Airlink started" << endl;
+	INFO << "AirlineManager started" << endl;
 }
+
