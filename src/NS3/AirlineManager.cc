@@ -41,6 +41,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 			"GridWidth", UintegerValue(stoi(cfg.get("deploymentMode"))),
 			"LayoutType", StringValue("RowFirst"));
 
+//	INFO << "FieldX: " << stod(cfg.get("fieldX")) << " fieldY: " << stod(cfg.get("fieldY")) << " mode: " << stoi(cfg.get("deploymentMode")) << endl;
 	mobility.Install (nodes);
 
 	NS_LOG_INFO ("Create channels.");
