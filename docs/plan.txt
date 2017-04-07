@@ -19,7 +19,7 @@ Possibilities:
 1. Test different implementations which could be compiled on native linux platform ... For e.g. if CoAP implementation between Contiki and RiOT has to be tested then, you can attach Contiki and RiOT nodes compiled on linux platform utilizing TAP interface and on the Airline using IdealAir ... 
 2. Allows loose coupling between PHY/MAC and above layers. A practical use-case would be to test RPL implementation from Contiki on adhoc Wifi.
 3. Problems with Cooja:
-  a. Unrealistic RF ... for e.g. transient links, transient asymmetic links, nodes with uneven tx power levels etc could not be simulated in Cooja.
+  a. Unrealistic RF ... for e.g. transient links, transient asymmetic links, inteference model, nodes with uneven tx power levels etc could not be simulated in Cooja.
   b. Scalability issues with JVM based Cooja ... I found node count above 100 have severe issues and the machine drains up on resources.
   c. Does not support advanced mobilility models as supported in NS3/Omnet.
   
