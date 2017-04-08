@@ -15,12 +15,17 @@ void AirlineManager::getAllNodeLocation(void)
 	for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i) 
 	{ 
 		Ptr<Node> node = *i; 
-		//std::string name = Names::FindName (node); // Assume that nodes are named, remove this line otherwise 
+		//std::string name = Names::FindName (node);
 		Ptr<MobilityModel> mob = node->GetObject<MobilityModel> (); 
-		if (! mob) continue; // Strange -- node has no mobility model installed. Skip. 
+		if (! mob) continue; // Strange, node has no mobility model installed. Skip. 
 
 		Vector pos = mob->GetPosition (); 
-		std::cout << "Node is at (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n"; 
+		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
+		std::cout << "Node is at (" << pos.x << ", " << pos.y << ", " << pos.z 
+				  << " shortaddr=" << dev->GetMac()->GetShortAddress()
+				  << " ExtAddr:" << dev->GetMac()->GetExtendedAddress()
+				  << " PanID:" << dev->GetMac()->GetPanId() 
+				  << ")\n"; 
 	} 
 }
 

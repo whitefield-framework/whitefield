@@ -2,24 +2,28 @@
 #define	_AIRLINE_H_
 
 #include <stdint.h>
-#include "ns3/application.h"
-#include "ns3/event-id.h"
-#include "ns3/ptr.h"
-#include "ns3/application-container.h"
-#include "ns3/node-container.h"
-#include "ns3/object-factory.h"
+#include <ns3/application.h>
+#include <ns3/event-id.h>
+#include <ns3/ptr.h>
+#include <ns3/application-container.h>
+#include <ns3/node-container.h>
+#include <ns3/object-factory.h>
+#include <ns3/lr-wpan-module.h>
 
 namespace ns3
 {
 	class Airline : public Application
 	{
 		public:
+			static void DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p);
+			static void DataConfirm (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params);
 			static TypeId GetTypeId();
 			Airline() {
 			};
 			virtual ~Airline() {
 			};
 		private:
+			void SendSamplePacket(void);
 			/**
 			 * \brief Start the application.
 			 */
