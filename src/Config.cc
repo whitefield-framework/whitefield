@@ -1,8 +1,6 @@
 #define _CONFIG_CC_
 
 #include <common.h>
-#include <Config.h>
-#include <string.h>
 
 string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
 {

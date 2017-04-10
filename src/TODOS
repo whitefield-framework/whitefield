@@ -1,6 +1,7 @@
 Create generic NodeInfo objects and populate the info from wf.cfg
 makefile add header file dependencies
 Add system tests mechanism
+(bug) Check why PANID is not coming into effect from config file
 
 
 (DONE) Create a separate template for NS3 and Castalia

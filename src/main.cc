@@ -1,6 +1,5 @@
 #define _MAIN_CC_
 #include <common.h>
-#include <Config.h>
 #include <Manager.h>
 
 wf::Config WF_config;

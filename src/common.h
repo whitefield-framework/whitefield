@@ -5,19 +5,25 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-
+#include <map>
+#include <string.h>
 using namespace std;
 
 #define SUCCESS 0
 #define FAILURE -1
 
-#define INFO std::cout
-#define LOG std::cout
-#define ERROR std::cerr
-#define WARN std::cerr
+#define INFO cout
+#define LOG cout
+#define ERROR cerr
+#define WARN cerr
 
-string& ltrim(std::string& s, const char* t = " \t\n\r\f\v");
-string& rtrim(std::string& s, const char* t = " \t\n\r\f\v");
-string& trim(std::string& s, const char* t = " \t\n\r\f\v");
+string& ltrim(string& s, const char* t = " \t\n\r\f\v");
+string& rtrim(string& s, const char* t = " \t\n\r\f\v");
+string& trim(string& s, const char* t = " \t\n\r\f\v");
+
+#include <Config.h>
+extern wf::Config WF_config;
+#define	CFG(STR)	WF_config.get(STR)
+#define	CFG_PANID	stoi(WF_config.get("panID"), nullptr, 0)
 
 #endif //_COMMON_H_

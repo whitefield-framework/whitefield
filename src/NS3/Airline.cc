@@ -8,6 +8,7 @@
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
+#include "common.h"
 
 #include <ns3/lr-wpan-module.h>
 
@@ -51,7 +52,7 @@ namespace ns3
 		McpsDataRequestParams params;
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
-		params.m_dstPanId = 0;
+		params.m_dstPanId = CFG_PANID;
 		params.m_dstAddr = Mac16Address ("00:02");
 		params.m_msduHandle = 0;
 		params.m_txOptions = TX_OPTION_ACK;

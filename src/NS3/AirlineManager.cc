@@ -21,8 +21,8 @@ void AirlineManager::getAllNodeLocation(void)
 
 		Vector pos = mob->GetPosition (); 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-		std::cout << "Node is at (" << pos.x << ", " << pos.y << ", " << pos.z 
-				  << " shortaddr=" << dev->GetMac()->GetShortAddress()
+		std::cout << "Node " << node->GetId() << " is at (" << pos.x << ", " << pos.y << ", " << pos.z 
+				  << ") shortaddr=" << dev->GetMac()->GetShortAddress()
 				  << " ExtAddr:" << dev->GetMac()->GetExtendedAddress()
 				  << " PanID:" << dev->GetMac()->GetPanId() 
 				  << ")\n"; 
@@ -41,9 +41,9 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
 			"MinX", DoubleValue(.0),
 			"MinY", DoubleValue(.0),
-			"DeltaX", DoubleValue(stod(cfg.get("fieldX"))),
-			"DeltaY", DoubleValue(stod(cfg.get("fieldY"))),
-			"GridWidth", UintegerValue(stoi(cfg.get("deploymentMode"))),
+			"DeltaX", DoubleValue(stod(CFG("fieldX"))),
+			"DeltaY", DoubleValue(stod(CFG("fieldY"))),
+			"GridWidth", UintegerValue(stoi(CFG("deploymentMode"))),
 			"LayoutType", StringValue("RowFirst"));
 
 //	INFO << "FieldX: " << stod(cfg.get("fieldX")) << " fieldY: " << stod(cfg.get("fieldY")) << " mode: " << stoi(cfg.get("deploymentMode")) << endl;
@@ -52,7 +52,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	NS_LOG_INFO ("Create channels.");
 	LrWpanHelper lrWpanHelper;
 	NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
-	lrWpanHelper.AssociateToPan (devContainer, stoi(cfg.get("panID")));
+	lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
 
 	AirlineHelper airlineApp;
 	ApplicationContainer apps = airlineApp.Install(nodes);

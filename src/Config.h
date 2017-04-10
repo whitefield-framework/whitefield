@@ -1,7 +1,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include <map>
+#include <common.h>
+#include <string>
 
 namespace wf {
 	class NodeConfig
@@ -22,39 +23,12 @@ namespace wf {
 			};
 	};
 
-#if 0
-	class NodeSet
-	{
-	private:
-		NodeConfig *nodeArray;
-		int nodeCnt;
-		void clearNodeArray(void)
-		{
-			if(nodeArray) {
-				delete [] nodeArray;
-			}
-			nodeArray = NULL;
-			nodeCnt = 0;
-		};
-	public:
-		int setCount(const int cnt) {
-			nodeArray = new NodeConfig [cnt];
-			nodeCnt = cnt;
-		};
-		NodeSet() {
-			nodeCnt=0;
-		};
-		~NodeSet() {
-		};
-	};
-#endif
-
 	class Config
 	{
 		private:
 			NodeConfig *nodeArray;
 			int numOfNodes;
-			std::map<string, string>keyval;
+			map<string, string>keyval;
 
 			int setNumberOfNodes(const int value)
 			{
@@ -77,9 +51,9 @@ namespace wf {
 				}
 			};
 			string getKeyRange(const string & keystr, int & beg_range, int & end_range);
+			void set(string key, string val) { keyval[key]=val; };
 
 		public:
-			void set(string key, string val) { keyval[key]=val; };
 			string get(string key) { return keyval[key]; };
 			int setConfigurationFromFile(const char *filename);
 			int getNumberOfNodes(void) { return numOfNodes; };
