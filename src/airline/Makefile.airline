@@ -22,7 +22,7 @@ ifeq ($(REL),debug)
 CFLAGS+=-g
 endif
 
-all: $(BINDIR) $(TARGET)
+all: $(BINDIR)/$(SRC) $(TARGET)
 
 $(TARGET): $(OBJS)
 	g++ -o $(TARGET) $(OBJS) $(CFLAGS) $(LIBS)
@@ -33,7 +33,7 @@ $(BINDIR)/%.o: %.cc %.h $(GLOBAL_HDR)
 $(BINDIR)/%.o: %.cc $(GLOBAL_HDR)
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 
-$(BINDIR):
+$(BINDIR)/$(SRC):
 	@mkdir -p $(BINDIR)/$(SRC)/$(AIRLINK)
 
 clean:
