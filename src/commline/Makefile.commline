@@ -1,0 +1,29 @@
+include config.inc
+
+SRC=src/commline
+LIBS=-shared
+LDFLAGS=-fPIC
+CFLAGS=-Wall -I$(SRC)
+
+TARGET=$(BINDIR)/libwf_commline_$(REL).so
+
+SRCS=$(wildcard $(SRC)/*.c)
+OBJS=$(addprefix $(BINDIR)/,$(SRCS:.c=.o))
+
+ifeq ($(REL),debug)
+CFLAGS+=-g
+endif
+
+all: $(BINDIR)/$(SRC) $(TARGET)
+
+$(TARGET): $(OBJS)
+	gcc -o $(TARGET) $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBS)
+
+$(BINDIR)/%.o: %.c %.h $(GLOBAL_HDR)
+	gcc -c -o $@ $< $(CFLAGS) $(LDFLAGS)
+
+$(BINDIR)/$(SRC):
+	@mkdir -p $(BINDIR)/$(SRC)
+
+clean:
+	rm -rf $(BINDIR)/$(SRC)
