@@ -1,11 +1,16 @@
 #define	_AIRLINEMANAGER_CC_
 
+#include <unistd.h>
+#include <thread>
 #include "ns3/core-module.h"
 #include "ns3/lr-wpan-module.h"
 #include "ns3/mobility-module.h"
 
 #include "AirlineManager.h"
 #include "Airline.h"
+extern "C" {
+#include "commline/commline.h"
+}
 
 using namespace ns3;
 
@@ -29,8 +34,39 @@ void AirlineManager::getAllNodeLocation(void)
 	} 
 }
 
+void AirlineManager::commline_thread(void)
+{
+	uint16_t len;
+	uint8_t buf[COMMLINE_MAX_BUF];
+	cl_mgr_info_t info;
+	int slptime=1;
+
+	INFO << "Commline Thread created\n";
+	while(1)
+	{
+		usleep(slptime);
+		slptime=1000;
+
+		memset(&info, 0, sizeof(info));
+		len = sizeof(info);
+		if(CL_SUCCESS==cl_recvfrom_q(CL_MANAGER_ID, (uint8_t *)&info, &len) && len>0) {
+			len = sizeof(buf);
+			if(CL_SUCCESS!=cl_recvfrom_q(info.sndr_id, buf, &len)) {
+				ERROR << "recv failed " << info.sndr_id << endl;
+				break;
+			}
+			INFO << "Received msg len:" << len << " for id:" << info.sndr_id << endl;
+			slptime=1;
+		}
+	}
+}
+
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
+	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
+		ERROR << "Failure creating commline\n";
+		return FAILURE;
+	}
 	NodeContainer nodes;
 	nodes.Create (cfg.getNumberOfNodes());
 	INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
@@ -59,6 +95,8 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	apps.Start(Seconds(0.0));
 
 	getAllNodeLocation();
+	thread t1(commline_thread);
+	t1.detach();
 	Simulator::Run ();
 	Simulator::Destroy ();
 	INFO << "Execution done\n";
@@ -71,3 +109,7 @@ AirlineManager::AirlineManager(wf::Config & cfg)
 	INFO << "AirlineManager started" << endl;
 }
 
+AirlineManager::~AirlineManager() 
+{
+	cl_cleanup();
+}

@@ -1,8 +1,9 @@
 include config.inc
 
 SRC=src/airline
-LIBS=
-CFLAGS=-std=c++11 -Wall -I$(SRC)
+CL_SRC=src
+LIBS=-lpthread -L$(BINDIR) -lwf_commline_$(REL)
+CFLAGS=-std=c++11 -Wall -I$(CL_SRC) -I$(SRC)
 
 TARGET=$(BINDIR)/whitefield
 # Should be equivalent to your list of C files, if you don't build selectively
