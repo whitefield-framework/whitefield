@@ -10,4 +10,6 @@ if [ "$1" == "gdb" ]; then
 	shift
 	cmdprefix="gdb --args"
 fi
+
+mkdir pcap 2>/dev/null
 $cmdprefix $BINDIR/whitefield $*

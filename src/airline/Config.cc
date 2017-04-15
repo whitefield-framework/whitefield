@@ -7,7 +7,7 @@ string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end
 	istringstream keyline(keystr);
 	string key=keystr;
 	const char *ptr;
-
+	
 	beg_range = 0;
 	end_range = numOfNodes-1;
 	if(!(ptr=strchr(keystr.c_str(), '['))) return key; //No range specified in the key

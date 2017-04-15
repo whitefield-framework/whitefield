@@ -58,6 +58,17 @@ void AirlineManager::commline_thread(void)
 			INFO << "Received msg len:" << len << " for id:" << info.sndr_id << endl;
 			slptime=1;
 		}
+
+#if 0
+		{
+			NodeContainer const & n = NodeContainer::GetGlobal (); 
+			Ptr<Application> nodeApp = n.Get(2)->GetApplication(0);
+			if(nodeApp) {
+				Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+				aline->rxPacketFromStackline(buf, len);
+			}
+		}
+#endif
 	}
 }
 
@@ -90,6 +101,9 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
 	lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
 
+	INFO << CFG("captureFileAll") << endl;
+	lrWpanHelper.EnablePcapAll (string(CFG("NS3_captureFile")), true);
+
 	AirlineHelper airlineApp;
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
@@ -98,6 +112,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	thread t1(commline_thread);
 	t1.detach();
 	Simulator::Run ();
+	sleep(1);
 	Simulator::Destroy ();
 	INFO << "Execution done\n";
 	return SUCCESS;

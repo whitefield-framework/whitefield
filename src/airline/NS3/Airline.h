@@ -22,6 +22,10 @@ namespace ns3
 			};
 			virtual ~Airline() {
 			};
+			void rxPacketFromStackline(const uint8_t *buf, const uint16_t len) 
+			{
+				INFO << "Yippeeeee Recvd packet\n";
+			}
 		private:
 			void SendSamplePacket(void);
 			/**
