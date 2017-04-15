@@ -17,17 +17,22 @@ void cl_cleanup(void)
 	msgq_cleanup();
 }
 
-int cl_sendto_q(const uint8_t *buf, const uint16_t buflen, const uint16_t srcid, const uint16_t dstid)
+int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
 {
-	return CL_SUCCESS;
-}
-
-int cl_recvfrom_q(const uint16_t srcid, uint8_t *buf, uint16_t *buflen)
-{
-	if(!buf || !buflen) { 
-		ERROR("invalid parameters passed buf:%p, buflen:%p\n", buf, buflen);
+	if(!mbuf || !len) {
+		ERROR("sendto invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
 		return CL_FAILURE;
 	}
-	return msgq_recvfrom(srcid, buf, buflen);
+	return msgq_sendto(mtype, mbuf, len);
+}
+
+int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
+{
+	if(!mbuf || !len) {
+		ERROR("invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
+		return CL_FAILURE;
+	}
+	memset(mbuf, 0, sizeof(msg_buf_t));
+	return msgq_recvfrom(mtype, mbuf, len);
 }
 

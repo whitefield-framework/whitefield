@@ -1,13 +1,32 @@
 #define _CONFIG_CC_
 
 #include <common.h>
+extern "C" {
+#include "commline/commline.h"
+}
 
+extern void sig_handler(int);
 //This interface is called from AirlineManager...
 void wf::Config::spawnStackline(const uint16_t nodeID)
 {
+	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
+	msg_buf_t *mbuf = (msg_buf_t*)buf;
+	int len=0;
+	string cmd = nodeArray[nodeID].getNodeExecutable();
+
+	if(cmd.empty()) {
+		ERROR << "No Stackline executable configured for nodeID:" << nodeID << endl;
+		sig_handler(1);
+	}
+
 	INFO << "spawning node:" << nodeID 
-		 << " Exec: " << nodeArray[nodeID].getNodeExecutable() 
+		 << " Exec: " << cmd
 		 << endl;
+	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s|%d", cmd.c_str(), nodeID);
+	mbuf->len = len;
+	if(CL_SUCCESS != cl_sendto_q(MTYPE(FORKER, 0), mbuf, len + sizeof(msg_buf_t))) {
+		ERROR << "Failure sending command to forker\n";
+	}
 }
 
 string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
@@ -31,6 +50,9 @@ string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end
 	if(end_range <= beg_range) {
 		ERROR << "invalid range:" << keystr << endl;
 		return "";
+	}
+	if(end_range >= numOfNodes) {
+		end_range = numOfNodes-1;
 	}
 	return key;
 }

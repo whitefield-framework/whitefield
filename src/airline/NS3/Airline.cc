@@ -42,7 +42,6 @@ namespace ns3
 		uint16_t id = GetNode()->GetId();
 		Ptr<LrWpanNetDevice> device = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 
-		INFO << "setting address:" << id << endl;
 		idBuf[0] = (id >> 8) & 0xff;
 		idBuf[1] = (id >> 0) & 0xff;
 		address.CopyFrom (idBuf);

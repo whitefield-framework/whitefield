@@ -14,6 +14,10 @@
 #include <commline.h>
 #include <cl_msgq.h>
 
+#define	MAKE_MTYPE(MTYPE, LINE, ID)	\
+	(MTYPE) = LINE << 16;\
+	(MTYPE) |= ID;
+
 int gMsgQ_id=-1;
 key_t get_msgq_key(void)
 {
@@ -39,7 +43,6 @@ int msgq_init(const uint8_t flags)
 		ERROR("could not get msgq\n");
 		return CL_FAILURE;
 	}
-	INFO("Msgq creation success\n");
 	return CL_SUCCESS;
 }
 
@@ -52,29 +55,30 @@ void msgq_cleanup(void)
 	INFO("msgq deleted\n");
 }
 
-typedef struct _cl_msg_ {
-	long mtype;
-	uint8_t buf[COMMLINE_MAX_BUF];
-} cl_msg_t;
-
-int msgq_recvfrom(const uint16_t srcid, uint8_t *buf, uint16_t *buflen)
+int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len)
 {
-	cl_msg_t msg;
-	msg.mtype = srcid;
 	int ret;
-	*buflen=0;
-	ret = msgrcv(gMsgQ_id, (void*)&msg, sizeof(msg), srcid, IPC_NOWAIT);
+
+	mbuf->len=0;
+	ret = msgrcv(gMsgQ_id, (void*)mbuf, len, mtype, IPC_NOWAIT);
 	if(ret<0) {
 		if(ENOMSG == errno) return CL_SUCCESS;
 		return CL_FAILURE;
 	}
-	if(ret <= sizeof(long)) 
+	if(ret <= sizeof(msg_buf_t)) 
 	{
 		ERROR("some problem ... msgrcv length(%d) not enough\n", ret);
 		return CL_FAILURE;
 	}
-	memcpy(buf, msg.buf+sizeof(long), ret - sizeof(long));
-	*buflen = ret - sizeof(long);
+	return CL_SUCCESS;
+}
+
+int msgq_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
+{
+	mbuf->mtype=mtype;
+	if(msgsnd(gMsgQ_id, (void*)mbuf, len, 0)<0) {
+		return CL_FAILURE;
+	}
 	return CL_SUCCESS;
 }
 
