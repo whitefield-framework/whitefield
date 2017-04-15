@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -24,10 +25,12 @@ void redirect_stdout_to_log(int nodeid)
 	}
 }
 
+#define	MAX_CHILD_PROCESS	32000
+pid_t gChildProcess[MAX_CHILD_PROCESS];
 void fork_n_exec(char *buf)
 {
 	char *argv[20] = {NULL};
-	int i=0;
+	int i=0, nodeid;
 	char *ptr=NULL;
 
 	do {
@@ -39,10 +42,28 @@ void fork_n_exec(char *buf)
 	} while((ptr=strchr(buf, '|')));
 	argv[i] = NULL;
 
-	if(0 == fork()) {
-		redirect_stdout_to_log(atoi(argv[1]));
+	if(i<1) {
+		ERROR("Insufficient command exec info\n");
+		return;
+	}
+	nodeid = atoi(argv[1]);
+
+	gChildProcess[nodeid] = fork();
+	if(0 == gChildProcess[nodeid]) {
+		redirect_stdout_to_log(nodeid);
 		execv(argv[0], argv);
 		ERROR("Could not execv [%s]. Check if the cmdname/path is correct.Aborting...\n", argv[0]);
+	} else if(gChildProcess[nodeid] < 0) {
+		ERROR("fork failed!!!\n");
+	}
+}
+
+void killall_childprocess(void)
+{
+	int i;
+	for(i=0;i<MAX_CHILD_PROCESS;i++) {
+		if(gChildProcess[i] <= 0) continue;
+		kill(gChildProcess[i], SIGKILL);
 	}
 }
 
@@ -60,6 +81,7 @@ void wait_on_q(void)
 		}
 		usleep(1000);
 	}
+	killall_childprocess();
 	INFO("Quitting forker process\n");
 }
 
