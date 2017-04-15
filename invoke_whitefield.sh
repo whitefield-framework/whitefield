@@ -11,5 +11,5 @@ if [ "$1" == "gdb" ]; then
 	cmdprefix="gdb --args"
 fi
 
-mkdir pcap 2>/dev/null
+mkdir log pcap 2>/dev/null
 $cmdprefix $BINDIR/whitefield $*

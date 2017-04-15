@@ -12,7 +12,7 @@ SRCS+=$(wildcard $(SRC)/$(AIRLINK)/*.cc)
 OBJS=$(addprefix $(BINDIR)/,$(SRCS:.cc=.o))
 #$(info $(OBJS))
 CFLAGS+=-I$(SRC)/$(AIRLINK)
-GLOBAL_HDR=$(SRC)/common.h
+GLOBAL_HDR=$(SRC)/common.h $(SRC)/Config.h
 
 ifeq ($(AIRLINK),NS3)
 CFLAGS+=-I$(NS3PATH)

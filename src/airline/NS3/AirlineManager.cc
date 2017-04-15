@@ -2,9 +2,6 @@
 
 #include <unistd.h>
 #include <thread>
-#include "ns3/core-module.h"
-#include "ns3/lr-wpan-module.h"
-#include "ns3/mobility-module.h"
 
 #include "AirlineManager.h"
 #include "Airline.h"
@@ -12,9 +9,7 @@ extern "C" {
 #include "commline/commline.h"
 }
 
-using namespace ns3;
-
-void AirlineManager::getAllNodeLocation(void)
+void AirlineManager::getAllNodeInfo(void)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
 	for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i) 
@@ -28,9 +23,9 @@ void AirlineManager::getAllNodeLocation(void)
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		std::cout << "Node " << node->GetId() << " is at (" << pos.x << ", " << pos.y << ", " << pos.z 
 				  << ") shortaddr=" << dev->GetMac()->GetShortAddress()
-				  << " ExtAddr:" << dev->GetMac()->GetExtendedAddress()
+				  //<< " ExtAddr:" << dev->GetMac()->GetExtendedAddress()
 				  << " PanID:" << dev->GetMac()->GetPanId() 
-				  << ")\n"; 
+				  << "\n"; 
 	} 
 }
 
@@ -72,18 +67,8 @@ void AirlineManager::commline_thread(void)
 	}
 }
 
-int AirlineManager::startNetwork(wf::Config & cfg)
+void AirlineManager::setMobilityModel(MobilityHelper & mobility)
 {
-	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
-		ERROR << "Failure creating commline\n";
-		return FAILURE;
-	}
-	NodeContainer nodes;
-	nodes.Create (cfg.getNumberOfNodes());
-	INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
-	SeedManager::SetSeed(0xbabe);
-
-	MobilityHelper mobility;
 	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 	mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
 			"MinX", DoubleValue(.0),
@@ -93,7 +78,18 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 			"GridWidth", UintegerValue(stoi(CFG("deploymentMode"))),
 			"LayoutType", StringValue("RowFirst"));
 
-//	INFO << "FieldX: " << stod(cfg.get("fieldX")) << " fieldY: " << stod(cfg.get("fieldY")) << " mode: " << stoi(cfg.get("deploymentMode")) << endl;
+	//TODO: In the future this could support different types of mobility models
+}
+
+int AirlineManager::startNetwork(wf::Config & cfg)
+{
+	NodeContainer nodes;
+	nodes.Create (cfg.getNumberOfNodes());
+	INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
+	SeedManager::SetSeed(0xbabe);
+
+	MobilityHelper mobility;
+	setMobilityModel(mobility);
 	mobility.Install (nodes);
 
 	NS_LOG_INFO ("Create channels.");
@@ -101,17 +97,20 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
 	lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
 
-	INFO << CFG("captureFileAll") << endl;
-	lrWpanHelper.EnablePcapAll (string(CFG("NS3_captureFile")), true);
+	string ns3_capfile = CFG("NS3_captureFile");
+	if(!ns3_capfile.empty()) {
+		INFO << "NS3 Capture File:" << ns3_capfile << endl;
+		lrWpanHelper.EnablePcapAll (ns3_capfile, true);
+	}
 
 	AirlineHelper airlineApp;
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
 
-	getAllNodeLocation();
 	thread t1(commline_thread);
 	t1.detach();
 	Simulator::Run ();
+	getAllNodeInfo();
 	sleep(1);
 	Simulator::Destroy ();
 	INFO << "Execution done\n";
@@ -126,5 +125,4 @@ AirlineManager::AirlineManager(wf::Config & cfg)
 
 AirlineManager::~AirlineManager() 
 {
-	cl_cleanup();
 }

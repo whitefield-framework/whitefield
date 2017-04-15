@@ -2,6 +2,14 @@
 
 #include <common.h>
 
+//This interface is called from AirlineManager...
+void wf::Config::spawnStackline(const uint16_t nodeID)
+{
+	INFO << "spawning node:" << nodeID 
+		 << " Exec: " << nodeArray[nodeID].getNodeExecutable() 
+		 << endl;
+}
+
 string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
 {
 	istringstream keyline(keystr);
@@ -45,14 +53,6 @@ int wf::Config::setNodeSetCapFile(const string path, int beg, int end)
 	return SUCCESS;
 }
 
-int wf::Config::setNodeSetChannel(const int channel, int beg, int end)
-{
-	int i;
-	for(i=beg;i<=end;i++) {
-		nodeArray[i].setNodeChannel(channel);
-	}
-	return SUCCESS;
-}
 int wf::Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
@@ -77,8 +77,6 @@ int wf::Config::setConfigurationFromFile(const char *fname)
 			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
-			} else if(key == "nodeChannel") {
-				setNodeSetChannel(stoi(value), beg_range, end_range);
 			} else if(key == "nodeExec") {
 				setNodeSetExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {

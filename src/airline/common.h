@@ -25,5 +25,6 @@ string& trim(string& s, const char* t = " \t\n\r\f\v");
 extern wf::Config WF_config;
 #define	CFG(STR)	WF_config.get(STR)
 #define	CFG_PANID	stoi(WF_config.get("panID"), nullptr, 0)
+#define	SPAWN_STACKLINE(NODEID)	WF_config.spawnStackline(NODEID)
 
 #endif //_COMMON_H_
