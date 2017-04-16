@@ -15,7 +15,6 @@ class AirlineManager
 private:
 	int startNetwork(wf::Config & cfg);
 	void getAllNodeInfo(void);
-	static void commline_thread(void);
 	void setMobilityModel(MobilityHelper & mobility);
 public:
 	AirlineManager(wf::Config & cfg);

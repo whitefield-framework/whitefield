@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include <string.h>
+#include <unistd.h>
 using namespace std;
 
 #define SUCCESS 0

@@ -34,9 +34,9 @@ enum {
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 
 #ifndef	ERROR
-#define	ERROR printf
-#define	INFO printf
-#define	WARN printf
+#define	ERROR(...) printf(__VA_ARGS__); fflush(stdout);
+#define	INFO(...) printf(__VA_ARGS__); fflush(stdout);
+#define	WARN(...) printf(__VA_ARGS__); fflush(stdout);
 #endif
 
 #endif	//_COMMLINE_H_

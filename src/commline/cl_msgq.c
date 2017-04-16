@@ -77,6 +77,7 @@ int msgq_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
 {
 	mbuf->mtype=mtype;
 	if(msgsnd(gMsgQ_id, (void*)mbuf, len, 0)<0) {
+		ERROR("msgsend failed!\n");
 		return CL_FAILURE;
 	}
 	return CL_SUCCESS;
