@@ -40,6 +40,19 @@ void AirlineManager::setMobilityModel(MobilityHelper & mobility)
 	//TODO: In the future this could support different types of mobility models
 }
 
+int msgrecvCallback(const void *ptr)
+{
+	const msg_buf_t *mbuf=(msg_buf_t *)ptr;
+	NodeContainer const & n = NodeContainer::GetGlobal (); 
+	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
+
+	if(nodeApp) {
+		Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+		aline->rxPacketFromStackline(mbuf->buf, mbuf->len);
+	}
+	return SUCCESS;
+}
+
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	NodeContainer nodes;
@@ -66,8 +79,8 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
 
-	thread t1(commline_thread);
-	t1.detach();
+	thread t1(commline_thread, msgrecvCallback);
+//	t1.detach();
 	Simulator::Run ();
 	getAllNodeInfo();
 	pause();

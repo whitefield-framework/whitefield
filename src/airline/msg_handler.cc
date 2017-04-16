@@ -2,11 +2,8 @@
 
 #include "common.h"
 #include "msg_handler.h"
-extern "C" {
-#include "commline/commline.h"
-}
 
-void commline_thread(void)
+void commline_thread(msgrecv_cb_t cb)
 {
 	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
 	msg_buf_t *mbuf=(msg_buf_t*)buf;
@@ -26,17 +23,8 @@ void commline_thread(void)
 				 << " src:" << mbuf->src_id 
 				 << " dst:" << mbuf->dst_id 
 				 << endl;
+			cb(mbuf);
 		}
-#if 0
-		{
-			NodeContainer const & n = NodeContainer::GetGlobal (); 
-			Ptr<Application> nodeApp = n.Get(2)->GetApplication(0);
-			if(nodeApp) {
-				Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-				aline->rxPacketFromStackline(buf, len);
-			}
-		}
-#endif
 	}
 	INFO << "stopping commline_thread\n";
 }
