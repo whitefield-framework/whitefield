@@ -1,0 +1,18 @@
+include config.inc
+
+LDFLAGS=-fPIC
+CFLAGS=-Wall -I$(SRC)
+
+ifeq ($(REL),debug)
+CFLAGS+=-g
+endif
+
+FORKER=$(BINDIR)/wf_forker
+
+all: $(FORKER)
+
+$(FORKER): src/utils/forker.c
+	gcc -o $(FORKER) src/utils/forker.c -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline_$(REL)
+
+clean:
+	rm -rf $(FORKER)

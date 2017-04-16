@@ -4,13 +4,22 @@
 #include <common.h>
 #include <Config.h>
 
+#include "ns3/core-module.h"
+#include "ns3/lr-wpan-module.h"
+#include "ns3/mobility-module.h"
+
+using namespace ns3;
+
 class AirlineManager
 {
 private:
 	int startNetwork(wf::Config & cfg);
-	void getAllNodeLocation(void);
+	void getAllNodeInfo(void);
+	static void commline_thread(void);
+	void setMobilityModel(MobilityHelper & mobility);
 public:
 	AirlineManager(wf::Config & cfg);
+	~AirlineManager();
 };
 
 #endif	//_AIRLINEMANAGER_H_

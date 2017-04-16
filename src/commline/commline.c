@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <commline.h>
+#include <errno.h>
 #include <cl_msgq.h>
 
 int cl_init(const uint8_t flags)
@@ -11,13 +12,27 @@ int cl_init(const uint8_t flags)
 	return msgq_init(flags);
 }
 
-int cl_sendto_q(const uint8_t *buf, const uint16_t buflen, const uint16_t srcid, const uint16_t dstid)
+void cl_cleanup(void)
 {
-	return CL_SUCCESS;
+	msgq_cleanup();
 }
 
-int cl_recvfrom_q(const uint16_t srcid, uint8_t *buf, uint16_t *buflen)
+int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
 {
-	return CL_SUCCESS;
+	if(!mbuf || !len) {
+		ERROR("sendto invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
+		return CL_FAILURE;
+	}
+	return msgq_sendto(mtype, mbuf, len);
+}
+
+int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
+{
+	if(!mbuf || !len) {
+		ERROR("invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
+		return CL_FAILURE;
+	}
+	memset(mbuf, 0, sizeof(msg_buf_t));
+	return msgq_recvfrom(mtype, mbuf, len);
 }
 

@@ -10,13 +10,10 @@ namespace wf {
 		private:
 			string nodeExec;
 			string capFile;
-			int channel;
 		public:
+			string getNodeExecutable(void) { return nodeExec; };
 			void setNodeExecutable(const string path) {
 				nodeExec = path;
-			};
-			void setNodeChannel(const int channel) {
-				this->channel = channel;
 			};
 			void setNodeCaptureFile(const string path) {
 				capFile = path;
@@ -40,7 +37,6 @@ namespace wf {
 
 			int setNodeSetExec(const string exec, int beg, int end);
 			int setNodeSetCapFile(const string path, int beg, int end);
-			int setNodeSetChannel(const int chn, int beg, int end);
 
 			void clearNodeArray(void)
 			{
@@ -57,6 +53,7 @@ namespace wf {
 			string get(string key) { return keyval[key]; };
 			int setConfigurationFromFile(const char *filename);
 			int getNumberOfNodes(void) { return numOfNodes; };
+			void spawnStackline(const uint16_t nodeID);
 			Config() 
 			{
 				nodeArray=NULL;
