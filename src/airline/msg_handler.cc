@@ -19,10 +19,6 @@ void commline_thread(msgrecv_cb_t cb)
 		}
 		slptime=mbuf->len?1:1000;
 		if(mbuf->len) {
-			INFO << "rcvd packet len:" << mbuf->len
-				 << " src:" << mbuf->src_id 
-				 << " dst:" << mbuf->dst_id 
-				 << endl;
 			cb(mbuf);
 		}
 	}

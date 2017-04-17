@@ -16,6 +16,8 @@ private:
 	int startNetwork(wf::Config & cfg);
 	void getAllNodeInfo(void);
 	void setMobilityModel(MobilityHelper & mobility);
+	void msgReader(void);
+	EventId m_sendEvent;
 public:
 	AirlineManager(wf::Config & cfg);
 	~AirlineManager();
