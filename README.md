@@ -11,7 +11,5 @@ Typical use of Whitefield:
 5. Regression tests using IdealAir
 
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
-
-## Whitefield as compared to Cooja
-
-## Whitefield as compared to NS3/Castalia/Omnet
+### Whitefield as compared to Cooja
+### Whitefield as compared to NS3/Castalia/Omnet
