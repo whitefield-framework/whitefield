@@ -32,8 +32,31 @@ namespace ns3
 			;
 		return tid;
 	};
-	void Airline::tx(const uint8_t *pBuf, const size_t buflen)
+	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
+	void Airline::tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen)
 	{
+		uint8_t dst[2], *ptr=(uint8_t*)&dst_id;
+		dst[0] = ptr[0];
+		dst[1] = ptr[1];
+		INFO << "sending pkt>> dst:" << dst_id 
+			 << " len:" << buflen
+			 << endl;
+		
+		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
+		Ptr<Packet> p0 = Create<Packet> (pBuf, (uint32_t)buflen);
+		McpsDataRequestParams params;
+		params.m_srcAddrMode = SHORT_ADDR;
+		params.m_dstAddrMode = SHORT_ADDR;
+		params.m_dstPanId = CFG_PANID;
+		Mac16Address dst_mac;
+		dst_mac.CopyFrom(dst);
+		params.m_dstAddr = dst_mac;
+		params.m_msduHandle = 1;
+		params.m_txOptions = TX_OPTION_NONE;
+		if(dst_id != 0xffff) {
+			params.m_txOptions = TX_OPTION_ACK;
+		}
+		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
 	void Airline::setDeviceAddress(void)
 	{
@@ -67,7 +90,7 @@ namespace ns3
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
 		params.m_dstPanId = CFG_PANID;
-		params.m_dstAddr = Mac16Address ("00:02");
+		params.m_dstAddr = Mac16Address ("ff:ff");
 		params.m_msduHandle = 0;
 		params.m_txOptions = TX_OPTION_ACK;
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
@@ -82,7 +105,10 @@ namespace ns3
 	};
 	void Airline::DataConfirm (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params)
 	{
-		INFO << "Wohoooo rcvd DataConfirm on node:" << airline->GetNode()->GetId() << endl;
+		INFO << "Wohoooo rcvd DataConfirm on node:" << airline->GetNode()->GetId()
+			 << " Confirm:" << params.m_status
+			 << " msdu:" << (int)params.m_msduHandle
+			 << endl;
 	};
 }
 
