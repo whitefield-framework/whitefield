@@ -11,4 +11,16 @@ Typical use of Whitefield:
 
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
 ### Whitefield as compared to Cooja
-### Whitefield as compared to NS3/Castalia/Omnet
+| Feature | Cooja | Whitefield |
+| --- | --- | --- |
+| Scale | <100 nodes | ~1K nodes |
+| RF model | No | Yes^ |
+| Loss model | No | Yes^ |
+| Asymmetric Links | Statically Configured | Dynamic^ |
+| Visualization | Good | Cmdline tools^^ |
+
+^ Managed by Airline module which depends on NS3 like implementation to provide these features.
+^^ In the first phase, Whitefield will provide command line tools to,
+  - dump network topology based on tree-like structure or using position based network topology
+  - monitor runtime tables (routing table for e.g.) and stats (MAC, IPv6, RPL, 6Lo, UDP) on any of the nodes
+In the future, Whitefield aims to have advanced visualization using sigmajs like SDKs. It is our intent (manifested in design) to loosely couple visualization from actual simulation for e.g. by having simulation modules send events/info on sockets to remote visualization tools.
