@@ -14,7 +14,7 @@ Typical use of Whitefield:
 | Feature | Cooja | Whitefield |
 | --- | --- | --- |
 | Interop testing | No | Yes |
-| Scale | <100 nodes | ~1K nodes |
+| Scale | <150 nodes | >1K nodes |
 | RF model | No | Yes^ |
 | Loss model | No | Yes^ |
 | Asymmetric Links | Statically Configured | Dynamic^ |
@@ -24,9 +24,12 @@ Typical use of Whitefield:
 ^ Managed by Airline module which depends on NS3 like implementation to provide these features.
 
 ^^ In the first phase, Whitefield will provide command line tools to,
-  - dump network topology based on tree-like structure or using position based network topology
+  - dump network topology based on tree-like structure or using position based network topology using GraphViz
   - monitor runtime tables (routing table for e.g.) and stats (MAC, IPv6, RPL, 6Lo, UDP) on any of the nodes.
   
 In the future, Whitefield aims to have advanced visualization using sigmajs like SDKs. It is our intent (manifested in design) to loosely couple visualization from actual simulation for e.g. by having simulation modules send events/info on sockets to remote visualization tools.
 
-Regarding use of emulated hardware: Contiki uses cross-compilers and MSPSim tools elegantly coupled with Cooja to provide this feature. While Whitefield can also support such a feature (since it is technically feature), we currently do not have plans to integrate such tools as part of Whitefield.
+Regarding use of emulated hardware: Contiki uses cross-compilers and MSPSim tools elegantly coupled with Cooja to provide this feature. While Whitefield can also support such a feature (since it is technically feasible), we currently do not have plans to integrate such tools as part of Whitefield.
+
+Scalability: Cooja uses JVM coupled with MSPSim and the combination takes a real dig at computational and other resources. While it is purely our obervation that Cooja stutters badly beyond 150 nodes, other users may have different opinion depending upon the hardware they use. We tested Whitefield and Cooja on the same machine for longer duration to make this observation. We ll put the detailed configs very soon.
+
