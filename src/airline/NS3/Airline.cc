@@ -42,6 +42,16 @@ namespace ns3
 		return mac;
 	};
 
+	uint16_t Airline::addr2id(const Mac16Address addr)
+	{
+		uint16_t id=0;
+		uint8_t str[2], *ptr=(uint8_t *)&id;
+		addr.CopyTo(str);
+		ptr[0] = str[1];
+		ptr[1] = str[0];
+		return id;
+	};
+
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
 	void Airline::tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen)
 	{
@@ -106,6 +116,22 @@ namespace ns3
 		INFO << "Airline application stopped\n";
 	};
 
+	void Airline::SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p)
+	{
+		uint8_t buf[sizeof(msg_buf_t)+COMMLINE_MAX_BUF];
+		msg_buf_t *mbuf = (msg_buf_t *)buf;
+		uint16_t node_id=GetNode()->GetId();
+
+		mbuf->src_id = addr2id(params.m_srcAddr);
+		mbuf->dst_id = addr2id(params.m_dstAddr);
+		mbuf->lqi = params.m_mpduLinkQuality;
+		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
+		if(CL_SUCCESS != cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len))
+		{
+			ERROR << "cl_sendto_q failed\n";
+		}
+	};
+
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
 	{
 		INFO << "RX DATA node:" << airline->GetNode()->GetId()
@@ -113,6 +139,7 @@ namespace ns3
 			 << " src:" << params.m_srcAddr
 			 << " dst:" << params.m_dstAddr
 			 << endl;
+		airline->SendPacketToStackline(params, p);
 	};
 
 	//Send the Ack status with retry count to stackline

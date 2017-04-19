@@ -31,6 +31,8 @@ namespace ns3
 			queue<McpsDataRequestParams> pktq;
 			void SendSamplePacket(void);
 			Mac16Address id2addr(const uint16_t id);
+			uint16_t addr2id(const Mac16Address addr);
+			void SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p);
 			void SendAckToStackline(void);
 			/**
 			 * \brief Start the application.

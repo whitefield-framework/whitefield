@@ -15,10 +15,10 @@ void cl_cleanup(void);
 typedef struct _msg_buf_
 {
 	long mtype;
-	uint8_t flag;
 	uint16_t src_id;
 	uint16_t dst_id;
 	uint16_t len; // length of the buf only
+	uint8_t lqi;	//Link quality indicator .. sent from airline to stackline
 	uint8_t buf[1];
 }msg_buf_t;
 
@@ -34,9 +34,9 @@ enum {
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 
 #ifndef	ERROR
-#define	ERROR(...) printf(__VA_ARGS__); fflush(stdout);
-#define	INFO(...) printf(__VA_ARGS__); fflush(stdout);
-#define	WARN(...) printf(__VA_ARGS__); fflush(stdout);
+#define	ERROR(...) { printf(__VA_ARGS__); fflush(stdout); }
+#define	INFO(...) { printf(__VA_ARGS__); fflush(stdout); } 
+#define	WARN(...) { printf(__VA_ARGS__); fflush(stdout); }
 #endif
 
 #endif	//_COMMLINE_H_
