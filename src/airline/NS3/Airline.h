@@ -2,6 +2,7 @@
 #define	_AIRLINE_H_
 
 #include <stdint.h>
+#include <queue>
 #include <ns3/application.h>
 #include <ns3/event-id.h>
 #include <ns3/ptr.h>
@@ -9,6 +10,9 @@
 #include <ns3/node-container.h>
 #include <ns3/object-factory.h>
 #include <ns3/lr-wpan-module.h>
+extern "C" {
+#include "commline/commline.h"
+}
 
 namespace ns3
 {
@@ -18,13 +22,16 @@ namespace ns3
 			static void DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p);
 			static void DataConfirm (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params);
 			static TypeId GetTypeId();
-			Airline() {
-			};
+			Airline();
 			virtual ~Airline() {
 			};
 			void tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen);
 		private:
+			uint8_t m_macpktqlen;
+			queue<McpsDataRequestParams> pktq;
 			void SendSamplePacket(void);
+			Mac16Address id2addr(const uint16_t id);
+			void SendAckToStackline(void);
 			/**
 			 * \brief Start the application.
 			 */

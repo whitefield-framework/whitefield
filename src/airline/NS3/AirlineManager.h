@@ -17,6 +17,7 @@ private:
 	void getAllNodeInfo(void);
 	void setMobilityModel(MobilityHelper & mobility);
 	void msgReader(void);
+	void ScheduleCommlineRX(void);
 	EventId m_sendEvent;
 public:
 	AirlineManager(wf::Config & cfg);

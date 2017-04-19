@@ -84,9 +84,9 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 //	thread t1(commline_thread, msgrecvCallback);
 //	t1.detach();
-	msgReader();
-	Simulator::Run ();
 	getAllNodeInfo();
+	ScheduleCommlineRX();
+	Simulator::Run ();
 //	commline_thread(msgrecvCallback);
 	pause();
 	Simulator::Destroy ();
@@ -94,7 +94,11 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	return SUCCESS;
 }
 
-#if 1
+void AirlineManager::ScheduleCommlineRX(void)
+{
+	m_sendEvent = Simulator::Schedule (Seconds(0.001), &AirlineManager::msgReader, this);
+}
+
 void AirlineManager::msgReader(void)
 {
 	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
@@ -108,9 +112,8 @@ void AirlineManager::msgReader(void)
 			break;
 		}
 	}
-	m_sendEvent = Simulator::Schedule (Seconds(0.001), &AirlineManager::msgReader, this);
+	ScheduleCommlineRX();
 }
-#endif
 
 AirlineManager::AirlineManager(wf::Config & cfg)
 {

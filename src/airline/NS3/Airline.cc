@@ -8,9 +8,7 @@
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
-#include "common.h"
-
-#include <ns3/lr-wpan-module.h>
+#include "ns3/lr-wpan-module.h"
 
 namespace ns3
 {
@@ -32,32 +30,45 @@ namespace ns3
 			;
 		return tid;
 	};
+
+	//convert 2byte short addr to Mac16Address object
+	Mac16Address Airline::id2addr(const uint16_t id)
+	{
+		Mac16Address mac;
+		uint8_t idstr[2], *ptr=(uint8_t*)&id;
+		idstr[0] = ptr[0];
+		idstr[1] = ptr[1];
+		mac.CopyFrom(idstr);
+		return mac;
+	};
+
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
 	void Airline::tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen)
 	{
-		uint8_t dst[2], *ptr=(uint8_t*)&dst_id;
-		dst[0] = ptr[0];
-		dst[1] = ptr[1];
+		if(pktq.size() > m_macpktqlen) {
+			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";
+			return;
+		}
+
 		INFO << "sending pkt>> dst:" << dst_id 
 			 << " len:" << buflen
 			 << endl;
-		
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		Ptr<Packet> p0 = Create<Packet> (pBuf, (uint32_t)buflen);
 		McpsDataRequestParams params;
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
 		params.m_dstPanId = CFG_PANID;
-		Mac16Address dst_mac;
-		dst_mac.CopyFrom(dst);
-		params.m_dstAddr = dst_mac;
-		params.m_msduHandle = 1;
+		params.m_dstAddr = id2addr(dst_id);
+		params.m_msduHandle = 0;
 		params.m_txOptions = TX_OPTION_NONE;
 		if(dst_id != 0xffff) {
 			params.m_txOptions = TX_OPTION_ACK;
 		}
+		pktq.push(params);
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
+
 	void Airline::setDeviceAddress(void)
 	{
 		Mac16Address address;
@@ -70,6 +81,7 @@ namespace ns3
 		address.CopyFrom (idBuf);
 		device->GetMac ()->SetShortAddress (address);
 	};
+
 	void Airline::StartApplication()
 	{
 		//INFO << "Airline application started ID:"<< GetNode()->GetId() << endl;
@@ -78,37 +90,66 @@ namespace ns3
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));
 		SPAWN_STACKLINE(GetNode()->GetId());
-		if(GetNode()->GetId() == 0) {
+	/*	if(GetNode()->GetId() == 0) {
 			SendSamplePacket();
-		}
+		} */
 	};
+
 	void Airline::SendSamplePacket()
 	{
-		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
-		Ptr<Packet> p0 = Create<Packet> (50);
-		McpsDataRequestParams params;
-		params.m_srcAddrMode = SHORT_ADDR;
-		params.m_dstAddrMode = SHORT_ADDR;
-		params.m_dstPanId = CFG_PANID;
-		params.m_dstAddr = Mac16Address ("ff:ff");
-		params.m_msduHandle = 0;
-		params.m_txOptions = TX_OPTION_ACK;
-		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
+		uint8_t buf[50]={0};
+		tx(0xffff, buf, sizeof(buf));
 	};
+
 	void Airline::StopApplication()
 	{
 		INFO << "Airline application stopped\n";
 	};
+
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
 	{
-		INFO << "Wohoooo rcvd DataIndication on node:" << airline->GetNode()->GetId() << endl;
+		INFO << "RX DATA node:" << airline->GetNode()->GetId()
+			 << " LQI:" << (int)params.m_mpduLinkQuality
+			 << " src:" << params.m_srcAddr
+			 << " dst:" << params.m_dstAddr
+			 << endl;
 	};
+
+	//Send the Ack status with retry count to stackline
+	void Airline::SendAckToStackline(void) 
+	{
+		if(pktq.empty()) {
+			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
+			return;
+		}
+		McpsDataRequestParams params = pktq.front();
+		if(params.m_txOptions == TX_OPTION_ACK) {
+			//handle ACK
+			INFO << "TODO Handle DataConfirm Indication\n";
+		}
+		pktq.pop();
+	};
+
+	//MAC layer Ack handling
 	void Airline::DataConfirm (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params)
 	{
-		INFO << "Wohoooo rcvd DataConfirm on node:" << airline->GetNode()->GetId()
-			 << " Confirm:" << params.m_status
-			 << " msdu:" << (int)params.m_msduHandle
-			 << endl;
+	//	INFO << "RX ACK node:" << airline->GetNode()->GetId()
+	//		 << " Confirm:" << params.m_status
+	//		 << " Retries:" << (int)params.m_retries
+	//		 << " msdu:" << (int)params.m_msduHandle
+	//		 << endl;
+		airline->SendAckToStackline();
+	};
+
+	Airline::Airline() {
+		if(!m_macpktqlen) {
+			string dstr = CFG("macPktQlen");
+			if(!dstr.empty()) {
+				m_macpktqlen = (uint8_t)stoi(dstr);
+			} else {
+				m_macpktqlen = 10;
+			}
+		}
 	};
 }
 
