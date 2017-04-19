@@ -13,11 +13,13 @@ Typical use of Whitefield:
 ### Whitefield as compared to Cooja
 | Feature | Cooja | Whitefield |
 | --- | --- | --- |
+| Interop testing | No | Yes |
 | Scale | <100 nodes | ~1K nodes |
 | RF model | No | Yes^ |
 | Loss model | No | Yes^ |
 | Asymmetric Links | Statically Configured | Dynamic^ |
 | Visualization | Good | Cmdline tools^^ |
+| Emulated Hardware | Yes | No |
 
 ^ Managed by Airline module which depends on NS3 like implementation to provide these features.
 
@@ -26,3 +28,5 @@ Typical use of Whitefield:
   - monitor runtime tables (routing table for e.g.) and stats (MAC, IPv6, RPL, 6Lo, UDP) on any of the nodes.
   
 In the future, Whitefield aims to have advanced visualization using sigmajs like SDKs. It is our intent (manifested in design) to loosely couple visualization from actual simulation for e.g. by having simulation modules send events/info on sockets to remote visualization tools.
+
+Regarding use of emulated hardware: Contiki uses cross-compilers and MSPSim tools elegantly coupled with Cooja to provide this feature. While Whitefield can also support such a feature (since it is technically feature), we currently do not have plans to integrate such tools as part of Whitefield.
