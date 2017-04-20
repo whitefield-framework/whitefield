@@ -118,8 +118,7 @@ namespace ns3
 
 	void Airline::SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p)
 	{
-		uint8_t buf[sizeof(msg_buf_t)+COMMLINE_MAX_BUF];
-		msg_buf_t *mbuf = (msg_buf_t *)buf;
+		DEFINE_MBUF(mbuf);
 		uint16_t node_id=GetNode()->GetId();
 
 		mbuf->src_id = addr2id(params.m_srcAddr);
@@ -134,16 +133,16 @@ namespace ns3
 
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
 	{
-		INFO << "RX DATA node:" << airline->GetNode()->GetId()
+/*		INFO << "RX DATA node:" << airline->GetNode()->GetId()
 			 << " LQI:" << (int)params.m_mpduLinkQuality
 			 << " src:" << params.m_srcAddr
 			 << " dst:" << params.m_dstAddr
-			 << endl;
+			 << endl; */
 		airline->SendPacketToStackline(params, p);
 	};
 
 	//Send the Ack status with retry count to stackline
-	void Airline::SendAckToStackline(void) 
+	void Airline::SendAckToStackline(uint8_t m_retries) 
 	{
 		if(pktq.empty()) {
 			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
@@ -151,8 +150,14 @@ namespace ns3
 		}
 		McpsDataRequestParams params = pktq.front();
 		if(params.m_txOptions == TX_OPTION_ACK) {
-			//handle ACK
-			INFO << "TODO Handle DataConfirm Indication\n";
+			DEFINE_MBUF(mbuf);
+
+			mbuf->src_id = GetNode()->GetId();
+			mbuf->dst_id = addr2id(params.m_dstAddr);
+			mbuf->lqi = m_retries;
+			mbuf->flags |= MBUF_IS_ACK;
+			mbuf->len = 1;
+			cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 		}
 		pktq.pop();
 	};
@@ -165,7 +170,7 @@ namespace ns3
 	//		 << " Retries:" << (int)params.m_retries
 	//		 << " msdu:" << (int)params.m_msduHandle
 	//		 << endl;
-		airline->SendAckToStackline();
+		airline->SendAckToStackline(params.m_retries);
 	};
 
 	Airline::Airline() {

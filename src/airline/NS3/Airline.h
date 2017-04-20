@@ -33,7 +33,7 @@ namespace ns3
 			Mac16Address id2addr(const uint16_t id);
 			uint16_t addr2id(const Mac16Address addr);
 			void SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p);
-			void SendAckToStackline(void);
+			void SendAckToStackline(uint8_t m_retries);
 			/**
 			 * \brief Start the application.
 			 */
