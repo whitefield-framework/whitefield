@@ -1,6 +1,8 @@
 #ifndef	_COMMLINE_H_
 #define	_COMMLINE_H_
 
+#include <sys/time.h>
+
 #define	CL_SUCCESS	0
 #define	CL_FAILURE	-1
 
@@ -34,9 +36,17 @@ enum {
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 
 #ifndef	ERROR
-#define	ERROR(...) { printf(__VA_ARGS__); fflush(stdout); }
-#define	INFO(...) { printf(__VA_ARGS__); fflush(stdout); } 
-#define	WARN(...) { printf(__VA_ARGS__); fflush(stdout); }
-#endif
+#define	PRN(...)	\
+	{\
+		struct timeval tv;\
+		gettimeofday(&tv, NULL);\
+		printf("[%s:%d] [%ld:%ld] ", __FUNCTION__, __LINE__, tv.tv_sec, tv.tv_usec);\
+		printf(__VA_ARGS__);\
+		fflush(stdout);\
+	}
+#define	ERROR(...) PRN(__VA_ARGS__)
+#define	INFO(...) PRN(__VA_ARGS__)
+#define	WARN(...) PRN(__VA_ARGS__)
+#endif //ERROR
 
 #endif	//_COMMLINE_H_

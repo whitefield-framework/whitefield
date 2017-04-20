@@ -2,7 +2,7 @@ include config.inc
 
 SRC=src/airline
 CL_SRC=src
-LIBS=-lpthread -L$(BINDIR) -lwf_commline_$(REL)
+LIBS=-lpthread -L$(BINDIR) -lwf_commline
 CFLAGS=-std=c++11 -Wall -I$(CL_SRC) -I$(SRC)
 
 TARGET=$(BINDIR)/whitefield
