@@ -53,26 +53,24 @@ namespace ns3
 	};
 
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
-	void Airline::tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen)
+	void Airline::tx(const msg_buf_t *mbuf)
 	{
+		Macstats::set(AL_TX, mbuf);
 		if(pktq.size() > m_macpktqlen) {
 			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";
 			return;
 		}
 
-		INFO << "sending pkt>> dst:" << dst_id 
-			 << " len:" << buflen
-			 << endl;
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
-		Ptr<Packet> p0 = Create<Packet> (pBuf, (uint32_t)buflen);
+		Ptr<Packet> p0 = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
 		McpsDataRequestParams params;
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
 		params.m_dstPanId = CFG_PANID;
-		params.m_dstAddr = id2addr(dst_id);
+		params.m_dstAddr = id2addr(mbuf->dst_id);
 		params.m_msduHandle = 0;
 		params.m_txOptions = TX_OPTION_NONE;
-		if(dst_id != 0xffff) {
+		if(mbuf->dst_id != 0xffff) {
 			params.m_txOptions = TX_OPTION_ACK;
 		}
 		pktq.push(params);
@@ -100,15 +98,6 @@ namespace ns3
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));
 		SPAWN_STACKLINE(GetNode()->GetId());
-	/*	if(GetNode()->GetId() == 0) {
-			SendSamplePacket();
-		} */
-	};
-
-	void Airline::SendSamplePacket()
-	{
-		uint8_t buf[50]={0};
-		tx(0xffff, buf, sizeof(buf));
 	};
 
 	void Airline::StopApplication()
@@ -123,12 +112,10 @@ namespace ns3
 
 		mbuf->src_id = addr2id(params.m_srcAddr);
 		mbuf->dst_id = addr2id(params.m_dstAddr);
-		mbuf->lqi = params.m_mpduLinkQuality;
+		mbuf->sig.lqi = params.m_mpduLinkQuality;
 		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
-		if(CL_SUCCESS != cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len))
-		{
-			ERROR << "cl_sendto_q failed\n";
-		}
+		Macstats::set(AL_RX, mbuf);
+		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
 	};
 
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
@@ -141,22 +128,48 @@ namespace ns3
 		airline->SendPacketToStackline(params, p);
 	};
 
+	uint8_t Airline::wf_ack_status(LrWpanMcpsDataConfirmStatus status)
+	{
+		switch(status) {
+			case IEEE_802_15_4_SUCCESS:
+				return WF_STATUS_ACK_OK;
+			case IEEE_802_15_4_NO_ACK:
+				return WF_STATUS_NO_ACK;
+			case IEEE_802_15_4_TRANSACTION_OVERFLOW:
+			case IEEE_802_15_4_TRANSACTION_EXPIRED:
+			case IEEE_802_15_4_CHANNEL_ACCESS_FAILURE:
+				return WF_STATUS_ERR;	//can retry later
+			case IEEE_802_15_4_INVALID_GTS:
+			case IEEE_802_15_4_COUNTER_ERROR:
+			case IEEE_802_15_4_FRAME_TOO_LONG:
+			case IEEE_802_15_4_UNAVAILABLE_KEY:
+			case IEEE_802_15_4_UNSUPPORTED_SECURITY:
+			case IEEE_802_15_4_INVALID_PARAMETER:
+			default:
+				return WF_STATUS_FATAL;
+		}
+	};
+
 	//Send the Ack status with retry count to stackline
-	void Airline::SendAckToStackline(uint8_t m_retries) 
+	void Airline::SendAckToStackline(McpsDataConfirmParams & params)
 	{
 		if(pktq.empty()) {
 			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
 			return;
 		}
-		McpsDataRequestParams params = pktq.front();
-		if(params.m_txOptions == TX_OPTION_ACK) {
+		McpsDataRequestParams drparams = pktq.front();
+		if(drparams.m_txOptions == TX_OPTION_ACK) {
 			DEFINE_MBUF(mbuf);
 
 			mbuf->src_id = GetNode()->GetId();
-			mbuf->dst_id = addr2id(params.m_dstAddr);
-			mbuf->lqi = m_retries;
+			mbuf->dst_id = addr2id(drparams.m_dstAddr);
+			mbuf->ack.status = wf_ack_status(params.m_status);
+			if(mbuf->ack.status == WF_STATUS_ACK_OK) {
+				mbuf->ack.retries = params.m_retries+1;
+			}
 			mbuf->flags |= MBUF_IS_ACK;
 			mbuf->len = 1;
+			Macstats::set(AL_RX, mbuf);
 			cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 		}
 		pktq.pop();
@@ -170,7 +183,7 @@ namespace ns3
 	//		 << " Retries:" << (int)params.m_retries
 	//		 << " msdu:" << (int)params.m_msduHandle
 	//		 << endl;
-		airline->SendAckToStackline(params.m_retries);
+		airline->SendAckToStackline(params);
 	};
 
 	Airline::Airline() {

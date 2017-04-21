@@ -65,7 +65,7 @@ int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len)
 		if(ENOMSG == errno) return CL_SUCCESS;
 		return CL_FAILURE;
 	}
-	if(ret <= sizeof(msg_buf_t)) 
+	if(ret < sizeof(msg_buf_t)) 
 	{
 		ERROR("some problem ... msgrcv length(%d) not enough\n", ret);
 		return CL_FAILURE;

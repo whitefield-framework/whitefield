@@ -5,3 +5,4 @@ all:
 
 clean:
 	@make -f src/airline/Makefile.airline clean
+	@rm -rf log pcap

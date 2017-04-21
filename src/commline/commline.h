@@ -22,9 +22,18 @@ typedef struct _msg_buf_
 	long mtype;
 	uint16_t src_id;
 	uint16_t dst_id;
-	uint16_t len; // length of the buf only
 	uint8_t flags;
-	uint8_t lqi;	//Link quality indicator .. in case of MAC-ACK this is m_retries attempt
+	union {
+		struct {
+			uint8_t lqi;	//Link quality indicator 
+			uint8_t rssi;
+		}sig;
+		struct {
+			uint8_t retries;
+			uint8_t status;
+		}ack;
+	};
+	uint16_t len; // length of the buf only
 	uint8_t buf[1];
 }msg_buf_t;
 
@@ -45,17 +54,25 @@ enum {
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 
 #ifndef	ERROR
-#define	PRN(...)	\
+#define	PRN(STR, ...)	\
 	{\
 		struct timeval tv;\
 		gettimeofday(&tv, NULL);\
-		printf("[%s:%d] [%ld:%ld] ", __FUNCTION__, __LINE__, tv.tv_sec, tv.tv_usec);\
+		printf("%s [%ld:%ld] [%s:%d] ", STR, tv.tv_sec, tv.tv_usec, __FUNCTION__, __LINE__);\
 		printf(__VA_ARGS__);\
 		fflush(stdout);\
 	}
-#define	ERROR(...) PRN(__VA_ARGS__)
-#define	INFO(...) PRN(__VA_ARGS__)
-#define	WARN(...) PRN(__VA_ARGS__)
+#define	ERROR(...) PRN("ERROR", __VA_ARGS__)
+#define	INFO(...)  PRN("INFO ", __VA_ARGS__)
+#define	WARN(...)  PRN("WARN "__VA_ARGS__)
 #endif //ERROR
+
+/* MAC DataConfirmation status */
+enum {
+	WF_STATUS_ACK_OK,
+	WF_STATUS_NO_ACK,
+	WF_STATUS_ERR,
+	WF_STATUS_FATAL,
+};
 
 #endif	//_COMMLINE_H_

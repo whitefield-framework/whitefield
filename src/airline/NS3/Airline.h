@@ -13,6 +13,7 @@
 extern "C" {
 #include "commline/commline.h"
 }
+#include "mac_stats.h"
 
 namespace ns3
 {
@@ -25,7 +26,7 @@ namespace ns3
 			Airline();
 			virtual ~Airline() {
 			};
-			void tx(const uint16_t dst_id, const uint8_t *pBuf, const size_t buflen);
+			void tx(const msg_buf_t *mbuf);
 		private:
 			uint8_t m_macpktqlen;
 			queue<McpsDataRequestParams> pktq;
@@ -33,7 +34,8 @@ namespace ns3
 			Mac16Address id2addr(const uint16_t id);
 			uint16_t addr2id(const Mac16Address addr);
 			void SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p);
-			void SendAckToStackline(uint8_t m_retries);
+			uint8_t wf_ack_status(LrWpanMcpsDataConfirmStatus status);
+			void SendAckToStackline(McpsDataConfirmParams & params);
 			/**
 			 * \brief Start the application.
 			 */

@@ -46,7 +46,7 @@ int msgrecvCallback(const msg_buf_t *mbuf)
 
 	if(nodeApp) {
 		Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-		aline->tx(mbuf->dst_id, mbuf->buf, mbuf->len);
+		aline->tx(mbuf);
 	}
 	return SUCCESS;
 }
