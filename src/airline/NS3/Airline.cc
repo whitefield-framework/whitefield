@@ -120,11 +120,12 @@ namespace ns3
 
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
 	{
-/*		INFO << "RX DATA node:" << airline->GetNode()->GetId()
+		/*INFO << "RX DATA node:" << airline->GetNode()->GetId()
 			 << " LQI:" << (int)params.m_mpduLinkQuality
 			 << " src:" << params.m_srcAddr
 			 << " dst:" << params.m_dstAddr
-			 << endl; */
+			 << endl; 
+			 */
 		airline->SendPacketToStackline(params, p);
 	};
 
