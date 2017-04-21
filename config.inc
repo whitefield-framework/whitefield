@@ -1,5 +1,6 @@
 AIRLINK=NS3
-NS3PATH=/home/rahul/rnd/ns-allinone-3.26/ns-3.26/build
+NS3PATH=thirdparty/ns-3-dev-git/build
 
 REL=debug
 BINDIR=bin
+OAM_TCP_PORT=61616

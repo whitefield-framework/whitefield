@@ -71,6 +71,7 @@ void wait_on_q(void)
 {
 	uint8_t buf[sizeof(msg_buf_t)+COMMLINE_MAX_BUF];
 	msg_buf_t *mbuf=(msg_buf_t*)buf;
+
 	while(1)
 	{
 		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,0), mbuf, sizeof(buf))) {

@@ -12,7 +12,7 @@ FORKER=$(BINDIR)/wf_forker
 all: $(FORKER)
 
 $(FORKER): src/utils/forker.c
-	gcc -o $(FORKER) src/utils/forker.c -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline_$(REL)
+	gcc -o $(FORKER) src/utils/forker.c -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline
 
 clean:
 	rm -rf $(FORKER)

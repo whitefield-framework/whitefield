@@ -2,7 +2,7 @@ include config.inc
 
 SRC=src/airline
 CL_SRC=src
-LIBS=-lpthread -L$(BINDIR) -lwf_commline_$(REL)
+LIBS=-lpthread -L$(BINDIR) -lwf_commline
 CFLAGS=-std=c++11 -Wall -I$(CL_SRC) -I$(SRC)
 
 TARGET=$(BINDIR)/whitefield
@@ -16,7 +16,7 @@ GLOBAL_HDR=$(SRC)/common.h $(SRC)/Config.h
 
 ifeq ($(AIRLINK),NS3)
 CFLAGS+=-I$(NS3PATH)
-LIBS+=-L$(NS3PATH) -lns3.26-core-$(REL) -lns3.26-lr-wpan-$(REL) -lns3.26-network-$(REL) -lns3.26-spectrum-$(REL) -lns3.26-mobility-$(REL) -lns3.26-propagation-$(REL) -lns3.26-stats-$(REL) -lns3.26-antenna-$(REL)
+LIBS+=-L$(NS3PATH) -lns3-dev-core-$(REL) -lns3-dev-lr-wpan-$(REL) -lns3-dev-network-$(REL) -lns3-dev-spectrum-$(REL) -lns3-dev-mobility-$(REL) -lns3-dev-propagation-$(REL) -lns3-dev-stats-$(REL) -lns3-dev-antenna-$(REL)
 endif
 
 ifeq ($(REL),debug)

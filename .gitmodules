@@ -1,3 +1,6 @@
 [submodule "thirdparty/contiki"]
 	path = thirdparty/contiki
 	url = https://github.com/whitefield-framework/contiki
+[submodule "thirdparty/ns-3-dev-git"]
+	path = thirdparty/ns-3-dev-git
+	url = https://github.com/whitefield-framework/ns-3-dev-git

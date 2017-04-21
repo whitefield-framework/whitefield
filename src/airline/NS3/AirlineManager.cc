@@ -4,7 +4,6 @@
 
 #include "AirlineManager.h"
 #include "Airline.h"
-#include "msg_handler.h"
 
 void AirlineManager::getAllNodeInfo(void)
 {
@@ -47,7 +46,7 @@ int msgrecvCallback(const msg_buf_t *mbuf)
 
 	if(nodeApp) {
 		Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-		aline->tx(mbuf->dst_id, mbuf->buf, mbuf->len);
+		aline->tx(mbuf);
 	}
 	return SUCCESS;
 }
@@ -101,10 +100,9 @@ void AirlineManager::ScheduleCommlineRX(void)
 
 void AirlineManager::msgReader(void)
 {
-	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
-	msg_buf_t *mbuf=(msg_buf_t*)buf;
+	DEFINE_MBUF(mbuf);
 	while(1) {
-		cl_recvfrom_q(MTYPE(AIRLINE,0), mbuf, sizeof(buf));
+		cl_recvfrom_q(MTYPE(AIRLINE,0), mbuf, sizeof(mbuf_buf));
 		if(mbuf->len) {
 			msgrecvCallback(mbuf);
 			usleep(1);
