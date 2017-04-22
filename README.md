@@ -13,6 +13,22 @@ Typical use of Whitefield:
 4. Regression tests using IdealAir(future)
 
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
+
+### Setup Instructions
+Tested on: Ubuntu 16.04
+System Requirements: GraphViz,
+```
+apt-get install ...
+```
+Build Instructions:
+Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-udp)
+```
+git clone <git>
+cd whitefield
+git submodule update --init --recursive
+./setup.sh
+```
+
 ### Whitefield as compared to Cooja
 | Feature | Cooja | Whitefield |
 | --- | --- | --- |
