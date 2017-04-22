@@ -15,9 +15,9 @@ Typical use of Whitefield:
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
 
 ### Setup Instructions
-Tested on: Ubuntu >= 16.04
+Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
 
-Ubuntu 14.04: ns3 build has issues
+On ubuntu 14.04, ns3 build has issues.
 
 **System Requirements**:
 
