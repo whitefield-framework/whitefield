@@ -1,7 +1,5 @@
 #define	_AIRLINEMANAGER_CC_
 
-//#include <thread>
-
 #include "AirlineManager.h"
 #include "Airline.h"
 
@@ -39,16 +37,26 @@ void AirlineManager::setMobilityModel(MobilityHelper & mobility)
 	//TODO: In the future this could support different types of mobility models
 }
 
-int msgrecvCallback(const msg_buf_t *mbuf)
+void msgrecvCallback(msg_buf_t *mbuf)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
-	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
 
-	if(nodeApp) {
-		Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-		aline->tx(mbuf);
+	if(IN_RANGE(mbuf->src_id, 0, WF_config.getNumberOfNodes()))
+	{
+		Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
+		if(nodeApp) {
+			Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+			aline->tx(mbuf);
+		} else {
+			ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
+		}
+		return;
 	}
-	return SUCCESS;
+	if(mbuf->flags & MBUF_IS_CMD) {
+		INFO << "AIRLINEMANGER handle cmd [" << (char*)mbuf->buf << "]\n";
+		mbuf->len = sprintf((char*)mbuf->buf, "AIRLINEMANGER RESPONSE");
+		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+	}
 }
 
 int AirlineManager::startNetwork(wf::Config & cfg)
@@ -66,7 +74,6 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	setMobilityModel(mobility);
 	mobility.Install (nodes);
 
-	NS_LOG_INFO ("Create channels.");
 	LrWpanHelper lrWpanHelper;
 	NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
 	lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
@@ -81,12 +88,9 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
 
-//	thread t1(commline_thread, msgrecvCallback);
-//	t1.detach();
 	getAllNodeInfo();
 	ScheduleCommlineRX();
 	Simulator::Run ();
-//	commline_thread(msgrecvCallback);
 	pause();
 	Simulator::Destroy ();
 	INFO << "Execution done\n";
@@ -102,7 +106,7 @@ void AirlineManager::msgReader(void)
 {
 	DEFINE_MBUF(mbuf);
 	while(1) {
-		cl_recvfrom_q(MTYPE(AIRLINE,0), mbuf, sizeof(mbuf_buf));
+		cl_recvfrom_q(MTYPE(AIRLINE,CL_MGR_ID), mbuf, sizeof(mbuf_buf));
 		if(mbuf->len) {
 			msgrecvCallback(mbuf);
 			usleep(1);

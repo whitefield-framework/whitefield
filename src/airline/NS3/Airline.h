@@ -26,7 +26,7 @@ namespace ns3
 			Airline();
 			virtual ~Airline() {
 			};
-			void tx(const msg_buf_t *mbuf);
+			void tx(msg_buf_t *mbuf);
 		private:
 			uint8_t m_macpktqlen;
 			queue<McpsDataRequestParams> pktq;

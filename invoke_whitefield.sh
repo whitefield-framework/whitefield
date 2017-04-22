@@ -5,7 +5,7 @@
 export LD_LIBRARY_PATH=$NS3PATH:$BINDIR
 export FORKER=$BINDIR/wf_forker
 export LOGPATH=log
-export OAM_TCP_PORT=$OAM_TCP_PORT
+export MONITOR_PORT=$MONITOR_PORT
 
 if [ "$1" == "gdb" ]; then
 	shift
