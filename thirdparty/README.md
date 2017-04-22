@@ -2,7 +2,7 @@
 1. Added a new 'platform' called 'whitefield' (code in contiki/platform/whitefield)
 2. whitefield platform overrides mac/radio layer to send the packets to Airline using Commline interfaces
 3. Zero changes to anything else in Contiki!!
-4. Any Contiki application can be compiled with whitefield platform using '''make TARGET=whitefield''' and
+4. Any Contiki application can be compiled with whitefield platform using `make TARGET=whitefield` and
 the generated app bin path can be specified in the whitefield config (wf.cfg)
 
 ## Changes to NS3
