@@ -15,17 +15,25 @@ Typical use of Whitefield:
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
 
 ### Setup Instructions
-Tested on: Ubuntu 16.04
-System Requirements: GraphViz,
+Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
+
+On ubuntu 14.04, ns3 build has issues.
+
+**System Requirements**:
+
+Disk Space: ~1.5GB
 ```
-apt-get install ...
+sudo apt-get update
+sudo apt-get install gcc g++ make git graphviz
 ```
-Build Instructions:
+**Build Instructions**:
+
 Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-udp)
 ```
-git clone <git>
+git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
 git submodule update --init --recursive
+git submodule foreach git pull origin master
 ./setup.sh
 ```
 
