@@ -42,7 +42,7 @@ git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
 git submodule update --init --recursive
 git submodule foreach git pull origin master
-./setup.sh
+./scripts/setup.sh
 ```
 **Execute Instructions**:
 ```
