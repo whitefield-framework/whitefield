@@ -1,18 +1,24 @@
 include config.inc
 
-LDFLAGS=-fPIC
-CFLAGS=-Wall -I$(SRC)
+LDFLAGS=-fPIC -lpthread
+CFLAGS=-Wall
 
 ifeq ($(REL),debug)
 CFLAGS+=-g
 endif
 
+UTIL=src/utils
+SRC=$(UTIL)/forker.c $(UTIL)/monitor.c
 FORKER=$(BINDIR)/wf_forker
+UDP_CMD=$(BINDIR)/udp_cmd
 
-all: $(FORKER)
+all: $(FORKER) $(UDP_CMD)
 
-$(FORKER): src/utils/forker.c
-	gcc -o $(FORKER) src/utils/forker.c -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline
+$(FORKER): $(SRC)
+	gcc -o $(FORKER) $(SRC) -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline
+
+$(UDP_CMD): $(UTIL)/udp_cmd.c
+	gcc -o $(UDP_CMD) $(UTIL)/udp_cmd.c
 
 clean:
-	rm -rf $(FORKER)
+	@rm -f $(FORKER) $(UDP_CMD)

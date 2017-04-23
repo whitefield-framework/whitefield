@@ -14,6 +14,7 @@ void sig_handler(int signum)
 		ERROR << "Caught signal " << signum << endl;
 	}
 	cl_cleanup();
+	INFO << "Sayonara...\n";
 	exit(signum);
 }
 
@@ -49,7 +50,8 @@ int main(const int argc, const char *argv[])
 	signal(SIGSEGV, sig_handler);
 
 	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
-		ERROR << "Failure creating commline\n";
+		ERROR << "Possibly because whitefield is already running or there was problem clearing msgq during last exit\n";
+		ERROR << "To clear msgq use cmd 'ipcrm -Q <key>', you ll see key 0x.. in err msg above\n";
 		sig_handler(1);
 	}
 	if(SUCCESS != WF_config.setConfigurationFromFile(argv[1])) {

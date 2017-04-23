@@ -16,6 +16,7 @@ void cl_cleanup(void);
 
 //msg_buf_t::flags defined
 #define	MBUF_IS_ACK	(1<<0)
+#define	MBUF_IS_CMD	(1<<1)
 
 typedef struct _msg_buf_
 {
@@ -49,7 +50,10 @@ enum {
 	STACKLINE=1,
 	AIRLINE,
 	FORKER,
+	MONITOR,
 };
+
+#define	CL_MGR_ID	0xffff
 
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 
@@ -74,5 +78,10 @@ enum {
 	WF_STATUS_ERR,
 	WF_STATUS_FATAL,
 };
+
+#define	memcpy_s(DST, DSTLEN, SRC, SRCLEN)	\
+	memcpy(DST, SRC, DSTLEN<SRCLEN?DSTLEN:SRCLEN);
+
+#define	IN_RANGE(VAL, MIN_N, MAX_N)	((VAL)>=(MIN_N) && (VAL)<(MAX_N))
 
 #endif	//_COMMLINE_H_

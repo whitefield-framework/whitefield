@@ -21,11 +21,14 @@ void wf::Config::spawnStackline(const uint16_t nodeID)
 
 	INFO << "spawning node:" << nodeID 
 		 << " Exec: " << cmd
-		 << endl;
+		 << "\r";
 	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s|%d", cmd.c_str(), nodeID);
 	mbuf->len = len;
-	if(CL_SUCCESS != cl_sendto_q(MTYPE(FORKER, 0), mbuf, len + sizeof(msg_buf_t))) {
+	if(CL_SUCCESS != cl_sendto_q(MTYPE(FORKER, CL_MGR_ID), mbuf, len + sizeof(msg_buf_t))) {
 		ERROR << "Failure sending command to forker\n";
+	}
+	if(nodeID == getNumberOfNodes()-1) {
+		INFO << "\nAll nodes started.\n";
 	}
 }
 

@@ -53,8 +53,14 @@ namespace ns3
 	};
 
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
-	void Airline::tx(const msg_buf_t *mbuf)
+	void Airline::tx(msg_buf_t *mbuf)
 	{
+		if(mbuf->flags & MBUF_IS_CMD) {
+			INFO << "<TODO> Handle Node specific [" << (char*)mbuf->buf << "]\n";
+			mbuf->len = sprintf((char*)mbuf->buf, "AL NODE RESPONSE");
+			cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+			return;
+		}
 		Macstats::set(AL_TX, mbuf);
 		if(pktq.size() > m_macpktqlen) {
 			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";

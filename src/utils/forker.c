@@ -74,7 +74,7 @@ void wait_on_q(void)
 
 	while(1)
 	{
-		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,0), mbuf, sizeof(buf))) {
+		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,CL_MGR_ID), mbuf, sizeof(buf))) {
 			break;
 		}
 		if(mbuf->len) {
@@ -86,10 +86,16 @@ void wait_on_q(void)
 	INFO("Quitting forker process\n");
 }
 
+extern int start_monitor_thread(void);
+
 int main(void)
 {
 	if(CL_SUCCESS != cl_init(CL_ATTACHQ)) {
 		ERROR("forker: failure to cl_init()\n");
+		return 1;
+	}
+	if(CL_SUCCESS != start_monitor_thread()) {
+		ERROR("start_monitor_thread failed... exiting process!!\n");
 		return 1;
 	}
 	wait_on_q();
