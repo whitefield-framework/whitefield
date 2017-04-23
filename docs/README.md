@@ -11,4 +11,4 @@ Current Limitations:
 
 ### How to add a new IoT protocol stack using Stackline/Commline interfaces
   1. Explain changes to Contiki
-  2. Explain changes to RiOT
+  2. Explain changes to RIOT
