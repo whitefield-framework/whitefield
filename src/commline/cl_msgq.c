@@ -40,7 +40,7 @@ int msgq_init(const uint8_t flags)
 	}
 	gMsgQ_id = msgget(key, msgflag);
 	if(-1 == gMsgQ_id) {
-		ERROR("could not get msgq\n");
+		ERROR("could not get msgq key:0x%x\n", key);
 		return CL_FAILURE;
 	}
 	return CL_SUCCESS;

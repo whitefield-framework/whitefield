@@ -12,5 +12,9 @@ if [ "$1" == "gdb" ]; then
 	cmdprefix="gdb --args"
 fi
 
+[[ ! -f "$1" ]] && echo "Usage: $0 <wf_config_file>" && exit
+
 mkdir $LOGPATH pcap 2>/dev/null
-$cmdprefix $BINDIR/whitefield $*
+$cmdprefix $BINDIR/whitefield $* &
+sleep 1
+echo ;
