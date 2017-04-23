@@ -37,5 +37,5 @@ git submodule foreach git pull origin master
 ./setup.sh
 ```
 
-### Whitefield as compared to Cooja (docs/wf-vs-cooja.md "Whitefield-High Level design")
+### [Whitefield as compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
 
