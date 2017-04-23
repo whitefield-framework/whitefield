@@ -14,6 +14,8 @@ function stop_whitefield()
 	kill -2 $wfpid
 	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
 	echo "Stopped Whitefield"
+	sleep 1
+	echo ;
 }
 
 function menu()

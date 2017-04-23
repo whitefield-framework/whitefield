@@ -43,6 +43,10 @@ function main()
 	get_route_list
 
 	echo ;
+	str=`uptime`
+	echo "System load avg:${str/*:/}"
+	echo ;
+
 	echo "Press ctrl-c to exit, ? for menu..."
 }
 
