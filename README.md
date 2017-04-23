@@ -1,10 +1,10 @@
 # Whitefield
 
-Whitefield aims to provide a simulation environment for wireless sensor network by combining RF simulation provided by NS3, Castalia/Omnet++ while allowing to use native mode configuration of popular IoT OSes such as Contiki and RiOT.
+Whitefield aims to provide a simulation environment for wireless sensor network by combining RF simulation provided by NS3, Castalia/Omnet++ while allowing to use native mode configuration of popular IoT OSes such as Contiki/RIOT or any other in the future.
 
 Whitefield uses PHY/MAC layer provided by NS3/Omnet and loosely couples it with the 6Lowpan stacks supported by Contiki and RiOT(future), thus providing the best of both worlds by simply glueing things. On top of this it will provide kickass visualization and OAM tools which should really simplify monitoring and troubleshooting.
 
-Some background: There are lot of papers/IETF drafts making tall claims about protocol performance and providing the observations from Cooja simulation. We worked on many such papers (primarily related to RPL/6lo's perf optimizations) and implemented the algorithms, later to find out that the claims are unrealistic because of practical issues such as RF inteference/path loss model/asymmetric transient links. Whitefield aims to provide a realistic RF simulation using well-known implementations such as NS3/Omnet and hope that the experiments conducted would be more closer to reality.
+**Some background**: There are lot of papers/IETF drafts making tall claims about protocol performance and providing the observations from Cooja/Matlab simulation. We worked on few such papers (primarily related to RPL/6lo's perf optimizations) and implemented the algorithms, later to find out that the claims were unrealistic because of practical issues such as RF inteference/path losses/asymmetric transient links. Whitefield aims to provide a realistic RF simulation using well-known implementations such as NS3/Castalia-Omnet and hope that the experiments conducted thus would be more closer to reality.
 
 Typical use of Whitefield:
 1. Interoperability testing of various IOT protocol stack implementations without having to adapt to NS3 or Castalia based environment while still retaining more-realistic RF simulations provided by NS3/Omnet.
