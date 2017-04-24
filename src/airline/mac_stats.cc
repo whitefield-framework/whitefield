@@ -57,21 +57,19 @@ namespace wf {
 
 	int Macstats::get_summary(char *buf, int buflen)
 	{
-		int n;
+		int n, mac_retries=stoi(CFG("macMaxRetry"));
 		struct timeval etv;
 		gettimeofday(&etv, NULL);
 		n = snprintf(buf, buflen-1, 
-					"duration=%ld\n"
-					"tx_mcast_pkts=%ld,rx_mcast_pkts=%ld\n"
-					"tx_ucast_data_pkts=%ld,tx_success=%ld\n"
-					"rx_ucast_data_pkts=%ld, ack_ok ",
+					"Airline MAC stats: duration=%ld\n"
+					"MCAST_PKTS: rx=%ld,tx=%ld\n"
+					"UCAST_PKTS: rx=%ld,tx=%ld,tx_succ=%ld,tx_fail=%ld",
 					etv.tv_sec-tv.tv_sec,
-					tx_mc_pkts, rx_mc_pkts,
-					tx_data_pkts, tx_data_pkts-rx_tx_failure,
-					rx_data_pkts);
-		for(int i=0; i<MAX_MAC_TX_RETRY_CNT; i++) {
-			n += snprintf(buf+n, buflen-n-1, "%sretry%d=%ld", 
-						i?",":"", i, rx_ack_ok[i]);
+					rx_mc_pkts, tx_mc_pkts,
+					rx_data_pkts, tx_data_pkts, tx_data_pkts-rx_tx_failure,rx_tx_failure);
+		for(int i=1; i<=mac_retries; i++) {
+			n += snprintf(buf+n, buflen-n-1, ",tx_attempt%d=%ld", 
+						i, rx_ack_ok[i]);
 		}
 		return n;
 	};
