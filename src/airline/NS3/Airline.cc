@@ -61,7 +61,7 @@ namespace ns3
 			cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 			return;
 		}
-		Macstats::set(AL_TX, mbuf);
+		wf::Macstats::set(AL_TX, mbuf);
 		if(pktq.size() > m_macpktqlen) {
 			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";
 			return;
@@ -101,6 +101,7 @@ namespace ns3
 		//INFO << "Airline application started ID:"<< GetNode()->GetId() << endl;
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		setDeviceAddress();
+		dev->GetMac()->SetMacMaxFrameRetries(stoi(CFG("macMaxRetry")));
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));
 		SPAWN_STACKLINE(GetNode()->GetId());
@@ -120,7 +121,7 @@ namespace ns3
 		mbuf->dst_id = addr2id(params.m_dstAddr);
 		mbuf->sig.lqi = params.m_mpduLinkQuality;
 		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
-		Macstats::set(AL_RX, mbuf);
+		wf::Macstats::set(AL_RX, mbuf);
 		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
 	};
 
@@ -176,7 +177,7 @@ namespace ns3
 			}
 			mbuf->flags |= MBUF_IS_ACK;
 			mbuf->len = 1;
-			Macstats::set(AL_RX, mbuf);
+			wf::Macstats::set(AL_RX, mbuf);
 			cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 		}
 		pktq.pop();

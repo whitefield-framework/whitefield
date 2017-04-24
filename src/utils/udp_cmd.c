@@ -8,7 +8,7 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 8192
 
 int main(int argc, char *argv[]) {
 	struct sockaddr_in server;
