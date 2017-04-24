@@ -2,6 +2,8 @@
 
 #include "AirlineManager.h"
 #include "Airline.h"
+#include "Command.h"
+#include "mac_stats.h"
 
 void AirlineManager::getAllNodeInfo(void)
 {
@@ -53,8 +55,7 @@ void msgrecvCallback(msg_buf_t *mbuf)
 		return;
 	}
 	if(mbuf->flags & MBUF_IS_CMD) {
-		INFO << "AIRLINEMANGER handle cmd [" << (char*)mbuf->buf << "]\n";
-		mbuf->len = sprintf((char*)mbuf->buf, "AIRLINEMANGER RESPONSE");
+		handle_cmd(mbuf);
 		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 	}
 }
@@ -64,6 +65,8 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	GlobalValue::Bind ("ChecksumEnabled", BooleanValue (true));
 	GlobalValue::Bind ("SimulatorImplementationType", 
 	   StringValue ("ns3::RealtimeSimulatorImpl"));
+
+	wf::Macstats::clear();
 
 	NodeContainer nodes;
 	nodes.Create (cfg.getNumberOfNodes());
@@ -88,12 +91,12 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
 
-	getAllNodeInfo();
+//	getAllNodeInfo();
 	ScheduleCommlineRX();
+	INFO << "NS3 Simulator::Run initiated...\n";
 	Simulator::Run ();
 	pause();
 	Simulator::Destroy ();
-	INFO << "Execution done\n";
 	return SUCCESS;
 }
 

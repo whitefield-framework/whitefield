@@ -94,7 +94,7 @@ int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
 		mbuf->src_id = CL_MGR_ID;
 	}
 	cmdlen = strlen(cmd);
-	memcpy_s(mbuf->buf, COMMLINE_MAX_BUF, cmd, cmdlen);
+	strncpy((char*)mbuf->buf, cmd, COMMLINE_MAX_BUF);
 	mbuf->len = cmdlen;
 	mbuf->flags = MBUF_IS_CMD;
 	if(STACKLINE == line) {
@@ -128,7 +128,7 @@ void *monitor_thread(void *arg)
 		if (n <= 0) {
 			continue;
 		}
-		cmd[n-1] = 0;
+		cmd[n] = 0;
 		n = fwd_cmd_on_commline(cmd, n, rsp, sizeof(rsp));
 		if(n <= 0) {
 			n = snprintf(rsp, sizeof(rsp), "CMD_FAILURE");
