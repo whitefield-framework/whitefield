@@ -9,6 +9,8 @@
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
 #include "ns3/lr-wpan-module.h"
+#include <Nodeinfo.h>
+#include <Config.h>
 
 namespace ns3
 {
@@ -56,12 +58,10 @@ namespace ns3
 	void Airline::tx(msg_buf_t *mbuf)
 	{
 		if(mbuf->flags & MBUF_IS_CMD) {
-			INFO << "<TODO> Handle Node specific [" << (char*)mbuf->buf << "]\n";
-			mbuf->len = sprintf((char*)mbuf->buf, "AL NODE RESPONSE");
-			cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+			ERROR << "MBUF CMD not handled in Airline... No need!" << endl;
 			return;
 		}
-		wf::Macstats::set(AL_TX, mbuf);
+		wf::Macstats::set_stats(AL_TX, mbuf);
 		if(pktq.size() > m_macpktqlen) {
 			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";
 			return;
@@ -121,7 +121,7 @@ namespace ns3
 		mbuf->dst_id = addr2id(params.m_dstAddr);
 		mbuf->sig.lqi = params.m_mpduLinkQuality;
 		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
-		wf::Macstats::set(AL_RX, mbuf);
+		wf::Macstats::set_stats(AL_RX, mbuf);
 		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
 	};
 
@@ -177,7 +177,7 @@ namespace ns3
 			}
 			mbuf->flags |= MBUF_IS_ACK;
 			mbuf->len = 1;
-			wf::Macstats::set(AL_RX, mbuf);
+			wf::Macstats::set_stats(AL_RX, mbuf);
 			cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 		}
 		pktq.pop();

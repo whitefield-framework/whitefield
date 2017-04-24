@@ -2,6 +2,7 @@
 #define	_AIRLINEMANAGER_H_
 
 #include <common.h>
+#include <Nodeinfo.h>
 #include <Config.h>
 
 #include "ns3/core-module.h"

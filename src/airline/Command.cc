@@ -6,12 +6,12 @@
 #define	HANDLE_CMD(MBUF, CMD)	\
 	else if(!strcasecmp((char*)(MBUF)->buf, #CMD))	\
 	{\
-		(MBUF)->len = CMD((char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
+		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
 
-int cmd_mac_stats(char *buf, int buflen)
+int cmd_mac_stats(uint16_t nodeid, char *buf, int buflen)
 {
-	return wf::Macstats::get_summary(buf, buflen);
+	return wf::Macstats::get_summary(nodeid, buf, buflen);
 }
 
 void handle_cmd(msg_buf_t *mbuf)
