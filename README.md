@@ -49,6 +49,9 @@ git submodule foreach git pull origin master
 #modify configuration (for e.g. wf.cfg) as required
 ./invoke_whitefield.sh <wf_config>
 ./scripts/monitor.sh #Monitor whitefield status
+
+#To stop whitefield
+./script/show_menu.sh q
 ```
 
 ### [Whitefield as compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
