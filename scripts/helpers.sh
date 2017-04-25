@@ -15,3 +15,10 @@ function al_cmd()
 {
 	$UDP_TOOL localhost $MONITOR_PORT "AL:$1"
 }
+
+function get_node_list()
+{
+	usr=`whoami`
+	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a")
+}
+

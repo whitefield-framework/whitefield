@@ -19,12 +19,6 @@ function elap_time()
 	wf_elap_time=`echo $et`
 }
 
-function get_node_list()
-{
-	usr=`whoami`
-	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a")
-}
-
 function get_route_list()
 {
 	echo "TODO: Show route count on BR ... how to identify which node is BR??"

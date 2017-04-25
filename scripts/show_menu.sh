@@ -18,12 +18,24 @@ function stop_whitefield()
 	echo ;
 }
 
+function show_mac_status()
+{
+	get_node_list
+	for((i=0;i<${#nodelist[@]};i++)); do
+		echo "Node $i:"
+		al_cmd "$i:cmd_mac_stats"
+		echo ;
+		echo ;
+	done
+	al_cmd "cmd_mac_stats"
+}
+
 function menu()
 {
 	if [ "$1" == "" ]; then
 		clear
 		echo "---[Menu]---"
-		echo "1. show mac status"
+		echo "1. show mac status for all nodes"
 		echo "2. show all stats for node"
 		echo "S. Stop a node (radio turn off)"
 		echo "T. sTop a node (turn on radio)"
@@ -34,6 +46,7 @@ function menu()
 		shift
 	fi
 	if [ "$ans" == "1" ]; then
+		show_mac_status
 		echo ;
 	elif [ "$ans" == "s" ] || [ "$ans" == "S" ]; then
 		echo "TODO"
