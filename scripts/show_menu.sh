@@ -18,13 +18,32 @@ function stop_whitefield()
 	echo ;
 }
 
+function cmd_for_all_nodes()
+{
+	get_node_list
+	for((i=0;i<${#nodelist[@]};i++)); do
+		echo "$1 \"$i:$2\""
+		$1 "$i:$2"
+		echo ;
+		echo ;
+	done
+}
+
+function show_mac_status()
+{
+	cmd_for_all_nodes al_cmd "cmd_mac_stats"
+	al_cmd "cmd_mac_stats"
+	echo ;
+}
+
 function menu()
 {
 	if [ "$1" == "" ]; then
 		clear
 		echo "---[Menu]---"
-		echo "1. show mac status"
-		echo "2. show all stats for node"
+		echo "1. show mac status for all nodes"
+		echo "R. show Rpl stats for all nodes"
+		echo "N. Show stackline OS for all nodes"
 		echo "S. Stop a node (radio turn off)"
 		echo "T. sTop a node (turn on radio)"
 		echo "Q. Quit/stop Whitefield"
@@ -34,7 +53,11 @@ function menu()
 		shift
 	fi
 	if [ "$ans" == "1" ]; then
-		echo ;
+		show_mac_status
+	elif [ "$ans" == "n" ] || [ "$ans" == "N" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_node_osname"
+	elif [ "$ans" == "r" ] || [ "$ans" == "R" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_rpl_stats"
 	elif [ "$ans" == "s" ] || [ "$ans" == "S" ]; then
 		echo "TODO"
 	elif [ "$ans" == "q" ] || [ "$ans" == "Q" ]; then

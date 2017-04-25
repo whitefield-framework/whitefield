@@ -22,7 +22,11 @@ string& ltrim(string& s, const char* t = " \t\n\r\f\v");
 string& rtrim(string& s, const char* t = " \t\n\r\f\v");
 string& trim(string& s, const char* t = " \t\n\r\f\v");
 
-#include <Config.h>
+//#include <Config.h>
+namespace wf
+{
+	class Config;
+};
 extern wf::Config WF_config;
 #define	CFG(STR)	WF_config.get(STR)
 #define	CFG_PANID	stoi(WF_config.get("panID"), nullptr, 0)

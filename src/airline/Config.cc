@@ -1,13 +1,16 @@
 #define _CONFIG_CC_
 
 #include <common.h>
+#include <Nodeinfo.h>
+#include <Config.h>
 extern "C" {
 #include "commline/commline.h"
 }
 
+using namespace wf;
 extern void sig_handler(int);
 //This interface is called from AirlineManager...
-void wf::Config::spawnStackline(const uint16_t nodeID)
+void Config::spawnStackline(const uint16_t nodeID)
 {
 	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
 	msg_buf_t *mbuf = (msg_buf_t*)buf;
@@ -32,7 +35,7 @@ void wf::Config::spawnStackline(const uint16_t nodeID)
 	}
 }
 
-string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
+string Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
 {
 	istringstream keyline(keystr);
 	string key=keystr;
@@ -60,7 +63,7 @@ string wf::Config::getKeyRange(const string & keystr, int & beg_range, int & end
 	return key;
 }
 
-int wf::Config::setNodeSetExec(const string exec, int beg, int end)
+int Config::setNodeSetExec(const string exec, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -69,7 +72,7 @@ int wf::Config::setNodeSetExec(const string exec, int beg, int end)
 	return SUCCESS;
 }
 
-int wf::Config::setNodeSetCapFile(const string path, int beg, int end)
+int Config::setNodeSetCapFile(const string path, int beg, int end)
 {
 	int i;
 	for(i=beg;i<=end;i++) {
@@ -78,7 +81,7 @@ int wf::Config::setNodeSetCapFile(const string path, int beg, int end)
 	return SUCCESS;
 }
 
-int wf::Config::setConfigurationFromFile(const char *fname)
+int Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
 	string line, key, value;
@@ -117,3 +120,27 @@ int wf::Config::setConfigurationFromFile(const char *fname)
 	return SUCCESS;
 }
 
+Nodeinfo *Config::get_node_info(uint16_t id) 
+{
+	if(!IN_RANGE(id, 0, getNumberOfNodes())) {
+		return NULL;
+	}
+	return &nodeArray[id];
+}
+
+int Config::setNumberOfNodes(const int value)
+{
+	clearNodeArray();
+	nodeArray = new Nodeinfo [value];
+	numOfNodes = value;
+	return SUCCESS;
+}
+
+void Config::clearNodeArray(void)
+{
+	if(nodeArray) {
+		delete [] nodeArray;
+		nodeArray = NULL;
+		numOfNodes = 0;
+	}
+}

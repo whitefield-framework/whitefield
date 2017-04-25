@@ -43,21 +43,18 @@ void msgrecvCallback(msg_buf_t *mbuf)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
 
-	if(IN_RANGE(mbuf->src_id, 0, WF_config.getNumberOfNodes()))
-	{
-		Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
-		if(nodeApp) {
-			Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-			aline->tx(mbuf);
-		} else {
-			ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
-		}
+	if(mbuf->flags & MBUF_IS_CMD) {
+		al_handle_cmd(mbuf);
+		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 		return;
 	}
-	if(mbuf->flags & MBUF_IS_CMD) {
-		handle_cmd(mbuf);
-		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
+	if(!nodeApp) {
+		ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
+		return;
 	}
+	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+	aline->tx(mbuf);
 }
 
 int AirlineManager::startNetwork(wf::Config & cfg)

@@ -6,6 +6,6 @@ extern "C" {
 #include "commline/commline.h"
 }
 
-void handle_cmd(msg_buf_t *mbuf);
+void al_handle_cmd(msg_buf_t *mbuf);
 
 #endif	// _COMMAND_H_

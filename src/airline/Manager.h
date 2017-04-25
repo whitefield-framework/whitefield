@@ -2,6 +2,7 @@
 #define _MANAGER_H_
 
 #include <common.h>
+#include <Nodeinfo.h>
 #include <Config.h>
 
 class Manager
