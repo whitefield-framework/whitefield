@@ -16,6 +16,11 @@ function al_cmd()
 	$UDP_TOOL localhost $MONITOR_PORT "AL:$1"
 }
 
+function sl_cmd()
+{
+	$UDP_TOOL localhost $MONITOR_PORT "SL:$1"
+}
+
 function get_node_list()
 {
 	usr=`whoami`

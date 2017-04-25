@@ -44,7 +44,7 @@ void msgrecvCallback(msg_buf_t *mbuf)
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
 
 	if(mbuf->flags & MBUF_IS_CMD) {
-		handle_cmd(mbuf);
+		al_handle_cmd(mbuf);
 		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 		return;
 	}

@@ -84,4 +84,10 @@ enum {
 
 #define	IN_RANGE(VAL, MIN_N, MAX_N)	((VAL)>=(MIN_N) && (VAL)<(MAX_N))
 
+#define	HANDLE_CMD(MBUF, CMD)	\
+	else if(!strcasecmp((char*)(MBUF)->buf, #CMD))	\
+	{\
+		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
+	}
+
 #endif	//_COMMLINE_H_
