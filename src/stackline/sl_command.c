@@ -13,6 +13,11 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	if(0) { } 
 	HANDLE_CMD(mbuf, cmd_rpl_stats)
 	HANDLE_CMD(mbuf, cmd_node_osname)
+	HANDLE_CMD(mbuf, cmd_ipv6_stats)
+	HANDLE_CMD(mbuf, cmd_nd6_stats)
+	HANDLE_CMD(mbuf, cmd_icmp_stats)
+	HANDLE_CMD(mbuf, cmd_udp_stats)
+	HANDLE_CMD(mbuf, cmd_tcp_stats)
 	else {
 		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   

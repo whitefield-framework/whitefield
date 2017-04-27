@@ -42,10 +42,13 @@ function menu()
 		clear
 		echo "---[Menu]---"
 		echo "1. show mac status for all nodes"
+		echo "C. show iCmp stats for all nodes"
+		echo "I. show Ipv6 stats for all nodes"
 		echo "R. show Rpl stats for all nodes"
-		echo "N. Show stackline OS for all nodes"
-		echo "S. Stop a node (radio turn off)"
-		echo "T. sTop a node (turn on radio)"
+		echo "N. show Nd6 stats for all nodes"
+		echo "O. show stackline Os for all nodes"
+		echo "U. show Udp stats for all nodes"
+		echo "T. show Tcp stats for all nodes"
 		echo "Q. Quit/stop Whitefield"
 		read -p "Press cmd id or ctrl-c to exit:" ans
 	else 
@@ -54,8 +57,18 @@ function menu()
 	fi
 	if [ "$ans" == "1" ]; then
 		show_mac_status
-	elif [ "$ans" == "n" ] || [ "$ans" == "N" ]; then
+	elif [ "$ans" == "o" ] || [ "$ans" == "O" ]; then
 		cmd_for_all_nodes sl_cmd "cmd_node_osname"
+	elif [ "$ans" == "n" ] || [ "$ans" == "N" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_nd6_stats"
+	elif [ "$ans" == "u" ] || [ "$ans" == "U" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_udp_stats"
+	elif [ "$ans" == "t" ] || [ "$ans" == "T" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_tcp_stats"
+	elif [ "$ans" == "c" ] || [ "$ans" == "C" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_icmp_stats"
+	elif [ "$ans" == "i" ] || [ "$ans" == "I" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_ipv6_stats"
 	elif [ "$ans" == "r" ] || [ "$ans" == "R" ]; then
 		cmd_for_all_nodes sl_cmd "cmd_rpl_stats"
 	elif [ "$ans" == "s" ] || [ "$ans" == "S" ]; then
