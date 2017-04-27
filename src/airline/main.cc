@@ -11,7 +11,7 @@ extern "C" {
 void sig_handler(int signum)
 {
 	if(signum > 1) {
-		ERROR << "Caught signal " << signum << endl;
+		INFO << "Caught signal " << signum << endl;
 	}
 	cl_cleanup();
 	INFO << "Sayonara...\n";
@@ -36,6 +36,18 @@ void exec_forker(void)
 	}
 }
 
+ofstream g_errout;
+void redirect_log(void)
+{
+	char outfile[256];
+	if(!getenv("LOGPATH")) return;
+	snprintf(outfile, sizeof(outfile), "%s/airline_error.log", getenv("LOGPATH"));
+
+	g_errout.open(outfile);
+//	streambuf *cerrbuf=cerr.rdbuf();
+	cerr.rdbuf(g_errout.rdbuf());
+}
+
 wf::Config WF_config;
 int main(const int argc, const char *argv[])
 {
@@ -58,6 +70,7 @@ int main(const int argc, const char *argv[])
 		ERROR << "Terminating...\n"; 
 		sig_handler(1);
 	}
+	redirect_log();
 	exec_forker();
 	Manager WF_mgr(WF_config);
 	sig_handler(0);

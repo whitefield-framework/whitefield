@@ -14,7 +14,6 @@ using namespace std;
 #define FAILURE -1
 
 #define INFO cout
-#define LOG cout
 #define ERROR cerr
 #define WARN cerr
 

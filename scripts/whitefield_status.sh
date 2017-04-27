@@ -24,6 +24,17 @@ function get_route_list()
 	echo "TODO: Show route count on BR ... how to identify which node is BR??"
 }
 
+error_log()
+{
+	ERRCNT=5
+	ERRFILE="$DIR/../log/airline_error.log"
+	[[ ! -f "$ERRFILE" ]] && echo "ERROR FILE NOT FOUND!!\n" && return
+	[[ $(stat -c "%s" $ERRFILE) -le 0 ]] && return
+	echo "----[Airline last $ERRCNT ERRORS]----"
+	tail -$ERRCNT $ERRFILE
+	echo "<<check $ERRFILE for details>>"
+}
+
 function main()
 {
 	elap_time
@@ -49,7 +60,11 @@ function main()
 	echo "Airline CPU:$pcpu%, Memory:$memusage"
 	echo ;
 
-	echo "Press ctrl-c to exit, ? for menu..."
+	error_log
+
+	echo ;
+	echo ;
+	echo "[Press CTRL-C to exit, ? for menu]..."
 }
 
 #Processing begins here...
