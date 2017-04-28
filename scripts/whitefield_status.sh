@@ -21,7 +21,8 @@ function elap_time()
 
 function get_route_list()
 {
-	echo "TODO: Show route count on BR ... how to identify which node is BR??"
+	rtsize=`sl_cmd "0:cmd_rtsize"`
+	echo "Route Table size on node 0: $rtsize"
 }
 
 error_log()
@@ -44,15 +45,13 @@ function main()
 
 	get_node_list
 	echo "Node count: ${#nodelist[@]}"
+	get_route_list
 	echo ;
 
 	al_cmd "cmd_mac_stats"
 	echo ;
 	echo ;
 
-	get_route_list
-
-	echo ;
 	str=`uptime`
 	pcpu=`ps -h -p $wfpid -o "%C"`
 	memusage=`pmap $wfpid | tail -1 | awk '{print $2}'`

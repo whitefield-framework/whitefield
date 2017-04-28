@@ -42,6 +42,8 @@ function menu()
 		clear
 		echo "---[Menu]---"
 		echo "1. show mac status for all nodes"
+		echo "D. show Default route for all nodes"
+		echo "E. show routE table for all nodes"
 		echo "C. show iCmp stats for all nodes"
 		echo "I. show Ipv6 stats for all nodes"
 		echo "R. show Rpl stats for all nodes"
@@ -57,6 +59,10 @@ function menu()
 	fi
 	if [ "$ans" == "1" ]; then
 		show_mac_status
+	elif [ "$ans" == "e" ] || [ "$ans" == "E" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_route_table"
+	elif [ "$ans" == "d" ] || [ "$ans" == "D" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_def_route"
 	elif [ "$ans" == "o" ] || [ "$ans" == "O" ]; then
 		cmd_for_all_nodes sl_cmd "cmd_node_osname"
 	elif [ "$ans" == "n" ] || [ "$ans" == "N" ]; then
