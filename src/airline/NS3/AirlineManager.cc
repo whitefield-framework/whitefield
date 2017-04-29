@@ -5,10 +5,20 @@
 #include "Command.h"
 #include "mac_stats.h"
 
-void AirlineManager::getAllNodeInfo(void)
+int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 {
-	NodeContainer const & n = NodeContainer::GetGlobal (); 
-	for (NodeContainer::Iterator i = n.Begin (); i != n.End (); ++i) 
+	int n=0;
+	ofstream of;
+	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+	if(buf[0]) {
+		of.open(buf);
+		if(!of.is_open()) {
+			return snprintf(buf, buflen, "could not open file %s", buf);
+		} else {
+			n = snprintf(buf, buflen, "SUCCESS");
+		}
+	}
+	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
 	{ 
 		Ptr<Node> node = *i; 
 		//std::string name = Names::FindName (node);
@@ -17,12 +27,21 @@ void AirlineManager::getAllNodeInfo(void)
 
 		Vector pos = mob->GetPosition (); 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-		std::cout << "Node " << node->GetId() << " is at (" << pos.x << ", " << pos.y << ", " << pos.z 
-				  << ") shortaddr=" << dev->GetMac()->GetShortAddress()
-				  //<< " ExtAddr:" << dev->GetMac()->GetExtendedAddress()
-				  << " PanID:" << dev->GetMac()->GetPanId() 
-				  << "\n"; 
-	} 
+		if(id == 0xffff || id == node->GetId()) {
+			if(of.is_open()) {
+				of << "Node " << node->GetId() << " Location= " << pos.x << " " << pos.y << " " << pos.z 
+					  << "\n"; 
+			} else {
+				n += snprintf(buf+n, buflen-n, "%d loc= %.2f %.2f %.2f\n", node->GetId(), pos.x, pos.y, pos.z);
+				if(n > (buflen-50)) {
+					n += snprintf(buf+n, buflen-n, "[TRUNC]");
+					break;
+				}
+			}
+		}
+	}
+	of.close();
+	return n;
 }
 
 void AirlineManager::setMobilityModel(MobilityHelper & mobility)
@@ -39,12 +58,16 @@ void AirlineManager::setMobilityModel(MobilityHelper & mobility)
 	//TODO: In the future this could support different types of mobility models
 }
 
-void msgrecvCallback(msg_buf_t *mbuf)
+void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
 
 	if(mbuf->flags & MBUF_IS_CMD) {
-		al_handle_cmd(mbuf);
+		if(0) { } 
+		HANDLE_CMD(mbuf, cmd_node_position)	//NS3 Airline specific command
+		else {
+			al_handle_cmd(mbuf);
+		}
 		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 		return;
 	}
@@ -88,7 +111,6 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 	ApplicationContainer apps = airlineApp.Install(nodes);
 	apps.Start(Seconds(0.0));
 
-//	getAllNodeInfo();
 	ScheduleCommlineRX();
 	INFO << "NS3 Simulator::Run initiated...\n";
 	Simulator::Run ();

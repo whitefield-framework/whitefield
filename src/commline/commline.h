@@ -85,8 +85,16 @@ enum {
 #define	IN_RANGE(VAL, MIN_N, MAX_N)	((VAL)>=(MIN_N) && (VAL)<(MAX_N))
 
 #define	HANDLE_CMD(MBUF, CMD)	\
-	else if(!strcasecmp((char*)(MBUF)->buf, #CMD))	\
+	else if(!strncasecmp((char*)(MBUF)->buf, #CMD, sizeof(#CMD)-1))	\
 	{\
+		int aux_len=0;\
+		char *colon_ptr = strchr((char*)(MBUF)->buf, ':');\
+		if(colon_ptr) {\
+			*colon_ptr++=0;\
+			aux_len = strlen(colon_ptr);\
+			memmove((MBUF)->buf, colon_ptr, aux_len);\
+		}\
+		(MBUF)->buf[aux_len] = 0;\
 		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
 

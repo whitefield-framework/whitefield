@@ -12,34 +12,6 @@
 #include "commline/commline.h"
 
 int gMonitorFD=-1;
-int start_tcp_server(int portno)
-{
-	int sockfd=-1;
-	struct sockaddr_in serv_addr;
-
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-		ERROR("ERROR opening socket %m\n");
-		goto failure;
-	}
-	bzero((char *) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = htons(portno);
-	if (bind(sockfd, (struct sockaddr *) &serv_addr,
-				sizeof(serv_addr)) < 0) {
-		ERROR("ERROR on binding %m\n");
-		goto failure;
-	}
-	listen(sockfd,5);
-	return sockfd;
-failure:
-	if(sockfd > 0) {
-		close(sockfd);
-	}
-	return CL_FAILURE;
-}
-
 int start_udp_server(int portno)
 {
 	struct sockaddr_in myaddr;      /* our address */

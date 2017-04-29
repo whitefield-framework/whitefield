@@ -2,8 +2,7 @@
 
 // This file is included from thirdparty stackline OS such as Contiki (see contiki/platform/whitefiled/command.c)
 // It sort of provides virtual abstract interfaces for different commands i.e. it mandates the stackline OS platform 
-// to mandatorily implement these commands. This is essential to have a common OAM interfaces across different 
-// stackline implementations.
+// to implement these commands. This is essential to have a common OAM interfaces across different stacklines.
 
 #include "commline/commline.h"
 
