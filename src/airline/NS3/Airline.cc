@@ -38,8 +38,8 @@ namespace ns3
 	{
 		Mac16Address mac;
 		uint8_t idstr[2], *ptr=(uint8_t*)&id;
-		idstr[0] = ptr[0];
-		idstr[1] = ptr[1];
+		idstr[1] = ptr[0];
+		idstr[0] = ptr[1];
 		mac.CopyFrom(idstr);
 		return mac;
 	};
@@ -49,8 +49,8 @@ namespace ns3
 		uint16_t id=0;
 		uint8_t str[2], *ptr=(uint8_t *)&id;
 		addr.CopyTo(str);
-		ptr[0] = str[1];
 		ptr[1] = str[0];
+		ptr[0] = str[1];
 		return id;
 	};
 

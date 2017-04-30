@@ -3,6 +3,8 @@
 [[ "$DIR" == "" ]] && echo "DIR needs to be set in caller script" && exit
 . $DIR/../config.inc
 
+BR_ID=0
+
 WF_PNAME="whitefield"
 FORKER_PNAME="wf_forker"
 UDP_TOOL=$DIR/../$BINDIR/udp_cmd

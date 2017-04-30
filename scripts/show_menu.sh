@@ -38,14 +38,19 @@ function show_mac_status()
 
 function menu()
 {
+	wfpid=`wf_get_pid`
+	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && exit
 	if [ "$1" == "" ]; then
 		clear
 		echo "---[Menu]---"
 		echo "1. show mac status for all nodes"
+		echo "D. show Default route for all nodes"
+		echo "E. show routE table for all nodes"
 		echo "C. show iCmp stats for all nodes"
 		echo "I. show Ipv6 stats for all nodes"
 		echo "R. show Rpl stats for all nodes"
 		echo "N. show Nd6 stats for all nodes"
+		echo "P. show node Position for all nodes"
 		echo "O. show stackline Os for all nodes"
 		echo "U. show Udp stats for all nodes"
 		echo "T. show Tcp stats for all nodes"
@@ -57,6 +62,12 @@ function menu()
 	fi
 	if [ "$ans" == "1" ]; then
 		show_mac_status
+	elif [ "$ans" == "p" ] || [ "$ans" == "P" ]; then
+		al_cmd "cmd_node_position"
+	elif [ "$ans" == "e" ] || [ "$ans" == "E" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_route_table"
+	elif [ "$ans" == "d" ] || [ "$ans" == "D" ]; then
+		cmd_for_all_nodes sl_cmd "cmd_def_route"
 	elif [ "$ans" == "o" ] || [ "$ans" == "O" ]; then
 		cmd_for_all_nodes sl_cmd "cmd_node_osname"
 	elif [ "$ans" == "n" ] || [ "$ans" == "N" ]; then
