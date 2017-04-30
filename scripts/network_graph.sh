@@ -52,7 +52,7 @@ position_graph() {
 	done
 
 	echo "}" >> $TMP
-	neato -Tpng $TMP > $1
+	neato -s4 -Tpng $TMP > $1
 }
 
 main() {

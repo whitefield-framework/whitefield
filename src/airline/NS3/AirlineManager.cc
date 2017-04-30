@@ -52,7 +52,7 @@ void AirlineManager::setMobilityModel(MobilityHelper & mobility)
 			"MinY", DoubleValue(.0),
 			"DeltaX", DoubleValue(stod(CFG("fieldX"))),
 			"DeltaY", DoubleValue(stod(CFG("fieldY"))),
-			"GridWidth", UintegerValue(stoi(CFG("deploymentMode"))),
+			"GridWidth", UintegerValue(stoi(CFG("gridWidth"))),
 			"LayoutType", StringValue("RowFirst"));
 
 	//TODO: In the future this could support different types of mobility models

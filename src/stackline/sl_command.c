@@ -8,7 +8,6 @@
 
 void sl_handle_cmd(msg_buf_t *mbuf)
 {
-	INFO("Handle monitor command <TODO>\n");
 	if(0) { } 
 	HANDLE_CMD(mbuf, cmd_rpl_stats)
 	HANDLE_CMD(mbuf, cmd_def_route)
