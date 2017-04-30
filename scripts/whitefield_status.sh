@@ -21,8 +21,8 @@ function elap_time()
 
 function get_route_list()
 {
-	rtsize=`sl_cmd "0:cmd_rtsize"`
-	echo "Route Table size on node 0: $rtsize"
+	rtsize=`sl_cmd "$BR_ID:cmd_rtsize"`
+	echo "Route entries on node $BR_ID: $rtsize"
 }
 
 error_log()

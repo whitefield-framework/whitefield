@@ -81,6 +81,20 @@ int Config::setNodeSetCapFile(const string path, int beg, int end)
 	return SUCCESS;
 }
 
+int Config::setNodePosition(const string position, int beg, int end)
+{
+	int i;
+	vector<string> pos=split(position, ',');
+	if(pos.size() < 3) {
+		ERROR << "Incorrect position supplied in config file\n";
+		return FAILURE;
+	}
+	for(i=beg;i<=end;i++) {
+		nodeArray[i].setNodePosition(stod(pos.at(0)), stod(pos.at(1)), stod(pos.at(2)));
+	}
+	return SUCCESS;
+}
+
 int Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
@@ -109,6 +123,8 @@ int Config::setConfigurationFromFile(const char *fname)
 				setNodeSetExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {
 				setNodeSetCapFile(value, beg_range, end_range);
+			} else if(key == "nodePosition") {
+				setNodePosition(value, beg_range, end_range);
 			} else {
 				set(key, value);
 			}

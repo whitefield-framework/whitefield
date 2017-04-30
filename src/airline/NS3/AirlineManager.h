@@ -16,8 +16,10 @@ class AirlineManager
 private:
 	void msgrecvCallback(msg_buf_t *mbuf);
 	int startNetwork(wf::Config & cfg);
+	void nodePos(NodeContainer & nodes, uint16_t id, double & x, double & y, double & z);
 	int cmd_node_position(uint16_t id, char *buf, int buflen);
-	void setMobilityModel(MobilityHelper & mobility);
+	void setPositionAllocator(NodeContainer & nodes);
+	void setNodeSpecificPosition(NodeContainer & nodes);
 	void msgReader(void);
 	void ScheduleCommlineRX(void);
 	EventId m_sendEvent;

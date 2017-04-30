@@ -10,6 +10,8 @@ namespace wf {
 		private:
 			string nodeExec;
 			string capFile;
+			double X, Y, Z;
+			uint8_t pos_set;
 		public:
 			string getNodeExecutable(void) { return nodeExec; };
 			void setNodeExecutable(const string path) {
@@ -17,6 +19,22 @@ namespace wf {
 			};
 			void setNodeCaptureFile(const string path) {
 				capFile = path;
+			};
+			void setNodePosition(const double x_pos, const double y_pos, const double z_pos) {
+				X = x_pos;
+				Y = y_pos;
+				Z = z_pos;
+				pos_set=1;
+			};
+			void getNodePosition(uint8_t & is_set, double & x_pos, double & y_pos, double & z_pos) {
+				is_set = pos_set;
+				if(!is_set) return;
+				x_pos=X;
+				y_pos=Y;
+				z_pos=Z;
+			};
+			Nodeinfo() {
+				pos_set=0;
 			};
 	};
 }	//namespace wf

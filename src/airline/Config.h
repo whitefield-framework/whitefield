@@ -14,6 +14,7 @@ namespace wf {
 			int setNumberOfNodes(const int value);
 			int setNodeSetExec(const string exec, int beg, int end);
 			int setNodeSetCapFile(const string path, int beg, int end);
+			int setNodePosition(const string position, int beg, int end);
 
 			void clearNodeArray(void);
 			string getKeyRange(const string & keystr, int & beg_range, int & end_range);
@@ -22,6 +23,10 @@ namespace wf {
 		public:
 			Nodeinfo *get_node_info(uint16_t id);
 			string get(string key) { return keyval[key]; };
+			string get(string key, string def) { 
+				string out = keyval[key]; 
+				return out.empty()?def:out;
+			};
 			int setConfigurationFromFile(const char *filename);
 			int getNumberOfNodes(void) { return numOfNodes; };
 			void spawnStackline(const uint16_t nodeID);

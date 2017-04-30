@@ -45,6 +45,7 @@ position_graph() {
 	done
 
 	#Dump node absolute position
+	cat $POSF
 	readarray nodepos < $POSF
 	for((i=0;i<${#nodepos[@]};i++)); do
 		IFS=' ' read -r -a arr <<< "${nodepos[$i]}"
