@@ -55,7 +55,7 @@ main() {
 	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && exit
 	init
 	loop=1
-	while [ $loop ]; do
+	while [ $loop -ne 0 ]; do
 		if [ "$1" == "" ]; then
 			ans=""
 			while [ "$ans" == "" ]; do
