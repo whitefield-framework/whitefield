@@ -29,3 +29,29 @@ function get_node_list()
 	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a")
 }
 
+function cmd_for_all_nodes()
+{
+	get_node_list
+	for((i=0;i<${#nodelist[@]};i++)); do
+		echo "$1 \"$i:$2\""
+		$1 "$i:$2"
+		echo ;
+		echo ;
+	done
+}
+
+function stop_whitefield()
+{
+	wfpid=`wf_get_pid`
+	[[ "$wfpid" == "" ]] && echo "Whitefield NOT UP!!" && return
+	kill -2 $wfpid
+	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
+	echo "Stopped Whitefield"
+	sleep 1
+	echo ;
+}
+
+function plot_network_graph() 
+{
+	echo "TODO"
+}

@@ -1,0 +1,66 @@
+#!/bin/bash
+
+DIR=`dirname $0`
+. $DIR/helpers.sh
+CMDLIST="$DIR/internal/cmd_list.txt"
+SHCMD="$0"
+
+init() {
+	set -o emacs
+	bind 'set show-all-if-ambiguous on'
+	bind 'set completion-ignore-case on'
+	bind 'TAB:dynamic-complete-history'
+
+	cmds=`awk '{ print $2 }' $CMDLIST`
+	for i in $cmds ; do
+		history -s $i
+	done
+}
+
+usage_exit() {
+	echo "Incorrect usage or invalid cmd..."
+	echo ;
+	echo "Usage1: $SHCMD ... provides a shell interface"
+	echo "Usage2: $SHCMD <cmd_foobar> ... executes cmd_foobar on all the nodes"
+	echo "Usage3: $SHCMD <cmd_foobar> <node_id> ... executes cmd_foobar on node_id only"
+	echo ;
+	echo "Possible commands:"
+	echo $cmds
+	exit
+}
+
+chk_exec_cmd() {
+	cmd="$1"; shift
+	str=`grep " $cmd" $CMDLIST`
+	[[ $? -ne 0 ]] && usage_exit
+	line=${str/ */}
+	if [ "$line" == "fw" ]; then
+		$cmd $*
+	else
+		if [ "$1" == "" ]; then
+			cmd_for_all_nodes ${line}_cmd "$cmd"
+		else
+			${line}_cmd "$1:$cmd"
+		fi
+	fi
+}
+
+main() {
+	wfpid=`wf_get_pid`
+	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && exit
+	init
+	if [ "$1" == "" ]; then
+		ans=""
+		while [ "$ans" == "" ]; do
+			read -e -p "wfsh# " ans
+		done
+	else
+		ans="$1"
+		shift
+	fi
+	chk_exec_cmd $ans $*
+}
+
+#Processing starts here
+main $*
+

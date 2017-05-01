@@ -7,28 +7,6 @@
 DIR=`dirname $0`
 . $DIR/helpers.sh
 
-function stop_whitefield()
-{
-	wfpid=`wf_get_pid`
-	[[ "$wfpid" == "" ]] && echo "Whitefield NOT UP!!" && return
-	kill -2 $wfpid
-	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
-	echo "Stopped Whitefield"
-	sleep 1
-	echo ;
-}
-
-function cmd_for_all_nodes()
-{
-	get_node_list
-	for((i=0;i<${#nodelist[@]};i++)); do
-		echo "$1 \"$i:$2\""
-		$1 "$i:$2"
-		echo ;
-		echo ;
-	done
-}
-
 function show_mac_status()
 {
 	cmd_for_all_nodes al_cmd "cmd_mac_stats"

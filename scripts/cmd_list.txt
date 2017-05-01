@@ -1,0 +1,9 @@
+al cmd_mac_stats
+sl cmd_ipv6_stats
+sl cmd_rpl_stats
+sl cmd_def_route
+sl cmd_route_table
+sl cmd_rtsize
+sl cmd_node_osname
+sl cmd_node_osname
+fw stop_whitefield
