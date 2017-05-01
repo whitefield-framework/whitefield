@@ -11,3 +11,5 @@ sl cmd_tcp_stats
 al cmd_mac_stats
 fw stop_whitefield
 fw plot_network_graph
+fw help
+fw exit

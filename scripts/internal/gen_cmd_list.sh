@@ -21,3 +21,5 @@ gen_cmd "al" $AL_CMD_C >> $CMDLIST
 #Framework commands needs to be given here manually
 echo "fw stop_whitefield" >> $CMDLIST
 echo "fw plot_network_graph" >> $CMDLIST
+echo "fw help" >> $CMDLIST
+echo "fw exit" >> $CMDLIST

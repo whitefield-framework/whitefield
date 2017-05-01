@@ -20,13 +20,18 @@ init() {
 usage_exit() {
 	echo "Incorrect usage or invalid cmd..."
 	echo ;
+	help
+	exit
+}
+
+help() {
 	echo "Usage1: $SHCMD ... provides a shell interface"
 	echo "Usage2: $SHCMD <cmd_foobar> ... executes cmd_foobar on all the nodes"
 	echo "Usage3: $SHCMD <cmd_foobar> <node_id> ... executes cmd_foobar on node_id only"
 	echo ;
 	echo "Possible commands:"
 	echo $cmds
-	exit
+	echo ;
 }
 
 chk_exec_cmd() {
@@ -49,16 +54,20 @@ main() {
 	wfpid=`wf_get_pid`
 	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && exit
 	init
-	if [ "$1" == "" ]; then
-		ans=""
-		while [ "$ans" == "" ]; do
-			read -e -p "wfsh# " ans
-		done
-	else
-		ans="$1"
-		shift
-	fi
-	chk_exec_cmd $ans $*
+	loop=1
+	while [ $loop ]; do
+		if [ "$1" == "" ]; then
+			ans=""
+			while [ "$ans" == "" ]; do
+				read -e -p "wfsh# " ans
+			done
+		else
+			loop=0
+			ans="$1"
+			shift
+		fi
+		chk_exec_cmd $ans $*
+	done
 }
 
 #Processing starts here
