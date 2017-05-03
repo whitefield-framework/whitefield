@@ -39,6 +39,7 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	HANDLE_CMD(mbuf, cmd_icmp_stats)
 	HANDLE_CMD(mbuf, cmd_udp_stats)
 	HANDLE_CMD(mbuf, cmd_tcp_stats)
+	HANDLE_CMD(mbuf, cmd_config_info)
 	else {
 		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   

@@ -8,6 +8,7 @@ sl cmd_nd6_stats
 sl cmd_icmp_stats
 sl cmd_udp_stats
 sl cmd_tcp_stats
+sl cmd_config_info
 al cmd_mac_stats
 fw stop_whitefield
 fw plot_network_graph
