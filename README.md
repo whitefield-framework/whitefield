@@ -48,8 +48,9 @@ git submodule foreach git pull origin master
 ```
 **Execute Instructions**:
 ```
-#modify configuration (for e.g. wf.cfg) as required
-$./invoke_whitefield.sh <wf_config>
+#modify configuration (for e.g. src/wf.cfg) as required
+#Start Whitefield
+$./invoke_whitefield.sh src/wf.cfg
 
 #Monitor whitefield status
 $./scripts/monitor.sh
