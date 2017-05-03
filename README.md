@@ -27,7 +27,7 @@ Typical use of Whitefield:
 ### Setup Instructions
 Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
 
-*On ubuntu 14.04, ns3 build has issues!*
+*On ubuntu 14.04, ns3 build has issues.*
 
 **System Requirements**:
 
@@ -49,11 +49,16 @@ git submodule foreach git pull origin master
 **Execute Instructions**:
 ```
 #modify configuration (for e.g. wf.cfg) as required
-./invoke_whitefield.sh <wf_config>
-./scripts/monitor.sh #Monitor whitefield status
+$./invoke_whitefield.sh <wf_config>
 
-#To stop whitefield
-./script/show_menu.sh q
+#Monitor whitefield status
+$./scripts/monitor.sh
+
+#OAM commands
+$./script/wfshell help
+
+#Stop whitefield
+$./script/wfshell stop_whitefield
 ```
 
 ### [Whitefield as compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
