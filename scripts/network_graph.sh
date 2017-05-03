@@ -24,6 +24,7 @@ tree_graph() {
 	done
 	echo "}" >> $TMP
 	dot -Tpng $TMP > $1
+	echo "Dumped tree based network graph to file $1"
 }
 
 position_graph() {
@@ -45,7 +46,7 @@ position_graph() {
 	done
 
 	#Dump node absolute position
-	cat $POSF
+	#cat $POSF
 	readarray nodepos < $POSF
 	for((i=0;i<${#nodepos[@]};i++)); do
 		IFS=' ' read -r -a arr <<< "${nodepos[$i]}"
@@ -54,6 +55,7 @@ position_graph() {
 
 	echo "}" >> $TMP
 	neato -s4 -Tpng $TMP > $1
+	echo "Dumped position based network graph to file $1"
 }
 
 main() {
