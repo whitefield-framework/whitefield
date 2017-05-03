@@ -54,7 +54,8 @@ stop_whitefield()
 
 plot_network_graph() 
 {
-	echo "TODO"
+	[[ "$2" == "" ]] && echo "Usage: plot_network_graph <tree_png_outfile> <position_png_outfile>" && return
+	$DIR/network_graph.sh $1 $2
 }
 
 quit() {

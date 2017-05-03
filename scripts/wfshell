@@ -61,6 +61,7 @@ main() {
 			while [ "$ans" == "" ]; do
 				read -e -p "wfsh# " ans
 			done
+			history -s $ans
 		else
 			loop=0
 			ans="$1"
