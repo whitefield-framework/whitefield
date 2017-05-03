@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2017 Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * This file is subject to the terms and conditions of the GNU
+ * General Public License v2. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     airline
+ * @{
+ *
+ * @file
+ * @brief       Common/utility APIs for Airline
+ *
+ * @author      Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * @}
+ */
+
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
