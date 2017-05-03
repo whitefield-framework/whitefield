@@ -30,14 +30,14 @@ help() {
 	echo "Usage3: $SHCMD <cmd_foobar> <node_id> ... executes cmd_foobar on node_id only"
 	echo ;
 	echo "Possible commands:"
-	echo $cmds
+	echo "$cmds"
 	echo ;
 }
 
 chk_exec_cmd() {
 	cmd="$1"; shift
 	str=`grep " $cmd" $CMDLIST`
-	[[ $? -ne 0 ]] && usage_exit
+	[[ $? -ne 0 ]] && help && return 1
 	line=${str/ */}
 	if [ "$line" == "fw" ]; then
 		$cmd $*
@@ -61,7 +61,6 @@ main() {
 			while [ "$ans" == "" ]; do
 				read -e -p "wfsh# " ans
 			done
-			history -s $ans
 		else
 			loop=0
 			ans="$1"

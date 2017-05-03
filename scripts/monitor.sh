@@ -6,7 +6,7 @@ WATCH_PID=$!
 read -n 1 ans
 kill $WATCH_PID
 if [ "$ans" == "?" ]; then
-	$DIR/show_menu.sh
+	$DIR/wfshell
 else
 	sleep 1
 	echo

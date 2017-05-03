@@ -63,7 +63,7 @@ function main()
 
 	echo ;
 	echo ;
-	echo "[Press CTRL-C to exit, ? for menu]..."
+	echo "[Press CTRL-C to exit, ? for wfshell]..."
 }
 
 #Processing begins here...
