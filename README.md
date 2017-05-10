@@ -62,5 +62,7 @@ $./script/wfshell help
 $./script/wfshell stop_whitefield
 ```
 
-### [Whitefield as compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
+### [Whitefield compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
+
+### [Module support table](docs/README.md "Module support table")
 
