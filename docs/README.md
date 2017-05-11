@@ -1,3 +1,20 @@
+## Module support table
+|Module|Supported|Remarks|
+|------|---------|-------|
+|Contiki|Yes|Master version|
+|NS3|Yes|supports only lr-wpan module|
+|RIOT|Next rel|
+|Castalia-Omnet|Next rel|
+|Static Visualization|Yes|Using Graphviz to plot network diagram|
+|Dynamic Visualization| Next rel|Using Javascript+Web tech to plot runtime network|
+|Support for 802.15.4e|Future|Not planned yet. Requires submitting changes to NS3/Castalia|
+|Airline interface other than LOWPAN|Future|
+|Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
+|Runtime Mobility|Future|
+
+
+Next release is planned for July tentatively
+
 ## Advanced Whitefield Customisations
 
 ### How to add a new RF simulator using Airline/Commline interfaces
