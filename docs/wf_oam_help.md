@@ -1,9 +1,9 @@
-## OAM/Monitor command help
+# OAM/Monitor command help
 
-# Monitoring Whitefield
+## Monitoring Whitefield
 
-# wfshell
+## wfshell
 
-# List of commands in wfshell
+## List of commands in wfshell
 
-# Plotting Network diagram
+## Plotting Network diagram
