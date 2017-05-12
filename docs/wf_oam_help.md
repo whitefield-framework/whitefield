@@ -2,7 +2,7 @@
 
 ## Monitoring Whitefield
 
-![Alt text](docs/res/monitor.png "Screenshot of monitor script")
+![Alt text](res/monitor.png "Screenshot of monitor script")
 
 ## wfshell
 
