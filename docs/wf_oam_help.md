@@ -9,6 +9,7 @@ whitefield$ ./scripts/monitor.sh
 
 ## wfshell
 
-## List of commands in wfshell
-
-## Plotting Network diagram
+```
+whitefield$ ./scripts/wfshell
+```
+![Alt text](res/wfshell.png "wfshell")
