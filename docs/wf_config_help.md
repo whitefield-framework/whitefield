@@ -13,13 +13,13 @@ stackline.
 | |grid | Grid topology where nodes are separated by distance specified by fieldX * fieldY and the width of the grid is specified by gridWidth|
 |panID|Ushort range| PAN identifier to be used in LOWPAN |
 |macPktQlen|<100|Maximum number of packets that can be buffered/queued at MAC layer|
-|macMaxRetry|<20|Maximum number of times the mac packet will be retried|
-|nodeExec|/path/to/stackline/binary.exec|Usually native compiled executable for Contiki/RIOT nodes path will be specified here|
+|macMaxRetry| <20 | Maximum number of times the mac packet will be retried |
+|nodeExec|/path/to/stackline.bin| Native compiled executable path for Contiki/RIOT nodes will be specified here|
 
 The configuration can be applied to only a set of nodes by specifying the node index range (note, the first node has an index of zero). 
 For e.g.
 ```
-numOfNode=20
+numOfNodes=20
 nodeExec=/path/to/contiki
 nodeExec[10-19]=/path/to/riot
 ```
