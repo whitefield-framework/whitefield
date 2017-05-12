@@ -17,6 +17,8 @@ stackline.
 |macPktQlen|<100|Maximum number of packets that can be buffered/queued at MAC layer|
 |macMaxRetry| <20 | Maximum number of times the mac packet will be retried |
 |nodeExec[*]|/path/to/stackline.bin| Native compiled executable path for Contiki/RIOT nodes will be specified here|
+|captureFile[*]|/path/to/pcap_dir|Location where pcap will be stored ... Not supported currently, use NS3_captureFile instead|
+|NS3_captureFile|/path/to/pcap_dir|Uses NS3's inbuilt pcap capturing method |
 
 The configuration can be applied to only a set of nodes (for configuration options specified with [*]) by specifying the node index range (note, the first node has an index of zero). 
 For e.g.
