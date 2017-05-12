@@ -61,7 +61,9 @@ $./script/wfshell help
 #Stop whitefield
 $./script/wfshell stop_whitefield
 ```
-### [Whitefield Configuration Manual](docs/wf_config_help.md "Whitefield Configuration")
+### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
+
+### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
 
 ### [Whitefield compared to Cooja](docs/wf-vs-cooja.md "Whitefield-High Level design")
 
