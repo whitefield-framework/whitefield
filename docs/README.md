@@ -3,13 +3,13 @@
 |------|---------|-------|
 |Contiki|Yes|Master version|
 |NS3|Yes|supports only lr-wpan module|
-|RIOT|Next rel|
-|Castalia-Omnet|Next rel|
 |Static Visualization|Yes|Using Graphviz to plot network diagram|
 |Dynamic Visualization| Next rel|Using Javascript+Web tech to plot runtime network|
+|Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
+|RIOT|Next rel|
+|Castalia-Omnet|Next rel|
 |Support for 802.15.4e|Future|Not planned yet. Requires submitting changes to NS3/Castalia|
 |Airline interface other than LOWPAN|Future|
-|Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
 |Runtime Mobility|Future|
 
 
