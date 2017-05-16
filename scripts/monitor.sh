@@ -9,5 +9,5 @@ if [ "$ans" == "?" ]; then
 	$DIR/wfshell
 else
 	sleep 1
-	echo
+	echo ;
 fi

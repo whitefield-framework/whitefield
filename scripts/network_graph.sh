@@ -54,7 +54,7 @@ position_graph() {
 	done
 
 	echo "}" >> $TMP
-	neato -s4 -Tpng $TMP > $1
+	neato -n -Tpng $TMP -o $1
 	echo "Dumped position based network graph to file $1"
 }
 
