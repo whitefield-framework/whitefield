@@ -19,3 +19,25 @@ whitefield$ ./scripts/monitor.sh
 whitefield$ ./scripts/wfshell
 ```
 ![Alt text](res/wfshell.png "wfshell")
+
+## Network graph plot
+
+Sample Config:
+
+```
+numOfNodes=10
+fieldX=300  #field space in x direction ... currently 2D model is supp only.
+fieldY=300  #field space in y direction
+topologyType=grid   #grid, randrect (ns3 RandomRectanglePositionAllocator), 
+gridWidth=4  #Grid topology width if the topologyType=grid
+```
+```
+whitefield$ ./script/wfshell plot_network_graph tree.png pos.png
+```
+Tree-like plot:
+
+![Alt text](res/tree.png "wfshell")
+
+Position based plot:
+
+![Alt text](res/pos.png "wfshell")
