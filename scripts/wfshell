@@ -47,6 +47,7 @@ chk_exec_cmd() {
 		else
 			${line}_cmd "$1:$cmd"
 		fi
+		echo ;
 	fi
 }
 

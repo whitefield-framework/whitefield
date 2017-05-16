@@ -72,13 +72,14 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 	//TODO: In the future this could support different types of mobility models
 
 	if(CFG("topologyType") == "grid") {
+		int gw=stoi(CFG("gridWidth"));
 		INFO << "Using GridPositionAllocator\n";
 		mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
 				"MinX", DoubleValue(.0),
 				"MinY", DoubleValue(.0),
-				"DeltaX", DoubleValue(stod(CFG("fieldX"))),
-				"DeltaY", DoubleValue(stod(CFG("fieldY"))),
-				"GridWidth", UintegerValue(stoi(CFG("gridWidth"))),
+				"DeltaX", DoubleValue(stod(CFG("fieldX"))/gw),
+				"DeltaY", DoubleValue(stod(CFG("fieldY"))/gw),
+				"GridWidth", UintegerValue(gw),
 				"LayoutType", StringValue("RowFirst"));
 	} else if(CFG("topologyType") == "randrect") {
 		char x_buf[128], y_buf[128];
