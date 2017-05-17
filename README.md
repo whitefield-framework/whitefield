@@ -20,7 +20,7 @@ Typical use of Whitefield:
 
 [Airline](src/airline): Airline refers to PHY/MAC/RDC implementation provided by thirdparty simulators such as NS3/Castalia-Omnet++. Provides configuration management and OAM tools which works across any thirdpaty simulators. It interfaces with Commline to send/recv messages to/from Stackline.
 
-[Commline](src/commline): Message queue and corresponding interfaces which decouples Airline and Stackline.
+[Commline](src/commline): Message queue and corresponding interfaces which decouples Airline and Stackline. All the messages be it the network payloads or OAM messages are handshaked using Commline.
 
 [Stackline](src/stackline): 6lowpan/Network layer and above protocol stack provided by thirdparty IoT OSes such as Contiki/RIOT. A new platform is added in such OSes to interface with Whitefield. The protocol stack with application will be used as-is from these OSes.
 
