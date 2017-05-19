@@ -9,6 +9,7 @@
 | Visualization | Good | Cmdline tools^^ |
 | Emulated Hardware | Yes | No |
 | PHY/MAC/RDC | Provided by Contiki | Provided by NS3/Castalia |
+|Energy Consumption model| PowerTracker | In the future |
 
 ^ Managed by Airline module which depends on NS3 like implementation to provide these features.
 
