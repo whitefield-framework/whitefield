@@ -49,6 +49,7 @@ chk_exec_cmd() {
 		fi
 		echo ;
 	fi
+	history -s "$cmd"
 }
 
 main() {
