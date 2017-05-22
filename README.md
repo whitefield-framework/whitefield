@@ -55,11 +55,15 @@ $./invoke_whitefield.sh src/wf.cfg
 #Monitor whitefield status
 $./scripts/monitor.sh
 
+#View live network toplogy
+$./canvas/canvas.py 
+#open http://localhost:8080/ in a browser
+
 #OAM commands
-$./script/wfshell help
+$./scripts/wfshell help
 
 #Stop whitefield
-$./script/wfshell stop_whitefield
+$./scripts/wfshell stop_whitefield
 ```
 ### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
 
