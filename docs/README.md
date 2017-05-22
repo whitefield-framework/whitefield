@@ -7,7 +7,7 @@
 |Dynamic Visualization| Next rel|Using Javascript+Web tech to plot runtime network|
 |Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
 |RIOT|Next rel|
-|Castalia-Omnet|Next rel|
+|Castalia-Omnet|Future|Not Sure if Omnet license allows integrating with Whitefield|
 |Support for 802.15.4e|Future|Not planned yet. Requires submitting changes to NS3/Castalia|
 |Airline interface other than LOWPAN|Future|
 |Runtime Mobility|Future|
