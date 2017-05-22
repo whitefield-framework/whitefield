@@ -17,6 +17,8 @@ import bottle
 MONITOR_PORT = 61616
 BOTTLE_PORT = 8080
 BOTTLE_HOST = '0.0.0.0'
+ASSETS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets'))
+bottle.TEMPLATE_PATH.insert(0, ASSETS_PATH)
 
 
 def query_nodes():
@@ -61,9 +63,9 @@ def graph():
     return bottle.HTTPResponse(status=500)
 
 
-@bottle.route('/static/<filename>')
+@bottle.route('/assets/<filename>')
 def static_assets(filename):
-    return bottle.static_file(filename, root='./static')
+    return bottle.static_file(filename, root=ASSETS_PATH)
 
 
 @bottle.route('/')
