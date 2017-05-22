@@ -16,7 +16,7 @@ import bottle
 
 MONITOR_PORT = 61616
 BOTTLE_PORT = 8080
-BOTTLE_HOST = 'localhost'
+BOTTLE_HOST = '0.0.0.0'
 
 
 def query_nodes():
