@@ -48,8 +48,8 @@ def query_edges(nodes):
         pid = cmd_sock.recv(64).decode().strip('\0')
         cmd_sock.recv(64)
         if ':' in pid:
-            edges.append({'data': {'id': '%s-%s' % (pid.split(':')[-1], n['data']['id']),
-                                   'source': pid.split(':')[-1], 'target': n['data']['id']}})
+            edges.append({'data': {'id': '%s-%s' % (int(pid.split(':')[-1],16), n['data']['id']),
+                                   'source': int(pid.split(':')[-1], 16), 'target': n['data']['id']}})
     cmd_sock.close()
     return edges
 
