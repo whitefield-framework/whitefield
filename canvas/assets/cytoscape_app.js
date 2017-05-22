@@ -28,9 +28,9 @@ console.log('there')
 
 var cyInstance = new cytoscape({
   container: document.getElementById('cy'),
-  style: [{selector: 'node', style: {'background-color': '#666','label': 'data(id)'}},
-    {selector: 'edge',style: {'width': 5,'line-color': '#ccc','target-arrow-color': '#ccc',
-        'target-arrow-shape': 'triangle','arrow-scale': 5}}]});
+  style: [{selector: 'node', style: {'background-color': '#0471A6','label': 'data(id)'}},
+    {selector: 'edge',style: {'line-color': '#43AA8B','target-arrow-color': '#43AA8B',
+        'target-arrow-shape': 'triangle','curve-style': 'bezier'}}]});
 
 var first_run = true;
 var layout_name = 'preset';
