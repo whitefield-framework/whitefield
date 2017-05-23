@@ -8,10 +8,12 @@
 # Copyright (C) 2017 Anmol Sarma <me@anmolsarma.in>
 
 from __future__ import print_function
+
 import os
-import sys
 import socket
+import sys
 import tempfile
+
 import bottle
 
 MONITOR_PORT = 61616
@@ -45,11 +47,13 @@ def query_edges(nodes):
     edges = []
     for n in nodes:
         cmd_sock.sendto(('SL:%s:cmd_def_route' % n['data']['id']).encode(), ('localhost', MONITOR_PORT))
-        pid = cmd_sock.recv(64).decode().strip('\0')
+        rsp = cmd_sock.recv(64).decode().strip('\0')
         cmd_sock.recv(64)
-        if ':' in pid:
-            edges.append({'data': {'id': '%s-%s' % (int(pid.split(':')[-1],16), n['data']['id']),
-                                   'source': int(pid.split(':')[-1], 16), 'target': n['data']['id']}})
+        if rsp == '[NONE]':
+            continue
+        pid = str(int(rsp.split(':')[-1], 16))
+        edges.append({'data': {'id': '%s-%s' % (n['data']['id'], pid),
+                               'source': n['data']['id'], 'target': pid}})
     cmd_sock.close()
     return edges
 

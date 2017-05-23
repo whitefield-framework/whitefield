@@ -4,7 +4,7 @@ function query_graph() {
   xhr.onreadystatechange = function() {
     if(xhr.readyState === 4) {
       cyInstance.json(JSON.parse(xhr.responseText));
-      cyInstance.elements().layout({name: layout_name, fit: first_run}).run();
+      cyInstance.elements().layout({name: layout_name, fit: first_run, rankDir: 'BT'}).run();
       first_run = false;
     }
   }
