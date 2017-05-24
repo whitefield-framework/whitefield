@@ -4,7 +4,7 @@
 |Contiki|Yes|Master version|
 |NS3|Yes|supports only lr-wpan module|
 |Static Visualization|Yes|Using Graphviz to plot network diagram|
-|Dynamic Visualization| Next rel|Using Javascript+Web tech to plot runtime network|
+|Dynamic Visualization| Yes|Canvas tool which plots nodes and their edges dynamically using Cytoscape.js|
 |Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
 |RIOT|Next rel|
 |Castalia-Omnet|Future|Not Sure if Omnet license allows integrating with Whitefield|
