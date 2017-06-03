@@ -7,7 +7,7 @@ function query_graph() {
       cyInstance.elements().layout({
         name: layout_name,
         fit: first_run,
-        rankDir: 'BT'
+        rankDir: 'RL'
       }).run();
       first_run = false;
     }
@@ -33,7 +33,9 @@ var cyInstance = new cytoscape({
       selector: 'node',
       style: {
         'background-color': '#0471A6',
-        'label': 'data(id)'
+        'label': 'data(id)',
+        'text-halign': 'center',
+        'text-valign': 'center'
       }
     },
     {
