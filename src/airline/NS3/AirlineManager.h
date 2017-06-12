@@ -36,8 +36,9 @@ class AirlineManager
 private:
 	void msgrecvCallback(msg_buf_t *mbuf);
 	int startNetwork(wf::Config & cfg);
-	void nodePos(NodeContainer & nodes, uint16_t id, double & x, double & y, double & z);
+	void nodePos(NodeContainer const & nodes, uint16_t id, double & x, double & y, double & z);
 	int cmd_node_position(uint16_t id, char *buf, int buflen);
+	int cmd_set_node_position(uint16_t id, char *buf, int buflen);
 	void setPositionAllocator(NodeContainer & nodes);
 	void setNodeSpecificPosition(NodeContainer & nodes);
 	void msgReader(void);
