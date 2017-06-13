@@ -45,7 +45,11 @@ chk_exec_cmd() {
 		if [ "$1" == "" ]; then
 			cmd_for_all_nodes ${line}_cmd "$cmd"
 		else
-			${line}_cmd "$1:$cmd"
+			nodeid="$1"; shift;
+			if [ "$1" != "" ]; then 
+				args=":$*"
+			fi
+			${line}_cmd "$nodeid:$cmd$args"
 		fi
 		echo ;
 	fi

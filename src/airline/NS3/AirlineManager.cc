@@ -96,6 +96,33 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 	mobility.Install (nodes);
 }
 
+int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
+{
+	char *ptr, *saveptr;
+	double x, y, z=0;
+	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+
+	if(!IN_RANGE(id, 0, cfg.getNumberOfNodes())) {
+		return snprintf(buf, buflen, "NodeID mandatory for setting node pos id=%d", id);
+	}
+	ptr = strtok_r(buf, " ", &saveptr);
+	if(!ptr) return snprintf(buf, buflen, "invalid loc format! No x pos!");
+	x=stod(ptr);
+	ptr = strtok_r(NULL, " ", &saveptr);
+	if(!ptr) return snprintf(buf, buflen, "invalid loc format! No y pos!");
+	y=stod(ptr);
+	ptr = strtok_r(NULL, " ", &saveptr);
+	if(ptr) z = stod(ptr);
+
+	Ptr<MobilityModel> mob = nodes.Get(id)->GetObject<MobilityModel>();
+	Vector m_position = mob->GetPosition();
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
+	mob->SetPosition(m_position);
+	return snprintf(buf, buflen, "SUCCESS");
+}
+
 void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
@@ -103,6 +130,7 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 	if(mbuf->flags & MBUF_IS_CMD) {
 		if(0) { } 
 		HANDLE_CMD(mbuf, cmd_node_position)	//NS3 Airline specific command
+		HANDLE_CMD(mbuf, cmd_set_node_position)	//NS3 Airline specific command
 		else {
 			al_handle_cmd(mbuf);
 		}
@@ -118,7 +146,7 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 	aline->tx(mbuf);
 }
 
-void AirlineManager::nodePos(NodeContainer & nodes, uint16_t id, double & x, double & y, double & z)
+void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & x, double & y, double & z)
 {
 	MobilityHelper mob;
 	Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
