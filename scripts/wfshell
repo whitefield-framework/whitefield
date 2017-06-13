@@ -5,6 +5,12 @@ DIR=`dirname $0`
 CMDLIST="$DIR/internal/cmd_list.txt"
 SHCMD="$0"
 
+trap ctrl_c INT
+
+ctrl_c() {
+	echo ; >/dev/null
+}
+
 init() {
 	set -o emacs
 	bind 'set show-all-if-ambiguous on'
@@ -36,7 +42,7 @@ help() {
 
 chk_exec_cmd() {
 	cmd="$1"; shift
-	str=`grep " $cmd" $CMDLIST`
+	str=`grep " $cmd$" $CMDLIST`
 	[[ $? -ne 0 ]] && help && return 1
 	line=${str/ */}
 	if [ "$line" == "fw" ]; then
