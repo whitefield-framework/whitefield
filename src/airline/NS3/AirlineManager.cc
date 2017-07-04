@@ -101,8 +101,9 @@ int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
 	char *ptr, *saveptr;
 	double x, y, z=0;
 	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+	int numNodes = stoi(CFG("numOfNodes"));
 
-	if(!IN_RANGE(id, 0, cfg.getNumberOfNodes())) {
+	if(!IN_RANGE(id, 0, numNodes)) {
 		return snprintf(buf, buflen, "NodeID mandatory for setting node pos id=%d", id);
 	}
 	ptr = strtok_r(buf, " ", &saveptr);
