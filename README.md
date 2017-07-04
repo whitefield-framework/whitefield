@@ -9,7 +9,7 @@ Whitefield uses PHY/MAC/RDC layer provided by NS3/Castalia-Omnet++ and loosely c
 **Some background**: There are lot of papers/IETF drafts making tall claims about protocol performance and providing the observations from Cooja/Matlab simulation. We worked on few such papers (primarily related to RPL/6lo's perf optimizations) and implemented the algorithms, later to find out that the claims were unrealistic because of practical issues such as RF inteference/path losses/asymmetric transient links. Whitefield aims to provide a realistic RF simulation using well-known implementations such as NS3/Castalia-Omnet and hope that the experiments conducted thus would be more closer to reality.
 
 Typical use of Whitefield:
-1. Interoperability testing of various IOT protocol stack implementations without having to adapt to NS3 or Castalia based environment while still retaining more-realistic RF simulations provided by NS3/Omnet.
+1. Interoperability testing of various IOT protocol stack implementations without having to adapt to NS3 or Castalia based environment while still retaining more-realistic RF simulations provided by NS3.
 2. Large scale interop testing. It can scale to thousands of nodes.
 3. Validate RF phy/mac simulation against each other. For e.g. compare results in NS3 vs Castalia
 4. Regression tests using IdealAir(future)
