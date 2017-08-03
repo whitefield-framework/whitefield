@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
 
-Whitefield aims to provide a simulation environment for wireless sensor network by combining RF simulation provided by NS3, Castalia-Omnet++ while allowing use of native mode configuration/execution of popular IoT OSes such as Contiki/RIOT or any other in the future.
+Whitefield provides a simulation environment for wireless sensor network by combining RF simulation provided by NS3, Castalia-Omnet++ while allowing use of native mode configuration/execution of popular IoT OSes such as Contiki/RIOT or any other in the future.
 
 Whitefield uses PHY/MAC/RDC layer provided by NS3/Castalia-Omnet++ and loosely couples it with the 6lowpan stacks supported by Contiki and RIOT(future), thus providing the best of both worlds by simply glueing things. It provides visualization and OAM tools which should really simplify monitoring and troubleshooting.
 
