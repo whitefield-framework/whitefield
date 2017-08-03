@@ -41,11 +41,27 @@ cmd_for_all_nodes()
 	done
 }
 
+get_ftok_key()
+{
+	ipc_file="$DIR/.."
+	proj_id=0xab
+	dev=`stat --format=%d $ipc_file`
+	ino=`stat --format=%i $ipc_file`
+	ftok_key=$((($ino&0xffff)|(($dev&0xff)<<16)|(($proj_id&0xff)<<24)))
+}
+
+rem_msgq()
+{
+	get_ftok_key
+	ipcrm -Q $ftok_key
+}
+
 stop_whitefield()
 {
 	wfpid=`wf_get_pid`
-	[[ "$wfpid" == "" ]] && echo "Whitefield NOT UP!!" && return
+	[[ "$wfpid" == "" ]] && echo "Whitefield NOT UP!!" && rem_msgq && return
 	kill -2 $wfpid
+	rem_msgq
 	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
 	echo "Stopped Whitefield"
 	sleep 1

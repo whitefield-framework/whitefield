@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netdb.h>
 #include <unistd.h>
 
@@ -16,6 +17,7 @@ int main(int argc, char *argv[]) {
 	char buf[BUF_SIZE];
 	struct hostent *host;
 	int n, s, port;
+	struct timeval tv;
 
 	if (argc < 4) {
 		fprintf(stderr, "Usage: %s <host> <port> <message>\n", argv[0]);
@@ -41,6 +43,12 @@ int main(int argc, char *argv[]) {
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
 	server.sin_addr = *((struct in_addr*) host->h_addr);
+
+	tv.tv_sec=0;
+	tv.tv_usec=500000;
+	if(setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv))<0) {
+		perror("setsockopt");
+	}
 
 	/* send message */
 	if (sendto(s, argv[3], strlen(argv[3]), 0, (struct sockaddr *) &server, len) == -1) {
