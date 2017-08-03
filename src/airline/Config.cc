@@ -139,6 +139,7 @@ int Config::setConfigurationFromFile(const char *fname)
 			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
+				set(key, value);
 			} else if(key == "nodeExec") {
 				setNodeSetExec(value, beg_range, end_range);
 			} else if(key == "captureFile") {
