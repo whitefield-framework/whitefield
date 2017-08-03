@@ -1,0 +1,492 @@
+Contiki-3.x-3272-gbcd9e94 started with IPV6, RPL
+INFO  [1501738188:540707] [main:110] Using node id=5
+INFO  [1501738188:540723] [main:114] MAC wfmac RDC nullrdc NETWORK sicslowpan
+INFO  [1501738188:540725] [main:115] route_table_max_sz=100,nbr_table_max_sz=100
+Tentative link-local IPv6 address fe80:0000:0000:0000:0302:0304:0506:0005
+UDP client process started nbr:100 routes:100
+Client IPv6 addresses: fd00::302:304:506:5
+fe80::302:304:506:5
+Created a connection with the server :: local/remote port 8765/5678
+INFO  [1501738189:540135] [send_packet:48] src:5 dst:ffff len:10
+INFO  [1501738189:542338] [radio_read:91] src:1 dst:ffff len:10 flags:0
+INFO  [1501738195:564104] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738196:545647] [radio_read:91] src:6 dst:ffff len:10 flags:0
+INFO  [1501738197:772157] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738197:778601] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738197:778615] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738198:567153] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738201:52536] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501738201:608644] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738201:971508] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501738202:998541] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738202:998571] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738203:2855] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738203:2865] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738203:689965] [radio_read:91] src:6 dst:5 len:79 flags:0
+INFO  [1501738203:972356] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738206:152540] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738208:120735] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738208:128244] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738208:128254] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738210:88642] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738210:563143] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738210:563164] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738210:569533] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738210:569542] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738213:104651] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501738214:664058] [send_packet:48] src:5 dst:4 len:79
+INFO  [1501738214:669473] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738214:669484] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738215:522745] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738218:912885] [radio_read:91] src:6 dst:5 len:79 flags:0
+INFO  [1501738220:299162] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738220:305561] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738220:305572] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738222:917226] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738224:333328] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738224:563130] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501738228:537211] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738228:537239] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738228:542709] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738228:542722] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738240:893529] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738243:511332] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738245:825736] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738245:825763] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738245:831108] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738245:831121] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738246:127346] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738246:133733] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738246:133745] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738249:702275] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738249:702302] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738249:707568] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738249:707586] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738252:384991] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501738252:456859] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738256:87874] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501738286:951323] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501738289:824128] [radio_read:91] src:9 dst:5 len:79 flags:0
+INFO  [1501738290:386943] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738291:347131] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501738298:148897] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738302:159494] [radio_read:91] src:9 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 1'
+INFO  [1501738303:80172] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738303:86761] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738303:86775] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738310:423343] [radio_read:91] src:4 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 2'
+INFO  [1501738319:92057] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738319:98533] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738319:98544] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738336:439797] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501738336:445321] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501738336:445331] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738337:181633] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738337:181657] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738337:186974] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738337:186985] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738386:814567] [radio_read:91] src:1 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 3'
+INFO  [1501738387:247166] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738387:260065] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738387:260076] [mac_handle_ack:83] ACK status:ACK_OK retries:2
+INFO  [1501738402:155073] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501738407:653796] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738421:50738] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738421:50772] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738421:58204] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738421:58217] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738439:237931] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738444:477143] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738444:522156] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738444:528605] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738444:528616] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738446:462272] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501738446:470876] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501738446:470887] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738450:539515] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501738450:871308] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738450:871333] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738450:877778] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738450:877787] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 4'
+INFO  [1501738454:777522] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738454:782899] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738454:782909] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738475:536660] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738475:536685] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738475:542121] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738475:542133] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738526:634844] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738526:634871] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738526:640225] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738526:640250] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 5'
+INFO  [1501738544:244185] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738544:249573] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738544:249586] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 6'
+INFO  [1501738551:641566] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738551:646859] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738551:646871] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738552:394726] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738552:394747] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738552:399008] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738552:399017] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738563:191507] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501738563:200285] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501738563:200301] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738567:511041] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501738606:381601] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501738609:388879] [radio_read:91] src:9 dst:5 len:79 flags:0
+DATA send to 1 'Hello 7'
+INFO  [1501738632:253525] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738632:259939] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738632:259948] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738649:66333] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738649:66361] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738649:71687] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738649:71698] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738671:432759] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501738671:441416] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501738671:441428] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738680:270757] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501738683:179205] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738683:185527] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738683:185538] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738683:539146] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501738688:466842] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501738688:466867] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738688:474292] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738688:474303] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738691:870447] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501738705:231457] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501738715:430405] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738715:430428] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738715:435780] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738715:435792] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 8'
+INFO  [1501738723:993227] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738724:754] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738724:763] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738729:478] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501738747:511026] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501738747:518623] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501738747:518642] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 9'
+INFO  [1501738762:38007] [send_packet:48] src:5 dst:4 len:45
+INFO  [1501738762:44554] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738762:44568] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738775:67479] [radio_read:91] src:6 dst:5 len:45 flags:0
+INFO  [1501738775:67499] [send_packet:48] src:5 dst:4 len:54
+INFO  [1501738775:74900] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738775:74909] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 10'
+INFO  [1501738812:841057] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501738812:847461] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738812:847497] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738843:372257] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501738843:372280] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501738843:378704] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738843:378711] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738848:559686] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501738848:559716] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501738848:565055] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738848:565065] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738858:626854] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501738858:632315] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501738858:632327] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 11'
+INFO  [1501738871:438525] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501738871:443954] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738871:443966] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 12'
+INFO  [1501738920:444257] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501738920:450715] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738920:450728] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738924:798292] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501738924:807047] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501738924:807060] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738932:889442] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501738943:741746] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501738943:741767] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501738943:747122] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738943:747131] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738976:964056] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501738995:362690] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501738995:371418] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738995:371430] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501738996:92909] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501738996:92933] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501738996:98250] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501738996:98264] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 13'
+INFO  [1501739000:21187] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739000:26554] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739000:26564] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739001:522141] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501739001:529755] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501739001:529767] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739026:298661] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501739026:298689] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739026:302896] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739026:302908] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739027:248414] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501739054:353728] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739054:353751] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739054:360222] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739054:360238] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 14'
+INFO  [1501739056:718354] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739056:724846] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739056:724861] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739088:741840] [radio_read:91] src:9 dst:ffff len:80 flags:0
+INFO  [1501739093:235515] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739093:235541] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739093:240944] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739093:240971] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739111:708335] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501739111:717043] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501739111:717067] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739113:273660] [radio_read:91] src:6 dst:ffff len:80 flags:0
+INFO  [1501739116:685218] [radio_read:91] src:9 dst:5 len:79 flags:0
+DATA send to 1 'Hello 15'
+INFO  [1501739117:37170] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739117:41563] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739117:41573] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739149:147851] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739149:147873] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739149:154298] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739149:154313] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739150:448056] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501739152:754928] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739152:761341] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739152:761352] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 16'
+INFO  [1501739168:229446] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739168:234874] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739168:234887] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739185:481221] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501739204:866689] [radio_read:91] src:1 dst:ffff len:80 flags:0
+INFO  [1501739208:971848] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501739208:979544] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501739208:979553] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739212:997947] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739212:997981] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739213:3314] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739213:3325] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739222:253665] [radio_read:91] src:1 dst:5 len:79 flags:0
+DATA send to 1 'Hello 17'
+INFO  [1501739225:794623] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739225:799976] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739225:799988] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739268:565520] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501739279:106090] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501739279:113696] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501739279:113707] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 18'
+INFO  [1501739304:987224] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739304:992611] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739304:992619] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739305:880409] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739305:880430] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739305:885826] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739305:885836] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739337:726581] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739337:726604] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739337:733020] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739337:733032] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 19'
+INFO  [1501739344:360211] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739344:367729] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739344:367738] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739363:77634] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501739363:77665] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739363:84086] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739363:84098] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739370:539651] [radio_read:91] src:9 dst:5 len:79 flags:0
+INFO  [1501739385:738156] [radio_read:91] src:1 dst:5 len:79 flags:0
+DATA send to 1 'Hello 20'
+INFO  [1501739389:158094] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739389:164458] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739389:164467] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739396:152613] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501739396:164560] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501739396:164573] [mac_handle_ack:83] ACK status:ACK_OK retries:2
+INFO  [1501739398:551166] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501739398:551200] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739398:557613] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739398:557625] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739442:413876] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739442:413901] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739442:420291] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739442:420301] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 21'
+INFO  [1501739454:954251] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739454:960685] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739454:960694] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739460:133169] [radio_read:91] src:9 dst:5 len:79 flags:0
+INFO  [1501739466:27518] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501739469:563266] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739469:563286] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739469:568622] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739469:568631] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739477:878379] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739477:884955] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739477:884971] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739505:469049] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501739505:475603] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501739505:475618] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739509:255755] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739509:255781] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739509:262238] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739509:262251] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 22'
+INFO  [1501739510:780166] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739510:784507] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739510:784521] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 23'
+INFO  [1501739582:794805] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739582:802448] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739582:802459] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739592:839881] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501739594:781209] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501739594:787798] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501739594:787810] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739612:745887] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501739621:103379] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739621:103400] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739621:110879] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739621:110889] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739643:890591] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739643:890612] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739643:896997] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739643:897005] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739647:177621] [radio_read:91] src:9 dst:5 len:79 flags:0
+DATA send to 1 'Hello 24'
+INFO  [1501739659:518264] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739659:523618] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739659:523630] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739671:61406] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501739671:70102] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501739671:70116] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 25'
+INFO  [1501739720:730925] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739720:737349] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739720:737364] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739734:444792] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501739734:444822] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739734:451249] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739734:451261] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739742:184472] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739742:184496] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739742:189826] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739742:189836] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739749:282281] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501739749:289922] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501739749:289938] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739760:164306] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739760:164329] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739760:169643] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739760:169655] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739772:177786] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501739805:2908] [radio_read:91] src:4 dst:5 len:79 flags:0
+DATA send to 1 'Hello 26'
+INFO  [1501739805:887297] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739805:894862] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739805:894873] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739819:223079] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739819:223108] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739819:234890] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739819:234903] [mac_handle_ack:83] ACK status:ACK_OK retries:2
+INFO  [1501739832:840424] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501739832:848014] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739832:848031] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 27'
+INFO  [1501739844:765383] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739844:770766] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739844:770776] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739869:968698] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501739869:976349] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501739869:976364] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739870:810697] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739870:810724] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739870:816047] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739870:816058] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739875:844435] [radio_read:91] src:6 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 28'
+INFO  [1501739883:380198] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739883:385623] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739883:385634] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739921:232132] [radio_read:91] src:9 dst:5 len:79 flags:0
+INFO  [1501739927:270002] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501739937:711906] [radio_read:91] src:4 dst:ffff len:80 flags:0
+INFO  [1501739938:815855] [radio_read:91] src:9 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 29'
+INFO  [1501739960:634903] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739960:639183] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739960:639190] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739968:142080] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501739968:142111] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501739968:146325] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739968:146333] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739975:524061] [send_packet:48] src:5 dst:6 len:79
+INFO  [1501739975:531560] [radio_read:91] src:5 dst:6 len:1 flags:1
+INFO  [1501739975:531571] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501739982:617000] [radio_read:91] src:4 dst:5 len:79 flags:0
+DATA send to 1 'Hello 30'
+INFO  [1501739996:67358] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501739996:73997] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501739996:74019] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740037:321696] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501740037:321718] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501740037:328153] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740037:328168] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 31'
+INFO  [1501740064:976521] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501740064:984391] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740064:984403] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740087:235687] [radio_read:91] src:6 dst:5 len:53 flags:0
+INFO  [1501740087:235718] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501740087:240977] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740087:240987] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740091:215155] [send_packet:48] src:5 dst:1 len:79
+INFO  [1501740091:220618] [radio_read:91] src:5 dst:1 len:1 flags:1
+INFO  [1501740091:220631] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740092:73947] [send_packet:48] src:5 dst:ffff len:80
+INFO  [1501740095:533714] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501740095:533741] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501740095:538009] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740095:538025] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740113:608251] [radio_read:91] src:1 dst:5 len:79 flags:0
+INFO  [1501740128:689596] [radio_read:91] src:4 dst:5 len:79 flags:0
+INFO  [1501740137:804928] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501740137:804958] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501740137:810285] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740137:810295] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+DATA send to 1 'Hello 32'
+INFO  [1501740140:797383] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501740140:806027] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740140:806037] [mac_handle_ack:83] ACK status:ACK_OK retries:2
+INFO  [1501740150:967019] [send_packet:48] src:5 dst:4 len:53
+INFO  [1501740150:973510] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740150:973522] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740167:645817] [radio_read:91] src:1 dst:ffff len:80 flags:0
+DATA send to 1 'Hello 33'
+INFO  [1501740171:424508] [send_packet:48] src:5 dst:4 len:46
+INFO  [1501740171:430974] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740171:430987] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740176:452974] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501740176:452995] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501740176:457252] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740176:457261] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740215:787782] [send_packet:48] src:5 dst:9 len:79
+INFO  [1501740215:796554] [radio_read:91] src:5 dst:9 len:1 flags:1
+INFO  [1501740215:796568] [mac_handle_ack:83] ACK status:ACK_OK retries:1
+INFO  [1501740228:167278] [radio_read:91] src:9 dst:5 len:79 flags:0
+INFO  [1501740257:469723] [radio_read:91] src:6 dst:5 len:46 flags:0
+INFO  [1501740257:469749] [send_packet:48] src:5 dst:4 len:55
+INFO  [1501740257:476157] [radio_read:91] src:5 dst:4 len:1 flags:1
+INFO  [1501740257:476175] [mac_handle_ack:83] ACK status:ACK_OK retries:1
