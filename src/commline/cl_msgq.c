@@ -69,7 +69,6 @@ int msgq_init(const uint8_t flags)
 void msgq_cleanup(void)
 {
 	if(msgctl(gMsgQ_id, IPC_RMID, NULL)<0) {
-		ERROR("Failure deleting the msgq!\n");
 		return;
 	}
 	INFO("msgq deleted\n");
