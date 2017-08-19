@@ -27,10 +27,10 @@ void redirect_stdout_to_log(int nodeid)
 
 #define	MAX_CHILD_PROCESS	32000
 pid_t gChildProcess[MAX_CHILD_PROCESS];
-void fork_n_exec(char *buf)
+void fork_n_exec(uint16_t nodeid, char *buf)
 {
 	char *argv[20] = {NULL};
-	int i=0, nodeid;
+	int i=0;
 	char *ptr=NULL;
 
 	do {
@@ -46,7 +46,6 @@ void fork_n_exec(char *buf)
 		ERROR("Insufficient command exec info\n");
 		return;
 	}
-	nodeid = atoi(argv[1]);
 
 	gChildProcess[nodeid] = fork();
 	if(0 == gChildProcess[nodeid]) {
@@ -78,7 +77,7 @@ void wait_on_q(void)
 			break;
 		}
 		if(mbuf->len) {
-			fork_n_exec((char *)mbuf->buf);
+			fork_n_exec(mbuf->src_id, (char *)mbuf->buf);
 		}
 		usleep(1000);
 	}

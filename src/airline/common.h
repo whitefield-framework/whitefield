@@ -30,6 +30,7 @@
 #include <iterator>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 using namespace std;
 
 #define SUCCESS 0
@@ -53,5 +54,6 @@ extern wf::Config WF_config;
 #define	CFG(...)	WF_config.get(__VA_ARGS__)
 #define	CFG_PANID	stoi(WF_config.get("panID"), nullptr, 0)
 #define	SPAWN_STACKLINE(NODEID)	WF_config.spawnStackline(NODEID)
+#define WF_STOP	raise(SIGINT)
 
 #endif //_COMMON_H_

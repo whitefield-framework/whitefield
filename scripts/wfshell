@@ -64,7 +64,7 @@ chk_exec_cmd() {
 
 main() {
 	wfpid=`wf_get_pid`
-	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && exit
+	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && rem_msgq && exit
 	init
 	loop=1
 	while [ $loop -ne 0 ]; do

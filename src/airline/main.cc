@@ -28,6 +28,7 @@ extern "C" {
 #include "commline/commline.h"
 }
 
+ofstream g_errout;
 void sig_handler(int signum)
 {
 	if(signum > 1) {
@@ -56,10 +57,9 @@ void exec_forker(void)
 	}
 }
 
-ofstream g_errout;
 void redirect_log(void)
 {
-	char outfile[256];
+	char outfile[512];
 	if(!getenv("LOGPATH")) return;
 	snprintf(outfile, sizeof(outfile), "%s/airline_error.log", getenv("LOGPATH"));
 

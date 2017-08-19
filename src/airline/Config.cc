@@ -29,7 +29,84 @@ extern "C" {
 
 using namespace wf;
 extern void sig_handler(int);
-//This interface is called from AirlineManager...
+
+void Config::copyBetweenPtr(char *sptr, char *eptr, char *tok, int tok_len)
+{
+	//NULL tok not allowed
+	while((sptr < eptr) && (tok_len > 1) && *sptr) {
+		*tok++ = *sptr++;
+		tok_len--;
+	}
+	*tok=0;
+}
+
+char *Config::getNextCmdToken(char *ptr, char **state, char *tok, int tok_len)
+{
+	char *endptr;
+	if(!ptr) ptr=*state;
+	while(ptr && isspace(*ptr)) ptr++;
+	if(!ptr || !*ptr) return NULL;
+	if(*ptr == '"') 
+	{
+		ptr++;
+		endptr = strchr(ptr, '"');
+		if(!endptr) {
+			ERROR << "Invalid command token\n";
+			return NULL;
+		}
+		copyBetweenPtr(ptr, endptr, tok, tok_len);
+		*state=++endptr;
+		return tok;
+	}
+	endptr = strchr(ptr, ' ');
+	if(!endptr) {
+		strncpy(tok, ptr, tok_len-1);
+		tok[tok_len-1]='\0';
+		*state = 0;
+		return tok;
+	}
+	copyBetweenPtr(ptr, endptr, tok, tok_len);
+	*state = ++endptr;
+	return tok;
+}
+
+void Config::resolveToken(char *tok, int tok_len, uint16_t nodeID)
+{
+	char tmp[128];
+	char *ptr = strchr(tok, '$'); 
+	if(!ptr) return;
+	if(!strncmp(ptr, "$NODEID", sizeof("$NODEID")-1)) {
+		char *eptr = ptr + sizeof("$NODEID")-1;
+		int len=sprintf(tmp, "%d", nodeID);
+		strncpy(ptr, tmp, len);
+		ptr[len]=0;
+		strcat(ptr, eptr);
+		return;
+	}
+}
+
+void Config::cmdParser(string & cmd, uint16_t nodeID)
+{
+	char buf[1024], tok[512];
+	char *ptr = (char *)cmd.c_str(), *saveptr=NULL;
+	unsigned int buflen=0;
+	buf[0]=0;
+	while((ptr = getNextCmdToken(ptr, &saveptr, tok, sizeof(tok)))) {
+		resolveToken(tok, sizeof(tok), nodeID);
+		ptr = NULL;
+		if(buflen) {
+			buf[buflen++]='|';
+		}
+		buflen += snprintf(buf+buflen, sizeof(buf)-buflen, "%s", tok);
+		if(buflen >= sizeof(buf)-10) {
+			ERROR << "cmdParser: buf completely full\n";
+			WF_STOP;
+		}
+	}
+	string str(buf);
+	cmd = str;
+}
+
 void Config::spawnStackline(const uint16_t nodeID)
 {
 	uint8_t buf[sizeof(msg_buf_t) + COMMLINE_MAX_BUF];
@@ -39,14 +116,16 @@ void Config::spawnStackline(const uint16_t nodeID)
 
 	if(cmd.empty()) {
 		ERROR << "No Stackline executable configured for nodeID:" << nodeID << endl;
-		sig_handler(1);
+		WF_STOP;
 	}
 
+	cmdParser(cmd, nodeID);
 	INFO << "spawning node:" << nodeID 
 		 << " Exec: " << cmd
-		 << "\r";
-	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s|%d", cmd.c_str(), nodeID);
+		 << "\n";
+	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s", cmd.c_str());
 	mbuf->len = len;
+	mbuf->src_id = nodeID;
 	if(CL_SUCCESS != cl_sendto_q(MTYPE(FORKER, CL_MGR_ID), mbuf, len + sizeof(msg_buf_t))) {
 		ERROR << "Failure sending command to forker\n";
 	}
