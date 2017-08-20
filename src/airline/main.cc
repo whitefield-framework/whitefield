@@ -23,11 +23,13 @@
 #include <signal.h>
 #include <unistd.h>
 #include <common.h>
+#include <sys/prctl.h>
 #include <Manager.h>
 extern "C" {
 #include "commline/commline.h"
 }
 
+ofstream g_errout;
 void sig_handler(int signum)
 {
 	if(signum > 1) {
@@ -50,16 +52,19 @@ void exec_forker(void)
 			cmdname,
 			NULL,
 		};
+
+		/* When whitefield exits, then send inform forker */ 
+		prctl(PR_SET_PDEATHSIG, SIGINT);
+
 		execv(cmdname, argv);
 		ERROR << "Could not execv " << cmdname << ". Check if the forker cmdname/path is correct.Aborting..." << endl;
 		sig_handler(1);
 	}
 }
 
-ofstream g_errout;
 void redirect_log(void)
 {
-	char outfile[256];
+	char outfile[512];
 	if(!getenv("LOGPATH")) return;
 	snprintf(outfile, sizeof(outfile), "%s/airline_error.log", getenv("LOGPATH"));
 

@@ -50,6 +50,11 @@ namespace wf {
 			int setConfigurationFromFile(const char *filename);
 			int getNumberOfNodes(void) { return numOfNodes; };
 			void spawnStackline(const uint16_t nodeID);
+			void cmdParser(string & cmd, uint16_t nodeID);
+			char *getNextCmdToken(char *ptr, char **state, char *tok, int tok_len);
+			void copyBetweenPtr(char *sptr, char *eptr, char *tok, int tok_len);
+			void resolveToken(char *tok, int tok_len, uint16_t nodeID);
+
 			Config() 
 			{
 				nodeArray=NULL;

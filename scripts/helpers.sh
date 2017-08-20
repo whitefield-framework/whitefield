@@ -53,7 +53,12 @@ get_ftok_key()
 rem_msgq()
 {
 	get_ftok_key
-	ipcrm -Q $ftok_key
+	ftok_key_hex=`printf "0x%x" $ftok_key`
+	ipcs -q | grep "$ftok_key_hex" > /dev/null
+	if [ $? -eq 0 ]; then
+		#delete messageq only if it exists
+		ipcrm -Q $ftok_key
+	fi
 }
 
 stop_whitefield()
