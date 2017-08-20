@@ -26,9 +26,19 @@ void redirect_stdout_to_log(int nodeid)
 	}
 }
 
+int chk_executable(char *bin)
+{
+	struct stat st;
+	if(stat(bin, &st)) {
+		ERROR("Binary:[%s] DOES NOT EXIST!\n", bin);
+		return CL_FAILURE;
+	}
+	return CL_SUCCESS;
+}
+
 #define	MAX_CHILD_PROCESS	32000
 pid_t gChildProcess[MAX_CHILD_PROCESS];
-void fork_n_exec(uint16_t nodeid, char *buf)
+int fork_n_exec(uint16_t nodeid, char *buf)
 {
 	char *argv[20] = {NULL};
 	int i=0;
@@ -45,8 +55,10 @@ void fork_n_exec(uint16_t nodeid, char *buf)
 
 	if(i<1) {
 		ERROR("Insufficient command exec info\n");
-		return;
+		return CL_FAILURE;
 	}
+
+	if(chk_executable(argv[0])) return -1;
 
 	gChildProcess[nodeid] = fork();
 	if(0 == gChildProcess[nodeid]) {
@@ -63,6 +75,7 @@ void fork_n_exec(uint16_t nodeid, char *buf)
 	} else if(gChildProcess[nodeid] < 0) {
 		ERROR("fork failed!!!\n");
 	}
+	return CL_SUCCESS;
 }
 
 void killall_childprocess(void)
@@ -85,7 +98,7 @@ void wait_on_q(void)
 			break;
 		}
 		if(mbuf->len) {
-			fork_n_exec(mbuf->src_id, (char *)mbuf->buf);
+			if((CL_SUCCESS != fork_n_exec(mbuf->src_id, (char *)mbuf->buf))) break;
 		}
 		usleep(1000);
 	}
