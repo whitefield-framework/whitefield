@@ -28,7 +28,7 @@ int start_udp_server(int portno)
 	myaddr.sin_port = htons(portno);
 
 	if (bind(fd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
-		ERROR("bind failed %m\n");
+		ERROR("bind failed portno=%d %m\n", portno);
 		goto failure;
 	}
 	return fd;

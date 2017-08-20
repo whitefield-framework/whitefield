@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/prctl.h>
 #include "commline/commline.h"
 
 void redirect_stdout_to_log(int nodeid)
@@ -49,9 +50,16 @@ void fork_n_exec(uint16_t nodeid, char *buf)
 
 	gChildProcess[nodeid] = fork();
 	if(0 == gChildProcess[nodeid]) {
+
+		/* If parent dies, so does the child processes */
+		prctl(PR_SET_PDEATHSIG, SIGKILL);	//If forker dies then it should send SIGKILL to all kids i.e. stackline processes
+
+		/* Redirect stderr/out to the log files */
 		redirect_stdout_to_log(nodeid);
+
 		execv(argv[0], argv);
 		ERROR("Could not execv [%s]. Check if the cmdname/path is correct.Aborting...\n", argv[0]);
+		exit(0);
 	} else if(gChildProcess[nodeid] < 0) {
 		ERROR("fork failed!!!\n");
 	}
@@ -89,6 +97,7 @@ extern int start_monitor_thread(void);
 
 int main(void)
 {
+	INFO("Starting forker...\n");
 	if(CL_SUCCESS != cl_init(CL_ATTACHQ)) {
 		ERROR("forker: failure to cl_init()\n");
 		return 1;

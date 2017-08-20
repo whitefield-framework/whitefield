@@ -23,6 +23,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <common.h>
+#include <sys/prctl.h>
 #include <Manager.h>
 extern "C" {
 #include "commline/commline.h"
@@ -51,6 +52,10 @@ void exec_forker(void)
 			cmdname,
 			NULL,
 		};
+
+		/* When whitefield exits, then send inform forker */ 
+		prctl(PR_SET_PDEATHSIG, SIGINT);
+
 		execv(cmdname, argv);
 		ERROR << "Could not execv " << cmdname << ". Check if the forker cmdname/path is correct.Aborting..." << endl;
 		sig_handler(1);
