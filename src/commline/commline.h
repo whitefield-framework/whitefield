@@ -118,4 +118,7 @@ enum {
 		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
 
+// Stackline Helpers
+#include "cl_stackline_helpers.h"
+
 #endif	//_COMMLINE_H_

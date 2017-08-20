@@ -28,7 +28,7 @@ int start_udp_server(int portno)
 	myaddr.sin_port = htons(portno);
 
 	if (bind(fd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
-		ERROR("bind failed %m\n");
+		ERROR("bind failed portno=%d %m\n", portno);
 		goto failure;
 	}
 	return fd;
@@ -121,7 +121,7 @@ int start_monitor_thread(void)
 
 	gMonitorFD = start_udp_server(ptr?atoi(ptr):61616);
 	if(gMonitorFD < 0) {
-		ERROR("Failure starting TCP server\n");
+		ERROR("Failure starting UDP server\n");
 		return CL_FAILURE;
 	}
 	if(pthread_create(&tid, NULL, monitor_thread, NULL) < 0) {
