@@ -53,7 +53,7 @@ typedef struct _msg_buf_
 			uint8_t retries;
 			uint8_t status;
 		}ack;
-	};
+	} info;
 	uint16_t len; // length of the buf only
 	uint8_t buf[1];
 }msg_buf_t;

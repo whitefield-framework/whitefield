@@ -43,12 +43,12 @@ namespace wf {
 			return;
 		}
 		if(mbuf->flags & MBUF_IS_ACK) {
-			if(mbuf->ack.status == WF_STATUS_ACK_OK) {
-				if(IN_RANGE(mbuf->ack.retries, 1, MAX_MAC_TX_RETRY_CNT)) {
-					stats.rx_ack_ok[mbuf->ack.retries]++;
+			if(mbuf->info.ack.status == WF_STATUS_ACK_OK) {
+				if(IN_RANGE(mbuf->info.ack.retries, 1, MAX_MAC_TX_RETRY_CNT)) {
+					stats.rx_ack_ok[mbuf->info.ack.retries]++;
 				} else {
 					ERROR << "Stats failure since ACK_OK with retry:" 
-						  << (int)mbuf->ack.retries << endl;
+						  << (int)mbuf->info.ack.retries << endl;
 					return;
 				}
 			} else {

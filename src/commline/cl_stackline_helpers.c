@@ -43,3 +43,16 @@ int cl_get_id2longaddr(const uint16_t id, uint8_t *addr, const int addrlen)
 	addr[7] = ptr[0];
 	return CL_SUCCESS;
 }
+
+uint16_t cl_get_longaddr2id(const uint8_t *addr)
+{
+	if(!addr || !(addr[0]|addr[1]|addr[2]|addr[3]|addr[4]|addr[5]|addr[6]|addr[7])) { 
+		return 0xffff;
+	}
+	uint16_t nodeid;
+	uint8_t *ptr=(uint8_t*)&nodeid;
+	ptr[0] = addr[7];
+	ptr[1] = addr[6];
+	return nodeid;
+}
+
