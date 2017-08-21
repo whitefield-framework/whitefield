@@ -4,3 +4,7 @@
 [submodule "thirdparty/ns-3-dev-git"]
 	path = thirdparty/ns-3-dev-git
 	url = https://github.com/whitefield-framework/ns-3-dev-git
+[submodule "thirdparty/RIOT"]
+	path = thirdparty/RIOT
+	url = https://github.com/whitefield-framework/RIOT
+	branch = master

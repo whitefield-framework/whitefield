@@ -53,7 +53,7 @@ typedef struct _msg_buf_
 			uint8_t retries;
 			uint8_t status;
 		}ack;
-	};
+	} info;
 	uint16_t len; // length of the buf only
 	uint8_t buf[1];
 }msg_buf_t;
@@ -117,5 +117,8 @@ enum {
 		(MBUF)->buf[aux_len] = 0;\
 		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
+
+// Stackline Helpers
+#include "cl_stackline_helpers.h"
 
 #endif	//_COMMLINE_H_

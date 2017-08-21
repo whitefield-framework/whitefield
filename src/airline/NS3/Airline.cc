@@ -139,7 +139,7 @@ namespace ns3
 
 		mbuf->src_id = addr2id(params.m_srcAddr);
 		mbuf->dst_id = addr2id(params.m_dstAddr);
-		mbuf->sig.lqi = params.m_mpduLinkQuality;
+		mbuf->info.sig.lqi = params.m_mpduLinkQuality;
 		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
 		wf::Macstats::set_stats(AL_RX, mbuf);
 		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
@@ -191,9 +191,9 @@ namespace ns3
 
 			mbuf->src_id = GetNode()->GetId();
 			mbuf->dst_id = addr2id(drparams.m_dstAddr);
-			mbuf->ack.status = wf_ack_status(params.m_status);
-			if(mbuf->ack.status == WF_STATUS_ACK_OK) {
-				mbuf->ack.retries = params.m_retries+1;
+			mbuf->info.ack.status = wf_ack_status(params.m_status);
+			if(mbuf->info.ack.status == WF_STATUS_ACK_OK) {
+				mbuf->info.ack.retries = params.m_retries+1;
 			}
 			mbuf->flags |= MBUF_IS_ACK;
 			mbuf->len = 1;
