@@ -27,8 +27,6 @@ Typical use of Whitefield:
 ### Setup Instructions
 Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
 
-*On ubuntu 14.04, ns3 build has issues.*
-
 **System Requirements**:
 
 Disk Space: ~1.5GB
