@@ -1,4 +1,7 @@
 ## Module support table
+
+The best place to check whats up in the future is [Whitefield Project on Trello](https://trello.com/b/9bdugZxX)
+
 |Module|Supported|Remarks|
 |------|---------|-------|
 |Contiki|Yes|Master version|
@@ -6,7 +9,7 @@
 |Static Visualization|Yes|Using Graphviz to plot network diagram|
 |Dynamic Visualization| Yes|Canvas tool which plots nodes and their edges dynamically using Cytoscape.js|
 |Scapy as stackline|Next rel|Can be used for validating other stacklines (such as validating Contiki/RIOT)|
-|RIOT|Next rel|
+|RIOT|Yes|In alpha stage right now. Heavy duty testing in-progress. Tentative completion Sep-2017|
 |Castalia-Omnet|Future|Not Sure if Omnet license allows integrating with Whitefield|
 |Support for 802.15.4e|Future|Not planned yet. Requires submitting changes to NS3/Castalia|
 |Airline interface other than LOWPAN|Future|
