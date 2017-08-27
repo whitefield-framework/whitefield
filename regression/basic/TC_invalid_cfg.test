@@ -1,0 +1,5 @@
+testcase()
+{
+	$WF_CMD $TC_DIR/invalid.cfg
+	return $?
+}

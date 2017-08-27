@@ -1,0 +1,4 @@
+testcase()
+{
+	return 1
+}

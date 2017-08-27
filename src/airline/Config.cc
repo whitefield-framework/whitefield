@@ -219,14 +219,20 @@ int Config::setConfigurationFromFile(const char *fname)
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
 				set(key, value);
-			} else if(key == "nodeExec") {
-				setNodeSetExec(value, beg_range, end_range);
-			} else if(key == "captureFile") {
-				setNodeSetCapFile(value, beg_range, end_range);
-			} else if(key == "nodePosition") {
-				setNodePosition(value, beg_range, end_range);
 			} else {
-				set(key, value);
+				if(!numOfNodes) {
+					ERROR << "Configuration should first contain the numOfNodes cfg\n";
+					return FAILURE;
+				}
+				if(key == "nodeExec") {
+					setNodeSetExec(value, beg_range, end_range);
+				} else if(key == "captureFile") {
+					setNodeSetCapFile(value, beg_range, end_range);
+				} else if(key == "nodePosition") {
+					setNodePosition(value, beg_range, end_range);
+				} else {
+					set(key, value);
+				}
 			}
 		}
 	} catch(exception & e) {

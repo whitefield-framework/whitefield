@@ -36,7 +36,7 @@ void sig_handler(int signum)
 		INFO << "Caught signal " << signum << endl;
 	}
 	cl_cleanup();
-	INFO << "Sayonara...\n";
+	INFO << "Sayonara " << signum << "...\n";
 	exit(signum);
 }
 
