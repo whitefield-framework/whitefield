@@ -76,7 +76,7 @@ int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
 	while(c++ < 100)
 	{
 		usleep(1000);
-		cl_recvfrom_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, sizeof(mbuf_buf));
+		cl_recvfrom_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
 		if(mbuf->len > 0) {
 			memcpy_s(rsp, rsplen, mbuf->buf, mbuf->len);
 			rsp[mbuf->len++] = 0;

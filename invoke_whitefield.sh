@@ -3,7 +3,7 @@
 [[ ! -f "config.inc" ]] && echo "Need to start whitefield from base folder!!" && exit 1
 . config.inc
 
-export LD_LIBRARY_PATH=$NS3PATH:$BINDIR
+export LD_LIBRARY_PATH=$AIRLINE_NS3/build:$BINDIR
 export FORKER=$BINDIR/wf_forker
 export LOGPATH=log
 export MONITOR_PORT=$MONITOR_PORT

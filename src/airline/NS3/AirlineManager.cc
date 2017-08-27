@@ -227,7 +227,7 @@ void AirlineManager::msgReader(void)
 {
 	DEFINE_MBUF(mbuf);
 	while(1) {
-		cl_recvfrom_q(MTYPE(AIRLINE,CL_MGR_ID), mbuf, sizeof(mbuf_buf));
+		cl_recvfrom_q(MTYPE(AIRLINE,CL_MGR_ID), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
 		if(mbuf->len) {
 			msgrecvCallback(mbuf);
 			usleep(1);
