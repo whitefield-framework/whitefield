@@ -94,13 +94,12 @@ void wait_on_q(void)
 
 	while(1)
 	{
-		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,CL_MGR_ID), mbuf, sizeof(buf))) {
+		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,CL_MGR_ID), mbuf, sizeof(buf), 0)) {
 			break;
 		}
 		if(mbuf->len) {
 			if((CL_SUCCESS != fork_n_exec(mbuf->src_id, (char *)mbuf->buf))) break;
 		}
-		usleep(1000);
 	}
 	killall_childprocess();
 	INFO("Quitting forker process\n");

@@ -1,23 +1,24 @@
 include config.inc
 
+ifneq ($(AIRLINE_NS3),)
+AIRLINE=NS3
+CFLAGS+=-I$(AIRLINE_NS3)/build
+LIBS+=-L$(AIRLINE_NS3)/build -lns3-dev-core-$(REL) -lns3-dev-lr-wpan-$(REL) -lns3-dev-network-$(REL) -lns3-dev-spectrum-$(REL) -lns3-dev-mobility-$(REL) -lns3-dev-propagation-$(REL) -lns3-dev-stats-$(REL) -lns3-dev-antenna-$(REL)
+endif
+
 SRC=src/airline
 CL_SRC=src
-LIBS=-lpthread -L$(BINDIR) -lwf_commline
-CFLAGS=-std=c++11 -Wall -I$(CL_SRC) -I$(SRC)
+LIBS+=-lpthread -L$(BINDIR) -lwf_commline
+CFLAGS+=-std=c++11 -Wall -I$(CL_SRC) -I$(SRC)
 
 TARGET=$(BINDIR)/whitefield
 # Should be equivalent to your list of C files, if you don't build selectively
 SRCS=$(wildcard $(SRC)/*.cc)
-SRCS+=$(wildcard $(SRC)/$(AIRLINK)/*.cc)
+SRCS+=$(wildcard $(SRC)/$(AIRLINE)/*.cc)
 OBJS=$(addprefix $(BINDIR)/,$(SRCS:.cc=.o))
 #$(info $(OBJS))
-CFLAGS+=-I$(SRC)/$(AIRLINK)
+CFLAGS+=-I$(SRC)/$(AIRLINE)
 GLOBAL_HDR=$(SRC)/common.h $(SRC)/Config.h
-
-ifeq ($(AIRLINK),NS3)
-CFLAGS+=-I$(NS3PATH)
-LIBS+=-L$(NS3PATH) -lns3-dev-core-$(REL) -lns3-dev-lr-wpan-$(REL) -lns3-dev-network-$(REL) -lns3-dev-spectrum-$(REL) -lns3-dev-mobility-$(REL) -lns3-dev-propagation-$(REL) -lns3-dev-stats-$(REL) -lns3-dev-antenna-$(REL)
-endif
 
 ifeq ($(REL),debug)
 CFLAGS+=-g
@@ -35,7 +36,7 @@ $(BINDIR)/%.o: %.cc $(GLOBAL_HDR)
 	g++ -c -o $@ $< $(CFLAGS) $(LIBS)
 
 $(BINDIR)/$(SRC):
-	@mkdir -p $(BINDIR)/$(SRC)/$(AIRLINK)
+	@mkdir -p $(BINDIR)/$(SRC)/$(AIRLINE)
 
 clean:
 	@rm -rf $(BINDIR)

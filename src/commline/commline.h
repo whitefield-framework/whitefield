@@ -46,8 +46,10 @@ typedef struct _msg_buf_
 	uint8_t flags;
 	union {
 		struct {
-			uint8_t lqi;	//Link quality indicator 
-			uint8_t rssi;
+			//Note that you can have one or both or none of the indicators.
+			//Value is 0 if not present. NS3 provides LQI only. Castalia provides RSSI.
+			uint8_t lqi;	//Link Quality Indicator 
+			int8_t rssi;	//Rcvd Signal Strength Indicator
 		}sig;
 		struct {
 			uint8_t retries;
@@ -63,7 +65,8 @@ typedef struct _msg_buf_
 		msg_buf_t *MBUF = (msg_buf_t *)MBUF##_buf;\
 		memset(MBUF##_buf, 0, sizeof(MBUF##_buf));
 
-int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len);
+#define	CL_FLAG_NOWAIT	(1<<1)
+int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);
 int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len);
 
 enum {

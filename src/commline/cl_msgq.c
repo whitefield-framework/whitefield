@@ -74,12 +74,12 @@ void msgq_cleanup(void)
 	INFO("msgq deleted\n");
 }
 
-int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len)
+int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags)
 {
 	int ret;
 
 	mbuf->len=0;
-	ret = msgrcv(gMsgQ_id, (void*)mbuf, len, mtype, IPC_NOWAIT);
+	ret = msgrcv(gMsgQ_id, (void*)mbuf, len, mtype, (flags & CL_FLAG_NOWAIT)?IPC_NOWAIT:0);
 	if(ret<0) {
 		if(ENOMSG == errno) return CL_SUCCESS;
 		return CL_FAILURE;

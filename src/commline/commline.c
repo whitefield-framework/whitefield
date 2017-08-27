@@ -46,13 +46,13 @@ int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
 	return msgq_sendto(mtype, mbuf, len);
 }
 
-int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
+int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags)
 {
 	if(!mbuf || !len) {
 		ERROR("invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
 		return CL_FAILURE;
 	}
 	memset(mbuf, 0, sizeof(msg_buf_t));
-	return msgq_recvfrom(mtype, mbuf, len);
+	return msgq_recvfrom(mtype, mbuf, len, flags);
 }
 
