@@ -12,6 +12,25 @@ rm $TC_LOG 2>/dev/null
 tc_cnt=0
 tc_fail=0
 
+echoscr()
+{
+	>&2 echo $*;
+}
+
+wait4sec()
+{
+	[[ $# -ne 3 ]] && echo "Usage: $0 <waittime> <cmd> <expoutput>" && return 1
+	for((i=0;i<=$1;i++)); do
+		echoscr -en "\rwaiting $i/$1 sec..."
+		out=`$2`
+		[[ "$out" == "$3" ]] && tc_set_msg "reached in $i sec" && ret=0 && break
+		sleep 1
+	done
+	echoscr ;
+	[[ $ret -ne 0 ]] && tc_set_msg "($2) expected output ($3) never reached in $1 sec time"
+	return $ret
+}
+
 get_status_print()
 {
 	RED='\033[0;31m'
@@ -40,7 +59,8 @@ tc_set_msg()
 
 exec_testcase()
 {
-	TC_DIR=`dirname "$1"`
+	tcpath=`realpath "$1"`
+	TC_DIR=`dirname "$tcpath"`
 	tcname=`basename "$1"`
 	echo "executing $1..."
 	echo "-----[TEST: $1]-----" >> $TC_LOG
@@ -51,7 +71,6 @@ exec_testcase()
 	#execute testcase
 	pre_tc_exec
 	testcase >>$TC_LOG
-	post_tc_exec
 
 	#print testcase status
 	tc_res=$?
@@ -60,6 +79,7 @@ exec_testcase()
 	get_status_print $tc_res
 	echo -en "[$tc_cnt] [$tcname] [$tc_status] [tot_fail:$tc_fail]\n" | tee -a $TC_LOG
 	[[ "$TC_MSG" != "" ]] && echo -en "tc_msg:$TC_MSG\n"
+	post_tc_exec
 }
 
 regress_dir()
@@ -73,6 +93,7 @@ regress_dir()
 regress_cfg()
 {
 	[[ -d "$1" ]] && regress_dir "$1" && return
+	[[ $1 =~ .*TC_.*\.test$ ]] && exec_testcase "$1" && return
 	while read line; do 
 		line=`echo $line`	#trim spaces
 		[[ "${line}" == "" ]] && continue;
@@ -90,5 +111,6 @@ regress_cfg()
 
 regress_cfg "$1"
 echo "check $TC_LOG for execution log..."
-[[ $tc_fail -ne 0 ]] && echo "$tc_fail testcases failed!!" && exit 1
+[[ $tc_fail -ne 0 ]] && echo "$tc_fail/$tc_cnt testcases failed!!" && exit 1
+echo "All $tc_cnt testcases passed"
 exit 0

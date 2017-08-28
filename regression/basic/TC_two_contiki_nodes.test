@@ -1,0 +1,10 @@
+#!/bin/bash
+
+testcase()
+{
+	$WF_CMD $TC_DIR/two_contiki_nodes.cfg
+	[[ $? -ne 0 ]] && tc_set_msg "expecting return 0 instead got $?" && return 1
+	echoscr "waiting for routing table status..."
+	wait4sec 20 "$WFSH cmd_rtsize 0" "1"
+	return $?
+}
