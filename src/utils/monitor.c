@@ -53,7 +53,7 @@ int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
 		return snprintf(rsp, rsplen, "INVALID_LINE");
 	}
 	ptr=strchr(cmd, ':');
-	*ptr++ = 0;
+	*ptr++ = 2;
 	if(isdigit(*ptr)) {
 		mbuf->src_id = atoi(ptr);
 		cmd=strchr(ptr, ':');

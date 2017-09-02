@@ -6,7 +6,7 @@ testcase()
 	ret=$?
 
 	#We expect SIGCHLD(=17) when the nodeexec binary is incorrect
-	[[ $? -eq 17 ]] && return 0
-	tc_set_msg "expecting ret=17, instead rcvd $ret"
+	[[ $ret -eq 1 ]] && return 0
+	tc_set_msg "expecting ret=1, instead rcvd $ret"
 	return 1
 }

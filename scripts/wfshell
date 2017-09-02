@@ -62,9 +62,31 @@ chk_exec_cmd() {
 	history -s "$cmd"
 }
 
+usage()
+{
+	echo "Usage: $0 [-f <json>]"
+	exit 1
+}
+
+cmdline_args() #XXX Currently unused but can be put to use in future.
+{
+	while getopts "f:" o; do
+		case "$o" in
+			f)
+				output_fmt=$OPTARG
+				;;
+			*) 
+				usage
+				;;
+		esac
+	done
+}
+
 main() {
 	wfpid=`wf_get_pid`
 	[[ "$wfpid" == "" ]] && echo "Whitefield is stopped" && rem_msgq && exit
+#	cmdline_args $*
+#	shift $((OPTIND-1))
 	init
 	loop=1
 	while [ $loop -ne 0 ]; do
