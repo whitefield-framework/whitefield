@@ -18,7 +18,7 @@ void redirect_stdout_to_log(int nodeid)
 	char logfile[512];
 
 	snprintf(logfile, sizeof(logfile), "%s/node_%04d.log", getenv("LOGPATH")?getenv("LOGPATH"):"log", nodeid);
-	fd = open(logfile, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+	fd = open(logfile, O_TRUNC | O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd > 0) {
 		dup2(fd, 1);
 		dup2(fd, 2);

@@ -6,5 +6,50 @@ testcase()
 	[[ $? -ne 0 ]] && tc_set_msg "expecting return 0 instead got $?" && return 1
 	echoscr "waiting for routing table status..."
 	wait4sec 20 "$WFSH cmd_rtsize 0" "1"
-	return $?
+
+	#Verify OS name
+	str=`$WFSH cmd_node_osname 0 | jq .os`
+	[[ "$str" != "\"contiki\"" ]] && tc_set_msg "expected cmd_node_osname to return contiki. Actual [$str]" && return 1
+	echoscr "cmd_node_osname=$str"
+
+	# Verify default route on BR and node
+	str=`$WFSH cmd_def_route 0`
+	echoscr "cmd_def_route=$str"
+	[[ "$str" != "[NONE]" ]] && tc_set_msg "Exp def_route=[NONE] on BR. Actual [$str]" && return 1
+	str=`$WFSH cmd_def_route 1`
+	echoscr "cmd_def_route=$str"
+	[[ "$str" != "fe80::302:304:506:0" ]] && tc_set_msg "Exp def_route=fe80::302:304:506:0 on node. Actual [$str]" && return 1
+
+	#Verify rpl stats
+	str=`$WFSH cmd_rpl_stats 0 | jq -r .rpl_stats.resets`
+	[[ $str -le 0 ]] && tc_set_msg "Exp resets>0. Actual [$str]" && return 1
+	echoscr "cmd_rpl_stats.resets=$str"
+
+	#Verify route table on BR
+	str=`$WFSH cmd_route_table 0 | jq -r .route_table.routes[0].prefix,.route_table.routes[0].pref_len,.route_table.routes[0].next_hop`
+	exp_str="fd00::302:304:506:1 128 fe80::302:304:506:1"
+	[[ "$str" == "$exp_str" ]] && tc_set_msg "Exp route_table=[$exp_str]. Actual [$str]" && return 1
+	echoscr "cmd_route_table=$str"
+
+	#Verify IPv6 stats
+	rcvd=`$WFSH cmd_ipv6_stats 0 | jq -r .ipv6_stats.rcvd`
+	sent=`$WFSH cmd_ipv6_stats 0 | jq -r .ipv6_stats.sent`
+	[[ $rcvd -le 1 ]] && tc_set_msg "Exp ipv6.rcvd>1. Actual [$rcvd]" && return 1
+	[[ $sent -le 1 ]] && tc_set_msg "Exp ipv6.sent>1. Actual [$sent]" && return 1
+	echoscr "cmd_ipv6_stats: rcvd=$rcvd, sent=$sent"
+
+	#Verify icmp stats
+	rcvd=`$WFSH cmd_icmp_stats 0 | jq -r .icmp_stats.rcvd`
+	sent=`$WFSH cmd_icmp_stats 0 | jq -r .icmp_stats.sent`
+	[[ $rcvd -le 1 ]] && tc_set_msg "Exp icmp.rcvd>1. Actual [$rcvd]" && return 1
+	[[ $sent -le 1 ]] && tc_set_msg "Exp icmp.sent>1. Actual [$sent]" && return 1
+	echoscr "cmd_icmp_stats: rcvd=$rcvd, sent=$sent"
+
+	#Verify config info
+	rt_maxsz=`$WFSH cmd_config_info 0 | jq -r .config.rttable_maxsz`
+	nbr_maxsz=`$WFSH cmd_config_info 0 | jq -r .config.nbrtable_maxsz`
+	[[ $rt_maxsz -lt 10 ]] && tc_set_msg "Exp rt_maxsz>=10. Actual [$rt_maxsz]" && return 1
+	[[ $nbr_maxsz -lt 10 ]] && tc_set_msg "Exp nbr_maxsz>=10. Actual [$nbr_maxsz]" && return 1
+	echoscr "cmd_config_info: rt_maxsz=$rt_maxsz, nbr_maxsz:$nbr_maxsz"
+	return 0
 }
