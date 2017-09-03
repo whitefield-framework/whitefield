@@ -85,6 +85,7 @@ int main(const int argc, const char *argv[])
 	signal(SIGKILL, sig_handler);
 	signal(SIGTERM, sig_handler);
 	signal(SIGSEGV, sig_handler);
+	signal(SIGCHLD, sig_handler);
 
 	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
 		ERROR << "Whitefield is already running\n";

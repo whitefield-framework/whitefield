@@ -1,0 +1,5 @@
+basic
+#Basic two nodes setup with only contiki. Routing table is populated.
+#Basic two nodes setup with contiki as BR and RIOT as other node. Check if routing table is populated.
+#rpl
+

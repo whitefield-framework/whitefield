@@ -6,14 +6,61 @@
 DIR=`dirname "$0"`
 REG_DIR=`realpath "$DIR"`
 WF_CMD="$REG_DIR/../invoke_whitefield.sh"
+WFSH="$REG_DIR/../scripts/wfshell"
 TC_LOG="$REG_DIR/testcase_report.log"
 rm $TC_LOG 2>/dev/null
 tc_cnt=0
 tc_fail=0
 
+echoscr()
+{
+	>&2 echo $*;
+}
+
+wait4sec()
+{
+	[[ $# -ne 3 ]] && echo "Usage: $0 <waittime> <cmd> <expoutput>" && return 1
+	for((i=0;i<=$1;i++)); do
+		echoscr -en "\rwaiting $i/$1 sec..."
+		out=`$2`
+		[[ "$out" == "$3" ]] && tc_set_msg "reached in $i sec" && ret=0 && break
+		sleep 1
+	done
+	echoscr ;
+	[[ $ret -ne 0 ]] && tc_set_msg "($2) expected output ($3) never reached in $1 sec time"
+	return $ret
+}
+
+get_status_print()
+{
+	RED='\033[0;31m'
+	GREEN='\033[0;32m'
+	NC='\033[0m' # No Color
+	[[ $1 -eq 0 ]] && tc_status="${GREEN}PASS${NC}" && return
+	tc_status="${RED}FAIL${NC}"
+}
+
+pre_tc_exec()
+{
+	$WFSH stop_whitefield >/dev/null
+	unset TC_MSG
+}
+
+post_tc_exec()
+{
+	$WFSH stop_whitefield >/dev/null
+	unset TC_MSG
+}
+
+tc_set_msg()
+{
+	TC_MSG="$*"
+}
+
 exec_testcase()
 {
-	TC_DIR=`dirname "$1"`
+	tcpath=`realpath "$1"`
+	TC_DIR=`dirname "$tcpath"`
 	tcname=`basename "$1"`
 	echo "executing $1..."
 	echo "-----[TEST: $1]-----" >> $TC_LOG
@@ -22,13 +69,17 @@ exec_testcase()
 	source "$1"
 
 	#execute testcase
+	pre_tc_exec
 	testcase >>$TC_LOG
 
 	#print testcase status
 	tc_res=$?
 	((tc_cnt++))
 	[[ $tc_res -ne 0 ]] && ((tc_fail++))
-	echo -en "$tc_cnt $tcname res:$tc_res tot_fail:$tc_fail\n" | tee -a $TC_LOG
+	get_status_print $tc_res
+	echo -en "[$tc_cnt] [$tcname] [$tc_status] [tot_fail:$tc_fail]\n" | tee -a $TC_LOG
+	[[ "$TC_MSG" != "" ]] && echo -en "tc_msg:$TC_MSG\n"
+	post_tc_exec
 }
 
 regress_dir()
@@ -42,15 +93,24 @@ regress_dir()
 regress_cfg()
 {
 	[[ -d "$1" ]] && regress_dir "$1" && return
+	[[ $1 =~ .*TC_.*\.test$ ]] && exec_testcase "$1" && return
 	while read line; do 
+		line=`echo $line`	#trim spaces
+		[[ "${line}" == "" ]] && continue;
 		[[ "${line:0:1}" == "#" ]] && continue;
-		line="$REG_DIR/$line"
-		[[ -d "$line" ]] && regress_dir "$line" && continue
-		[[ -f "$line" ]] && exec_testcase "$line" && continue
-		echo "Invalid line:<$line> in <$1> ... ignoring..."
+		path="$REG_DIR/$line"
+		if [ -d "$path" ]; then
+			regress_dir "$path"
+		elif [ -f "$path" ]; then 
+			exec_testcase "$path"
+		else
+			echo "Invalid line:<$line> in <$1> ... ignoring..."
+		fi
 	done < "$1"
 }
 
 regress_cfg "$1"
 echo "check $TC_LOG for execution log..."
-[[ $tc_fail -ne 0 ]] && exit 1
+[[ $tc_fail -ne 0 ]] && echo "$tc_fail/$tc_cnt testcases failed!!" && exit 1
+echo "All $tc_cnt testcases passed"
+exit 0
