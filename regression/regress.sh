@@ -1,6 +1,7 @@
 #!/bin/bash
 
 [[ "`whereis realpath | cut -d ':' -f 2`" == "" ]] && echo "realpath cmd not found. Install coreutils." && exit
+[[ "`whereis jq | cut -d ':' -f 2`" == "" ]] && echo "jq cmd not found. Install jq (JSON parser)." && exit
 [[ ! -f "$1" ]] && [[ ! -d "$1" ]] && echo "Usage: $0 <testcfg || testdir>" && exit
 
 DIR=`dirname "$0"`
@@ -112,5 +113,5 @@ regress_cfg()
 regress_cfg "$1"
 echo "check $TC_LOG for execution log..."
 [[ $tc_fail -ne 0 ]] && echo "$tc_fail/$tc_cnt testcases failed!!" && exit 1
-echo "All $tc_cnt testcases passed"
+echo "$tc_cnt testcases passed"
 exit 0

@@ -62,31 +62,25 @@ uint16_t cl_get_longaddr2id(const uint8_t *addr)
 	return nodeid;
 }
 
-#if 0
-#define	HANDLE_CMD(MBUF, CMD)	\
-	else if(!strncasecmp((char*)(MBUF)->buf, #CMD, sizeof(#CMD)-1))	\
+#if USE_DL
+void *g_dl_lib_handle=NULL;
+typedef int (*cmd_handler_func_t)(uint16_t src_id, char*buf, int len);
+#else
+#define	PLAY_CMD(MBUF, CMD)	\
+	else if(!strcmp(cmd, #CMD))	\
 	{\
-		int aux_len=0;\
-		char *colon_ptr = strchr((char*)(MBUF)->buf, ':');\
-		if(colon_ptr) {\
-			*colon_ptr++=0;\
-			aux_len = strlen(colon_ptr);\
-			memmove((MBUF)->buf, colon_ptr, aux_len);\
-		}\
-		(MBUF)->buf[aux_len] = 0;\
+		extern int CMD(uint16_t, char *, int);\
 		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
 #endif
 
-void *g_dl_lib_handle=NULL;
-typedef int (*cmd_handler_func_t)(uint16_t src_id, char*buf, int len);
-
 void sl_handle_cmd(msg_buf_t *mbuf)
 {
-	cmd_handler_func_t cmd_func;
 	int aux_len=0;
 	char *colon_ptr, cmd[256];
 
+#if USE_DL
+	cmd_handler_func_t cmd_func;
 	if(!g_dl_lib_handle) {
 		g_dl_lib_handle=dlopen(NULL, RTLD_LAZY);
 		if(!g_dl_lib_handle) {
@@ -94,6 +88,8 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 			return;
 		}
 	}
+#endif
+
 	colon_ptr = strchr((char*)mbuf->buf, ':');
 	if(colon_ptr) {
 		*colon_ptr++=0;
@@ -103,26 +99,29 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	} else {
 		strncpy(cmd, (char*)mbuf->buf, sizeof(cmd)-1);
 	}
+	mbuf->buf[aux_len] = 0;
+
+#if USE_DL
 	cmd_func = (cmd_handler_func_t)dlsym(g_dl_lib_handle, cmd);
 	if(!cmd_func) {
-		ERROR("Could not load cmd: <%s>\n", cmd);
+		ERROR("Could not load cmd: <%s> %s\n", cmd, dlerror());
+		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
 		return;
 	}
-	mbuf->buf[aux_len] = 0;
 	mbuf->len = cmd_func(mbuf->src_id, (char*)mbuf->buf, COMMLINE_MAX_BUF);
-#if 0
+#else
 	if(0) { } 
-	HANDLE_CMD(mbuf, cmd_rpl_stats)
-	HANDLE_CMD(mbuf, cmd_def_route)
-	HANDLE_CMD(mbuf, cmd_route_table)
-	HANDLE_CMD(mbuf, cmd_rtsize)
-	HANDLE_CMD(mbuf, cmd_node_osname)
-	HANDLE_CMD(mbuf, cmd_ipv6_stats)
-	HANDLE_CMD(mbuf, cmd_nd6_stats)
-	HANDLE_CMD(mbuf, cmd_icmp_stats)
-	HANDLE_CMD(mbuf, cmd_udp_stats)
-	HANDLE_CMD(mbuf, cmd_tcp_stats)
-	HANDLE_CMD(mbuf, cmd_config_info)
+	PLAY_CMD(mbuf, cmd_rpl_stats)
+	PLAY_CMD(mbuf, cmd_def_route)
+	PLAY_CMD(mbuf, cmd_route_table)
+	PLAY_CMD(mbuf, cmd_rtsize)
+	PLAY_CMD(mbuf, cmd_node_osname)
+	PLAY_CMD(mbuf, cmd_ipv6_stats)
+	PLAY_CMD(mbuf, cmd_nd6_stats)
+	PLAY_CMD(mbuf, cmd_icmp_stats)
+	PLAY_CMD(mbuf, cmd_udp_stats)
+	PLAY_CMD(mbuf, cmd_tcp_stats)
+	PLAY_CMD(mbuf, cmd_config_info)
 	else {
 		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   

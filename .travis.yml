@@ -17,3 +17,4 @@ before_script:
 
 script:
   - ./scripts/setup.sh
+  - ./regression/regress.sh regression/full.set
