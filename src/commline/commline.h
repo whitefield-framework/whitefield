@@ -39,6 +39,7 @@ void cl_cleanup(void);
 #define	MBUF_IS_CMD	(1<<1)
 //#define	MBUF_OUTPUT_JSON	(1<<2)
 
+#pragma pack(push,1)
 typedef struct _msg_buf_
 {
 	long mtype;
@@ -60,6 +61,7 @@ typedef struct _msg_buf_
 	uint16_t len; // length of the buf only
 	uint8_t buf[1];
 }msg_buf_t;
+#pragma pack(pop)
 
 #define	DEFINE_MBUF(MBUF)	\
 		uint8_t MBUF##_buf[sizeof(msg_buf_t)+COMMLINE_MAX_BUF];\

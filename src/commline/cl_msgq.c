@@ -80,16 +80,12 @@ int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flag
 
 	mbuf->len=0;
 	ret = msgrcv(gMsgQ_id, (void*)mbuf, len, mtype, (flags & CL_FLAG_NOWAIT)?IPC_NOWAIT:0);
-	if(ret<0) {
-		if(ENOMSG == errno) return CL_SUCCESS;
-		return CL_FAILURE;
-	}
-	if(ret < sizeof(msg_buf_t)) 
+	if(ret>0 && ret+4<sizeof(msg_buf_t)) //Rahul: +4 is added for bins compiled with -m32. sizeof(long) issue.
 	{
-		ERROR("some problem ... msgrcv length(%d) not enough\n", ret);
+		ERROR("some problem ... msgrcv length(%d) not enough sizeof:%zu\n", ret, sizeof(msg_buf_t));
 		return CL_FAILURE;
 	}
-	return CL_SUCCESS;
+	return ret;
 }
 
 int msgq_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)

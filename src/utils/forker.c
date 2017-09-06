@@ -94,7 +94,7 @@ void wait_on_q(void)
 
 	while(1)
 	{
-		if(CL_SUCCESS != cl_recvfrom_q(MTYPE(FORKER,CL_MGR_ID), mbuf, sizeof(buf), 0)) {
+		if(cl_recvfrom_q(MTYPE(FORKER,CL_MGR_ID), mbuf, sizeof(buf), 0)<0) {
 			break;
 		}
 		if(mbuf->len) {
