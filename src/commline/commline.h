@@ -124,6 +124,18 @@ enum {
 		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
 	}
 
+#define	PRINT_HEX(BUF, LEN, ...)	\
+{\
+	int i;\
+	printf(__VA_ARGS__);\
+	for(i=0;i<LEN;i++) {\
+		if(i && !(i%16)) printf("\n");\
+		else if(i && !(i%8)) printf("\t");\
+		printf("%02x ", (uint8_t)BUF[i]);\
+	}\
+	printf("\n");\
+}
+
 // Stackline Helpers
 #include "cl_stackline_helpers.h"
 
