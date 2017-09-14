@@ -100,6 +100,11 @@ namespace ns3
 			params.m_txOptions = TX_OPTION_ACK;
 		}
 		pktq.push(params);
+#if 0
+		if(GetNode()->GetId() == 1) {
+			INFO << GetNode()->GetId() << " packet q size:" << (int)pktq.size() << endl;
+		}
+#endif
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
 
@@ -185,6 +190,11 @@ namespace ns3
 			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
 			return;
 		}
+#if 0
+		if(GetNode()->GetId() == 1) {
+			INFO << GetNode()->GetId() << " rcvd confirm ind\n";
+		}
+#endif
 		McpsDataRequestParams drparams = pktq.front();
 		if(drparams.m_txOptions == TX_OPTION_ACK) {
 			DEFINE_MBUF(mbuf);
@@ -220,7 +230,7 @@ namespace ns3
 			if(!dstr.empty()) {
 				m_macpktqlen = (uint8_t)stoi(dstr);
 			} else {
-				m_macpktqlen = 10;
+				m_macpktqlen = 20;
 			}
 		}
 	};

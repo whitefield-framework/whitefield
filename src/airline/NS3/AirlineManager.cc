@@ -199,7 +199,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 		string ns3_capfile = CFG("NS3_captureFile");
 		if(!ns3_capfile.empty()) {
 			INFO << "NS3 Capture File:" << ns3_capfile << endl;
-			lrWpanHelper.EnablePcapAll (ns3_capfile, true);
+			lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
 		}
 
 		AirlineHelper airlineApp;
