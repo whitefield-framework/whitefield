@@ -29,7 +29,6 @@ extern "C" {
 #include "commline/commline.h"
 }
 
-ofstream g_errout;
 void sig_handler(int signum)
 {
 	if(signum > 1) {
@@ -62,6 +61,8 @@ void exec_forker(void)
 	}
 }
 
+#if 0
+ofstream g_errout;
 void redirect_log(void)
 {
 	char outfile[512];
@@ -72,6 +73,7 @@ void redirect_log(void)
 //	streambuf *cerrbuf=cerr.rdbuf();
 	cerr.rdbuf(g_errout.rdbuf());
 }
+#endif
 
 wf::Config WF_config;
 int main(const int argc, const char *argv[])
@@ -95,7 +97,7 @@ int main(const int argc, const char *argv[])
 		ERROR << "Terminating...\n"; 
 		sig_handler(1);
 	}
-	redirect_log();
+	//redirect_log();
 	exec_forker();
 	Manager WF_mgr(WF_config);
 	sig_handler(0);
