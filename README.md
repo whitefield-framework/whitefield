@@ -71,4 +71,4 @@ $./scripts/wfshell stop_whitefield
 
 ### [Module support table](docs/README.md "Module support table")
 
-#### [Forum: https://groups.google.com/forum/?pli=1#!forum/whitefield-fw](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
+### [Forum](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
