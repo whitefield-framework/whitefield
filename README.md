@@ -32,7 +32,7 @@ Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
 Disk Space: ~1.5GB
 ```
 sudo apt-get update
-sudo apt-get install gcc g++ make git graphviz build-essential libc6-dev-i386
+sudo apt-get install git graphviz build-essential
 ```
 **Build Instructions**:
 
