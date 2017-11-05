@@ -1,4 +1,5 @@
 1. Test if nodePosition works ok
 2. Test for topologyType=grid
 3. Test for topologyType=randrect
+4. Test for RIOT nodes with contiki as BR.
 - nodeExec

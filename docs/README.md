@@ -16,8 +16,6 @@ The best place to check whats up in the future is [Whitefield Project on Trello]
 |Runtime Mobility|Future|
 
 
-Next release is planned for July tentatively
-
 ## Advanced Whitefield Customisations
 
 ### How to add a new RF simulator using Airline/Commline interfaces

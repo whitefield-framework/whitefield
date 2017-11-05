@@ -4,6 +4,6 @@
 
 testcase()
 {
-	inc_testcase $TC_DIR/two_contiki_nodes.cfg
+	inc_testcase $TC_DIR/two_mixed_nodes.cfg
 	return $?
 }
