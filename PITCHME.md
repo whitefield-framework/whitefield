@@ -1,6 +1,9 @@
 # Whitefield
 
+--
 ## Rationale
+
+--
 
 ## Design
 1.
@@ -8,10 +11,13 @@
 3. Integrated OAM
 4. Process design
 
+--
 ## What does Whitefield have today (Nov 2017)?
 
+--
 ## How have we used it for?
 
+--
 ## Screenshots
 1. configuration
 2. start whitefield
