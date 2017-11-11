@@ -1,9 +1,48 @@
 # Whitefield
 
---
+Framework for realistic RF simulation with real-world protocol stacks
+
+---
 ## Rationale
 
---
+- Wireless technologies in last-mile IoT
+    - 802.15.4, TISCH, BLE, 802.11-OCB...
+    - 6lo, RPL, 6top...
+- Protocol Design/performance/efficiency
+    - Dependency on link layer tech
+    - Asymmetric links
+    - Transient links
+- An example... protocol design with assumption of bidirectional links ...
+
+---
+
+## Our Experience
+- Lets talk practical IoT
+- We implemented and tested,
+    - IETF RFCs, and drafts
+    - IEEE papers
+- Unrealistic data with Cooja
+- Few use NS3, Castalia-Omnet++
+    - Requires more effort
+
+---
+
+## experience(contd)
+- Performance@scale
+    - example, routing/adhoc issues @ scale
+- Design@scale
+    - example, neighbor mgmt issues
+- Most of the plugfests, prototypes are limited to few nodes
+- Rarely you see pratical prototypes with 100s/1000s of nodes
+
+---
+
+## experience (contd)
+- Security is especially difficult
+- Impact of 6lo fragmentation
+- Network convergence time@scale
+
+---
 
 ## Design
 1.
@@ -11,13 +50,13 @@
 3. Integrated OAM
 4. Process design
 
---
+---
 ## What does Whitefield have today (Nov 2017)?
 
---
+---
 ## How have we used it for?
 
---
+---
 ## Screenshots
 1. configuration
 2. start whitefield
