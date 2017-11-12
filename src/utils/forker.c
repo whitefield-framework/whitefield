@@ -1,5 +1,7 @@
 #define	_FORKER_C_
 
+#define	_GNU_SOURCE
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -36,25 +38,34 @@ int chk_executable(char *bin)
 	return CL_SUCCESS;
 }
 
-#define	MAX_CHILD_PROCESS	32000
+#define	MAX_CHILD_PROCESS	8000
 pid_t gChildProcess[MAX_CHILD_PROCESS];
+#define	SET_ARG_ENV(BUF)	\
+	if(strchr(BUF, '=')) {\
+		envp[e++]=BUF;\
+	} else {\
+		argv[i++]=BUF;\
+	}
+
 int fork_n_exec(uint16_t nodeid, char *buf)
 {
 	char *argv[20] = {NULL};
-	int i=0;
+	char *envp[20] = {NULL};
+	int i=0, e=0;
 	char *ptr=NULL;
 
-	do {
-		if(ptr) {
-			*ptr = '\0';
-			buf = ++ptr;
-		}
-		argv[i++] = buf;
-	} while((ptr=strchr(buf, '|')));
+	while((ptr=strchr(buf, '|'))) {
+		*ptr++=0;
+		SET_ARG_ENV(buf);
+		buf = ptr;
+	}
+	SET_ARG_ENV(buf);
+
 	argv[i] = NULL;
+	envp[e] = NULL;
 
 	if(i<1) {
-		ERROR("Insufficient command exec info\n");
+		ERROR("Insufficient command exec info i=%d, e=%d\n", i, e);
 		return CL_FAILURE;
 	}
 
@@ -69,7 +80,7 @@ int fork_n_exec(uint16_t nodeid, char *buf)
 		/* Redirect stderr/out to the log files */
 		redirect_stdout_to_log(nodeid);
 
-		execv(argv[0], argv);
+		execvpe(argv[0], argv, envp);
 		ERROR("Could not execv [%s]. Check if the cmdname/path is correct.Aborting...\n", argv[0]);
 		exit(0);
 	} else if(gChildProcess[nodeid] < 0) {
