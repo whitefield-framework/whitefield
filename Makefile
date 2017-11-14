@@ -25,9 +25,11 @@ whitefield:
 
 riot:
 	make -C $(STACKLINE_RIOT)/tests/whitefield
+	#make -C $(STACKLINE_RIOT)/tests/whitefield_br
 
 riot_clean:
 	make -C $(STACKLINE_RIOT)/tests/whitefield clean
+	#make -C $(STACKLINE_RIOT)/tests/whitefield_br clean
 
 contiki:
 	make -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield
