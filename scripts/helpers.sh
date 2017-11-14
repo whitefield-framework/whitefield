@@ -28,12 +28,13 @@ get_node_list()
 {
 	usr=`whoami`
 	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a")
+	nodecnt=${#nodelist[@]}
 }
 
 cmd_for_all_nodes()
 {
 	get_node_list
-	for((i=0;i<${#nodelist[@]};i++)); do
+	for((i=0;i<$nodecnt;i++)); do
 		echo "$1 \"$i:$2\""
 		$1 "$i:$2"
 		echo ;
