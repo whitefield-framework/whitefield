@@ -44,7 +44,7 @@ function main()
 	msgq_status
 
 	get_node_list
-	echo "Node count: ${#nodelist[@]}"
+	echo "Node count: $nodecnt"
 	get_route_list
 	echo ;
 
