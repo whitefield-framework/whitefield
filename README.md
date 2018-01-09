@@ -1,4 +1,4 @@
-# Whitefield
+![Alt text](docs/res/Logo.png "Whitefield Logo")
 
 [![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
 
