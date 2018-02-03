@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=`dirname $0`
-watch -n2 -d $DIR/whitefield_status.sh &
+watch -n2 $DIR/whitefield_status.sh &
 WATCH_PID=$!
 read -n 1 ans
 kill $WATCH_PID
