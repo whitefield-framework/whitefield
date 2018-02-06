@@ -31,6 +31,39 @@ get_node_list()
 	nodecnt=${#nodelist[@]}
 }
 
+get_node_range()
+{
+    get_node_list
+    start_node=0
+    end_node=$nodecnt
+    [[ "$node_range" == "" ]] && return 0
+    [[ "$node_range" == "*" ]] && return 0
+    start_node=${node_range/-*/}
+    end_node=${node_range/*-/}
+}
+
+# Unset nodeid and optionally set node_range before you call this api
+get_next_node()
+{
+    [[ "$nodeid" == "" ]] && get_node_range && nodeid=0 && return 0
+    ((nodeid++))
+    [[ $nodeid -lt $end_node ]] && return 0
+    unset nodeid
+    unset start_node
+    unset end_node
+    unset node_range
+    return 1
+}
+
+combine_stats()
+{
+    unset nodeid
+    node_range="$2"
+    while get_next_node; do
+        $1 "$nodeid" | jq "$3"
+    done
+}
+
 cmd_for_all_nodes()
 {
 	get_node_list
