@@ -62,32 +62,38 @@ uint16_t cl_get_longaddr2id(const uint8_t *addr)
 	return nodeid;
 }
 
-#if USE_DL
+#if USE_DL//------------------[USE_DL-if]-----------------
 void *g_dl_lib_handle=NULL;
 typedef int (*cmd_handler_func_t)(uint16_t src_id, char*buf, int len);
-#else
+#define LOAD_DYN_LIB    \
+	cmd_handler_func_t cmd_func;\
+	if(!g_dl_lib_handle) {\
+		g_dl_lib_handle=dlopen(NULL, RTLD_LAZY);\
+		if(!g_dl_lib_handle) {\
+			ERROR("Could not load library!!\n");\
+			return;\
+		}\
+	}
+#else   //------------------[USE_DL-else]---------------
 #define	PLAY_CMD(MBUF, CMD)	\
 	else if(!strcmp(cmd, #CMD))	\
 	{\
 		extern int CMD(uint16_t, char *, int);\
-		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
+		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, (MBUF)->max_len);\
 	}
-#endif
+#endif //-----------------[USE_DL-endif]---------------
 
 void sl_handle_cmd(msg_buf_t *mbuf)
 {
+    DEFINE_MBUF_SZ(cbuf, MAX_CMD_RSP_SZ);
 	int aux_len=0;
 	char *colon_ptr, cmd[256];
 
+    memcpy(cbuf->buf, mbuf->buf, mbuf->len);
+    cbuf->len = mbuf->len;
+    mbuf = cbuf;
 #if USE_DL
-	cmd_handler_func_t cmd_func;
-	if(!g_dl_lib_handle) {
-		g_dl_lib_handle=dlopen(NULL, RTLD_LAZY);
-		if(!g_dl_lib_handle) {
-			ERROR("Could not load library!!\n");
-			return;
-		}
-	}
+    LOAD_DYN_LIB;
 #endif
 
 	colon_ptr = strchr((char*)mbuf->buf, ':');
@@ -105,10 +111,10 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	cmd_func = (cmd_handler_func_t)dlsym(g_dl_lib_handle, cmd);
 	if(!cmd_func) {
 		ERROR("Could not load cmd: <%s> %s\n", cmd, dlerror());
-		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
-		return;
+		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
+		goto ret_handle;
 	}
-	mbuf->len = cmd_func(mbuf->src_id, (char*)mbuf->buf, COMMLINE_MAX_BUF);
+	mbuf->len = cmd_func(mbuf->src_id, (char*)mbuf->buf, mbuf->max_len);
 #else
 	if(0) { } 
 	PLAY_CMD(mbuf, cmd_rpl_stats)
@@ -123,8 +129,11 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	PLAY_CMD(mbuf, cmd_tcp_stats)
 	PLAY_CMD(mbuf, cmd_config_info)
 	else {
-		mbuf->len = sprintf((char*)mbuf->buf, "SL_INVALID_CMD(%s)", mbuf->buf);
+		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   
 #endif
+ret_handle:
+    INFO("responding with:<%s>\n", cbuf->buf);
+    cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), cbuf, cbuf->len+sizeof(msg_buf_t));
 }
 

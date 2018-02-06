@@ -41,7 +41,7 @@ failure:
 
 int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
 {
-	DEFINE_MBUF(mbuf);
+	DEFINE_MBUF_SZ(mbuf, MAX_CMD_RSP_SZ);
 	int line=0, c=0, id=CL_MGR_ID;
 	char *ptr;
 
@@ -66,12 +66,13 @@ int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
 		mbuf->src_id = CL_MGR_ID;
 	}
 	cmdlen = strlen(cmd);
-	strncpy((char*)mbuf->buf, cmd, COMMLINE_MAX_BUF);
+	strncpy((char*)mbuf->buf, cmd, mbuf->max_len);
 	mbuf->len = cmdlen;
 	mbuf->flags = MBUF_IS_CMD;
 	if(STACKLINE == line) {
 		id = mbuf->src_id;
 	}
+    INFO("sending cmd:<%s> <%d>\n", mbuf->buf, mbuf->max_len);
 	cl_sendto_q(MTYPE(line, id), mbuf, sizeof(msg_buf_t)+mbuf->len);
 	while(c++ < 100)
 	{
@@ -92,7 +93,7 @@ void *monitor_thread(void *arg)
 	struct sockaddr_in remaddr;     /* remote address */
 	socklen_t alen=sizeof(remaddr); /* length of addresses */
 	char cmd[128];  				/* receive buffer */
-	char rsp[COMMLINE_MAX_BUF];  	/* response send buffer */
+	char rsp[MAX_CMD_RSP_SZ];  	/* response send buffer */
 	int n;                   		/* # bytes received */
 
 	while(1) {

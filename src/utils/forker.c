@@ -19,7 +19,11 @@ void redirect_stdout_to_log(int nodeid)
 	int fd;
 	char logfile[512];
 
-	snprintf(logfile, sizeof(logfile), "%s/node_%04x.log", getenv("LOGPATH")?getenv("LOGPATH"):"log", nodeid);
+    if(nodeid >= 0) {
+        snprintf(logfile, sizeof(logfile), "%s/node_%04x.log", getenv("LOGPATH")?getenv("LOGPATH"):"log", nodeid);
+    } else {
+        snprintf(logfile, sizeof(logfile), "%s/forker.log", getenv("LOGPATH")?getenv("LOGPATH"):"log");
+    }
 	fd = open(logfile, O_TRUNC | O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if(fd > 0) {
 		dup2(fd, 1);
@@ -120,6 +124,7 @@ extern int start_monitor_thread(void);
 
 int main(void)
 {
+    redirect_stdout_to_log(-1);
 	INFO("Starting forker...\n");
 	if(CL_SUCCESS != cl_init(CL_ATTACHQ)) {
 		ERROR("forker: failure to cl_init()\n");
