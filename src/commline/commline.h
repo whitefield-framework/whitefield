@@ -58,15 +58,20 @@ typedef struct _msg_buf_
 			uint8_t status;
 		}ack;
 	} info;
-	uint16_t len; // length of the buf only
+	uint16_t len, max_len; // length of the buf only
 	uint8_t buf[1];
 }msg_buf_t;
 #pragma pack(pop)
 
-#define	DEFINE_MBUF(MBUF)	\
-		uint8_t MBUF##_buf[sizeof(msg_buf_t)+COMMLINE_MAX_BUF];\
-		msg_buf_t *MBUF = (msg_buf_t *)MBUF##_buf;\
-		memset(MBUF##_buf, 0, sizeof(MBUF##_buf));
+#define	DEFINE_MBUF_SZ(MBUF, SZ)	\
+    uint8_t MBUF##_buf[sizeof(msg_buf_t)+SZ];\
+    msg_buf_t *MBUF = (msg_buf_t *)MBUF##_buf;\
+    memset(MBUF##_buf, 0, sizeof(MBUF##_buf));\
+    MBUF->max_len = SZ;
+
+#define	DEFINE_MBUF(MBUF)	DEFINE_MBUF_SZ(MBUF, COMMLINE_MAX_BUF)
+
+#define MAX_CMD_RSP_SZ  8192
 
 #define	CL_FLAG_NOWAIT	(1<<1)
 int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);

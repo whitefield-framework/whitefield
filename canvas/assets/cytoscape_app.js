@@ -7,7 +7,7 @@ function query_graph() {
       cyInstance.elements().layout({
         name: layout_name,
         fit: first_run,
-        rankDir: 'RL'
+        rankDir: 'BT'
       }).run();
       first_run = false;
     }
