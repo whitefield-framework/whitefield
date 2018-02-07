@@ -41,7 +41,7 @@ Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-ud
 ```
 git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
-git submodule update --init --recursive
+git submodule update --init
 git submodule foreach git pull origin master
 ./scripts/setup.sh
 ```
