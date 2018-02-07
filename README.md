@@ -1,6 +1,7 @@
 ![Alt text](docs/res/Logo.png "Whitefield Logo")
 
 [![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
+[![Join the chat at https://gitter.im/whitefielders](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/whitefielders?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Whitefield provides a simulation environment for wireless sensor network by combining realistic RF simulation with the native mode use of popular IoT OSes such as Contiki/RIOT. Thus one can use existing stack implementation as is and test it on top of realistic RF simulation.
 
