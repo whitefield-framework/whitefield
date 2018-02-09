@@ -9,6 +9,18 @@ WF_PNAME="whitefield"
 FORKER_PNAME="wf_forker"
 UDP_TOOL=$DIR/../$BINDIR/udp_cmd
 
+function elap_time()
+{
+	wfpid=`wf_get_pid`
+	if [ "$wfpid" == "" ]; then
+		echo "Whitefield stopped"
+		exit
+	fi
+	wf_elap_times=`ps -p $wfpid -o etimes=`
+	et=`ps -p $wfpid -o etime=`
+	wf_elap_time=`echo $et`
+}
+
 wf_get_pid()
 {
 	pgrep -u `whoami` -x $WF_PNAME

@@ -8,17 +8,6 @@ function msgq_status()
 	ipcs -q
 }
 
-function elap_time()
-{
-	wfpid=`wf_get_pid`
-	if [ "$wfpid" == "" ]; then
-		echo "Whitefield stopped"
-		exit
-	fi
-	et=`ps -p $wfpid -o etime=`
-	wf_elap_time=`echo $et`
-}
-
 function get_route_list()
 {
 	rtsize=`sl_cmd "$BR_ID:cmd_rtsize"`
