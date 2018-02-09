@@ -14,5 +14,7 @@ al cmd_set_node_position
 al cmd_node_position
 fw stop_whitefield
 fw plot_network_graph
+fw path_upstream
+fw path_downstream
 fw help
 fw exit
