@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "THIS SCRIPT SHOULD NO MORE BE USED."
+exit
+
 DIR="`dirname $0`/.."
 . $DIR/helpers.sh
 CMDLIST="`dirname $0`/cmd_list.txt"

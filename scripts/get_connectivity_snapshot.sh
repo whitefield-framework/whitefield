@@ -4,6 +4,7 @@ DIR=`dirname $0`
 . $DIR/helpers.sh
 CMDLIST="$DIR/internal/cmd_list.txt"
 SHCMD="$DIR/wfshell"
+AGGCMD="$DIR/aggregate_stats.sh"
 
 usage()
 {
@@ -43,6 +44,10 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
 
 get_routing_state_snapshot()
 {
+    unset nlist_defrt
+    unset nlist_rttab
+    unset nlist_rtcnt_exp
+    unset nlist_rtcnt_act
     declare -g nlist_defrt
     declare -g nlist_rttab
     declare -g nlist_rtcnt_act  #actual entries present in the route table
@@ -50,6 +55,7 @@ get_routing_state_snapshot()
 
     get_node_list
     unconn_nodes=0
+    elap_time   #exits if whitefield is not up
 
     for((i=0;i<$nodecnt;i++)); do
         def_rt=`$SHCMD cmd_def_route $i`
@@ -65,6 +71,11 @@ get_routing_state_snapshot()
         nlist_rtcnt_act[$i]=${#arr[@]}
         nlist_rtcnt_exp[$i]=0
     done
+    str=`$AGGCMD cmd_rpl_stats .rpl_stats.parent_switch`
+    tot_parent_sw=${str/ */}
+    tot_parent_sw=${tot_parent_sw/total=/}
+    avg_parent_sw=${str/* /}
+    avg_parent_sw=${avg_parent_sw/avg=/}
 }
 
 #1. get next node (target)
@@ -119,12 +130,12 @@ get_stats()
         ((tot_stale_cnt+=$stale_cnt))
     done
 
-    echo "$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt"
+    echo "$s,$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt,$tot_parent_sw,$avg_parent_sw,$wf_elap_times"
 }
 
 main_loop()
 {
-    echo "total_nodes,leaf_nodes,unconn_nodes,stale_entries"
+    echo "num,tot_nodes,lf_nodes,unconn_nodes,stale_entries,tot_par_sw,avg_sw,elap_time"
     for((s=0;s<$g_sample_cnt;s++)); do
         [[ $s -gt 0 ]] && sleep $g_interval
         get_routing_state_snapshot

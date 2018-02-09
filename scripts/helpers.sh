@@ -16,7 +16,8 @@ function elap_time()
 		echo "Whitefield stopped"
 		exit
 	fi
-	wf_elap_times=`ps -p $wfpid -o etimes=`
+	et=`ps -p $wfpid -o etimes=`
+	wf_elap_times=`echo $et`
 	et=`ps -p $wfpid -o etime=`
 	wf_elap_time=`echo $et`
 }
@@ -48,6 +49,7 @@ get_node_range()
     get_node_list
     start_node=0
     end_node=$nodecnt
+    [[ "$nodecnt" == "0" ]] && echo "Nodecnt=$nodecnt. May be whitefield has stopped." && exit
     [[ "$node_range" == "" ]] && return 0
     [[ "$node_range" == "*" ]] && return 0
     start_node=${node_range/-*/}
@@ -57,7 +59,7 @@ get_node_range()
 # Unset nodeid and optionally set node_range before you call this api
 get_next_node()
 {
-    [[ "$nodeid" == "" ]] && get_node_range && nodeid=0 && return 0
+    [[ "$nodeid" == "" ]] && get_node_range && nodeid=$start_node && return 0
     ((nodeid++))
     [[ $nodeid -lt $end_node ]] && return 0
     unset nodeid
@@ -127,4 +129,14 @@ plot_network_graph()
 
 quit() {
 	exit 0
+}
+
+path_upstream()
+{
+    $DIR/node_path.sh up $1
+}
+
+path_downstream()
+{
+    $DIR/node_path.sh down $1
 }

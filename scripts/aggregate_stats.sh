@@ -14,7 +14,6 @@ hash jq 2>/dev/null
 
 DIR=`dirname $0`
 . $DIR/helpers.sh
-CMDLIST="$DIR/internal/cmd_list.txt"
 SHCMD="$DIR/wfshell"
 
 unset nodeid
