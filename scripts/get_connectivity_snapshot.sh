@@ -35,6 +35,8 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
 				;;
 		esac
 	done
+    shift $((OPTIND-1))
+    [[ "$*" != "" ]] && usage
     if [ $g_elap_time -gt 0 ]; then
         ((slp_time=$g_elap_time-$wf_elap_times))
         echo "Waiting for $slp_time seconds..."
