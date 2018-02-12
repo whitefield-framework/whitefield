@@ -112,7 +112,7 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	if(!cmd_func) {
 		ERROR("Could not load cmd: <%s> %s\n", cmd, dlerror());
 		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
-		goto ret_handle;
+        cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), cbuf, cbuf->len+sizeof(msg_buf_t));
 	}
 	mbuf->len = cmd_func(mbuf->src_id, (char*)mbuf->buf, mbuf->max_len);
 #else
@@ -132,7 +132,6 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   
 #endif
-ret_handle:
     INFO("responding with:<%s>\n", cbuf->buf);
     cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), cbuf, cbuf->len+sizeof(msg_buf_t));
 }
