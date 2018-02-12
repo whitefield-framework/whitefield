@@ -60,7 +60,8 @@ get_routing_state_snapshot()
     for((i=0;i<$nodecnt;i++)); do
         def_rt=`$SHCMD cmd_def_route $i`
         def_rt=${def_rt/*:/}
-        rt_list=`$SHCMD cmd_route_table $i | jq -r ".route_table.routes[].prefix" | sed -e 's/.*://g'`
+        $SHCMD cmd_route_table $i rttable.txt >/dev/null
+        rt_list=`cat rttable.txt | jq -r ".route_table.routes[].prefix" | sed -e 's/.*://g'`
         rt_list=`echo $rt_list`
         nodeid=`printf %x $i`
 
