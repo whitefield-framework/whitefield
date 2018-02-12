@@ -71,7 +71,7 @@ typedef struct _msg_buf_
 
 #define	DEFINE_MBUF(MBUF)	DEFINE_MBUF_SZ(MBUF, COMMLINE_MAX_BUF)
 
-#define MAX_CMD_RSP_SZ  8192
+#define MAX_CMD_RSP_SZ  4096
 
 #define	CL_FLAG_NOWAIT	(1<<1)
 int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);

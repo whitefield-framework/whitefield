@@ -35,6 +35,8 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
 				;;
 		esac
 	done
+    shift $((OPTIND-1))
+    [[ "$*" != "" ]] && usage
     if [ $g_elap_time -gt 0 ]; then
         ((slp_time=$g_elap_time-$wf_elap_times))
         echo "Waiting for $slp_time seconds..."
@@ -60,7 +62,8 @@ get_routing_state_snapshot()
     for((i=0;i<$nodecnt;i++)); do
         def_rt=`$SHCMD cmd_def_route $i`
         def_rt=${def_rt/*:/}
-        rt_list=`$SHCMD cmd_route_table $i | jq -r ".route_table.routes[].prefix" | sed -e 's/.*://g'`
+        $SHCMD cmd_route_table $i rttable.txt >/dev/null
+        rt_list=`cat rttable.txt | jq -r ".route_table.routes[].prefix" | sed -e 's/.*://g'`
         rt_list=`echo $rt_list`
         nodeid=`printf %x $i`
 
