@@ -8,8 +8,26 @@ AGGCMD="$DIR/aggregate_stats.sh"
 
 usage()
 {
-    echo "$0 [-e start_after_elapsed_time] [-i interval_to_report] [-c sample_cnt]"
+    echo "$0 [-e start_after_elapsed_time] [-i interval_to_report] [-c sample_cnt] [-o output_file]"
     exit
+}
+
+wr_report()
+{
+    [[ "$g_output_file" != "" ]] && echo "$*" >> $g_output_file
+    echo "$*"
+}
+
+wait_sec()
+{
+    [[ "$1" == "" ]] && return
+    cnt=$1
+    while [ $cnt -gt 0 ]; do
+        echo -en "sleeping ${cnt}s...\r"
+        sleep 1
+        ((cnt--))
+    done
+    echo -en "\033[2K"
 }
 
 cmdline_args() #XXX Currently unused but can be put to use in future.
@@ -18,7 +36,7 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
     g_elap_time=0
     g_interval=5
     g_sample_cnt=1
-	while getopts "e:i:c:" o; do
+	while getopts "e:i:c:o:" o; do
 		case "$o" in
 			e)
 				g_elap_time=$OPTARG
@@ -26,6 +44,10 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
 				;;
 			i)
 				g_interval=$OPTARG
+				;;
+			o)
+				g_output_file=$OPTARG
+                rm -f $g_output_file
 				;;
 			c)
 				g_sample_cnt=$OPTARG
@@ -39,8 +61,7 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
     [[ "$*" != "" ]] && usage
     if [ $g_elap_time -gt 0 ]; then
         ((slp_time=$g_elap_time-$wf_elap_times))
-        echo "Waiting for $slp_time seconds..."
-        sleep $slp_time
+        wait_sec $slp_time
     fi
 }
 
@@ -87,7 +108,7 @@ get_routing_state_snapshot()
         nlist_rtcnt_act[$i]=${#arr[@]}
         nlist_rtcnt_exp[$i]=0
     done
-    agg_stats cmd_rpl_stats .rpl_stats.parent_switch tot_parent_sw avg_parent_sw
+    agg_stats cmd_rpl_stats .rpl_stats.parent_switch tot_parent_sw
     agg_stats cmd_rpl_stats .rpl_stats.dao_sent tot_dao_sent
     agg_stats cmd_rpl_stats .rpl_stats.dao_rcvd tot_dao_rcvd
     agg_stats cmd_rpl_stats .rpl_stats.npdao_sent tot_npdao_sent
@@ -148,14 +169,14 @@ get_stats()
         ((tot_stale_cnt+=$stale_cnt))
     done
 
-    echo "$s,$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt,$tot_parent_sw,$avg_parent_sw,$wf_elap_times,$tot_dao_sent,$tot_dao_rcvd,$tot_npdao_sent,$tot_npdao_rcvd,$tot_dco_sent,$tot_dco_rcvd"
+    wr_report "$s,$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt,$tot_parent_sw,$wf_elap_times,$tot_dao_sent,$tot_dao_rcvd,$tot_npdao_sent,$tot_npdao_rcvd,$tot_dco_sent,$tot_dco_rcvd"
 }
 
 main_loop()
 {
-    echo "num,tot_nodes,lf_nodes,unconn_nodes,stale_entries,tot_par_sw,avg_sw,elap_time,dao_sent,dao_rcvd,npdao_sent,npdao_rcvd,dco_sent,dco_rcvd"
+    wr_report "num,tot_nodes,lf_nodes,unconn_nodes,stale_entries,tot_par_sw,elap_time,dao_sent,dao_rcvd,npdao_sent,npdao_rcvd,dco_sent,dco_rcvd"
     for((s=1;s<=$g_sample_cnt;s++)); do
-        [[ $s -gt 1 ]] && sleep $g_interval
+        [[ $s -gt 1 ]] && wait_sec $g_interval
         get_routing_state_snapshot
         verify_routing_state
         get_stats
