@@ -63,6 +63,7 @@ get_routing_state_snapshot()
         def_rt=`$SHCMD cmd_def_route $i`
         def_rt=${def_rt/*:/}
         $SHCMD cmd_route_table $i rttable.txt >/dev/null
+        rm rttable.txt
         rt_list=`cat rttable.txt | jq -r ".route_table.routes[].prefix" | sed -e 's/.*://g'`
         rt_list=`echo $rt_list`
         nodeid=`printf %x $i`
