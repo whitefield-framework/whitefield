@@ -42,6 +42,7 @@ set_dco_conf()
 }
 
 mkdir -p $DIR/$LABEL 2>/dev/null
+cp $CFG_FILE $DIR/$LABEL/
 set_dco_conf 0
 take_data "npdao_"
 
