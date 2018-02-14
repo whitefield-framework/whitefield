@@ -16,7 +16,7 @@ LABEL="$2"
 get_estimated_time()
 {
     SECONDS=0
-    est_time_sec=`echo "(($SAMPLE_INTERVAL*$SAMPLE_COUNT)+$WAIT_ELAP_TIME)*$NUM_OF_RUNS" | bc -q`
+    est_time_sec=`echo "(($SAMPLE_INTERVAL*$SAMPLE_COUNT)+$WAIT_ELAP_TIME)*$NUM_OF_RUNS*2" | bc -q`
     est_time_hms=`printf '%02d:%02d:%02d' $(($est_time_sec/3600)) $(($est_time_sec%3600/60)) $(($est_time_sec%60))`
 }
 
@@ -57,8 +57,8 @@ prn_time_info()
 get_estimated_time
 mkdir -p $DIR/$LABEL 2>/dev/null
 cp $CFG_FILE $DIR/$LABEL/
-set_dco_conf 0
-take_data "npdao_"
+#set_dco_conf 0
+#take_data "npdao_"
 
 set_dco_conf 1
-take_data "npdao_"
+take_data "dco_"
