@@ -25,7 +25,10 @@ get_upstream_path()
 
 get_next_hop()
 {
-    next_hop_ip=`$SHCMD cmd_route_table $1 | jq ".route_table.routes[] | select(.prefix == \"$target_ip\") | .next_hop" -r`
+    TMP_FILE=route_$$.tab
+    next_hop_ip=`$SHCMD cmd_route_table $1 $TMP_FILE`
+    next_hop_ip=`jq ".route_table.routes[] | select(.prefix == \"$target_ip\") | .next_hop" -r $TMP_FILE`
+    rm $TMP_FILE
     [[ "$next_hop_ip" == "" ]] && echo -en "$1" && return
     next_hop=${next_hop_ip/*:/}
     echo -en "`printf %x $1` -> "

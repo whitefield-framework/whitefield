@@ -67,7 +67,9 @@ cmdline_args() #XXX Currently unused but can be put to use in future.
 
 agg_stats()
 {
-    str=`$AGGCMD $1 $2`
+    nr=$noderange
+    unset noderange
+    str=`$AGGCMD $1 $2 $nr`
     tot=${str/ */}
     eval $3=${tot/total=/}
     if [ "$4" != "" ]; then
@@ -115,6 +117,9 @@ get_routing_state_snapshot()
     agg_stats cmd_rpl_stats .rpl_stats.npdao_rcvd tot_npdao_rcvd
     agg_stats cmd_rpl_stats .rpl_stats.dco_sent tot_dco_sent
     agg_stats cmd_rpl_stats .rpl_stats.dco_rcvd tot_dco_rcvd
+    noderange=0
+    agg_stats cmd_udp_stats .udp_stats.rcvd tot_udp_rcvd
+    agg_stats cmd_udp_stats .udp_stats.sent tot_udp_sent
 }
 
 #1. get next node (target)
@@ -169,12 +174,12 @@ get_stats()
         ((tot_stale_cnt+=$stale_cnt))
     done
 
-    wr_report "$s,$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt,$tot_parent_sw,$wf_elap_times,$tot_dao_sent,$tot_dao_rcvd,$tot_npdao_sent,$tot_npdao_rcvd,$tot_dco_sent,$tot_dco_rcvd"
+    wr_report "$s,$nodecnt,$tot_6ln,$unconn_nodes,$tot_stale_cnt,$tot_parent_sw,$wf_elap_times,$tot_dao_sent,$tot_dao_rcvd,$tot_npdao_sent,$tot_npdao_rcvd,$tot_dco_sent,$tot_dco_rcvd,$tot_udp_sent,$tot_udp_rcvd"
 }
 
 main_loop()
 {
-    wr_report "num,tot_nodes,lf_nodes,unconn_nodes,stale_entries,tot_par_sw,elap_time,dao_sent,dao_rcvd,npdao_sent,npdao_rcvd,dco_sent,dco_rcvd"
+    wr_report "num,tot_nodes,lf_nodes,unconn_nodes,stale_entries,tot_par_sw,elap_time,dao_sent,dao_rcvd,npdao_sent,npdao_rcvd,dco_sent,dco_rcvd,udp_sent,udp_rcvd"
     for((s=1;s<=$g_sample_cnt;s++)); do
         [[ $s -gt 1 ]] && wait_sec $g_interval
         get_routing_state_snapshot
