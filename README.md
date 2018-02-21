@@ -68,7 +68,7 @@ $./scripts/wfshell stop_whitefield
 
 ### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
 
-### [Whitefield compared to Cooja](docs/wf-vs-cooja.md "Whitefield compared to Cooja")
+### [Whitefield compared to Cooja/NS3](docs/wf-vs-cooja.md "Whitefield compared to Cooja/NS3")
 
 ### [Module support table](docs/README.md "Module support table")
 

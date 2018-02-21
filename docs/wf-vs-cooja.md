@@ -25,3 +25,8 @@ Scalability: Cooja uses JVM coupled with MSPSim and the combination takes a real
 
 One of the biggest advantage of using Cooja/Contiki's MAC layer is that contiki supports some advanced RDC mechanism with optimizations such PLO (Phase loop optimizations). In case of Whitefield, it depends upon Airline module's support for such optimizations. While Castalia can support some advanced RDC mechanisms, the current phase of Whitefield does not support Castalia. But since Cooja's air interface is not as realistic as NS3/Castalia thus using advanced Contiki RDC mechanism on Cooja's air interface may not result in realistic behaviour.
 
+# Whitefield compared to NS3/other simulation framework
+Whitefield uses NS3 internally for actual phy/mac simulation, so naturally question arises as to what is the difference of using NS3 in whitefield rather than using NS3 directly:
+1. To use NS3 simulation framework directly you need to port the network stack to NS3 model ... This is often time-consuming and error-prone.
+2. NS3/DCE compared to Whitefield?
+3. Is there any disadvantage with using NS3 in whitefield? The primary problem is that all the experiments now run in real-time and not in simulation-time. This has major implications on the amount of time take to complete the experiments.
