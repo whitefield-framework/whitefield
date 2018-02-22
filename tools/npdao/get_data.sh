@@ -57,8 +57,8 @@ prn_time_info()
 get_estimated_time
 mkdir -p $DIR/$LABEL 2>/dev/null
 cp $CFG_FILE $DIR/$LABEL/
-#set_dco_conf 0
-#take_data "npdao_"
+set_dco_conf 0
+take_data "npdao_"
 
 set_dco_conf 1
 take_data "dco_"
