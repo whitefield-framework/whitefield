@@ -34,14 +34,14 @@ position_graph() {
 		return;
 	fi
 
-	echo "graph position_network { " > $TMP
+	echo "digraph position_network { " > $TMP
 	for((i=0;i<${#nodelist[@]};i++)); do
 		id=`echo ${nodelist[$i]} | awk '{ print $3 }'`
 		parent_ip=`sl_cmd "$id:cmd_def_route"`
 		if [ "$parent_ip" != "[NONE]" ]; then
 			prnt_id=`ip2id $parent_ip`
 			#echo "Node $id, parent $prnt_id"
-			echo "$id -- $prnt_id;" >> $TMP
+			echo "$id -> $prnt_id;" >> $TMP
 		fi
 	done
 
