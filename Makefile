@@ -48,3 +48,6 @@ clean:
 
 allclean: $(STACKLINE_DEPCLEAN)
 	make clean
+
+tests:
+	regression/regress.sh regression/full.set

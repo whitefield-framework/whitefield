@@ -1,11 +1,10 @@
 #!/bin/bash
 
-[[ "`whereis realpath | cut -d ':' -f 2`" == "" ]] && echo "realpath cmd not found. Install coreutils." && exit
 [[ "`whereis jq | cut -d ':' -f 2`" == "" ]] && echo "jq cmd not found. Install jq (JSON parser)." && exit
 [[ ! -f "$1" ]] && [[ ! -d "$1" ]] && echo "Usage: $0 <testcfg || testdir>" && exit
 
 DIR=`dirname "$0"`
-REG_DIR=`realpath "$DIR"`
+REG_DIR=`readlink -f "$DIR"`
 WF_CMD="$REG_DIR/../invoke_whitefield.sh"
 WFSH="$REG_DIR/../scripts/wfshell"
 TC_LOG="$REG_DIR/testcase_report.log"
@@ -60,7 +59,7 @@ tc_set_msg()
 
 exec_testcase()
 {
-	tcpath=`realpath "$1"`
+	tcpath=`readlink -f "$1"`
 	TC_DIR=`dirname "$tcpath"`
 	tcname=`basename "$1"`
 	echo "executing $1..."
