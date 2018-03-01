@@ -1,0 +1,27 @@
+include config.inc
+
+CPP=g++
+LDFLAGS=-fPIC -lpthread
+CFLAGS=-Wall
+
+ifeq ($(REL),debug)
+CFLAGS+=-g
+endif
+
+ifneq ("$(wildcard $(STACKLINE_OPENTHREAD))", "")
+WFOTDIR=src/stackline/wf_openthread
+SRC=$(WFOTDIR)/wfot_main.c $(WFOTDIR)/wfot_radio_wrapper.c
+WFOTBIN=$(BINDIR)/wf_openthread
+OTLIBS=$(STACKLINE_OPENTHREAD)/output/x86_64-unknown-linux-gnu/lib
+endif
+
+all: $(WFOTBIN)
+
+$(OTLIBS):
+	cd $(STACKLINE_OPENTHREAD); ./configure; make -f examples/Makefile-posix; cd -
+
+$(WFOTBIN): $(OTLIBS) $(SRC)
+	$(CPP) -o $(WFOTBIN) -I$(STACKLINE_OPENTHREAD)/include -I $(STACKLINE_OPENTHREAD)/src/core $(SRC) -L$(OTLIBS) -lopenthread-posix -lopenthread-platform-utils -lopenthread-cli-ftd -lopenthread-ftd -lmbedcrypto -lopenthread-posix -lopenthread-diag $(CFLAGS) $(LDFLAGS) -Wl,-wrap,platformRadioInit -Wl,-wrap,otPlatRadioTransmit
+
+clean:
+	@rm -f $(WFOTBIN)
