@@ -18,6 +18,9 @@
 #include <openthread/platform/diag.h>
 #include <openthread/platform/radio.h>
 
+#include <commline/commline.h>  //Whitefield COMMLINE
+#include "wfot_common.h"
+
 extern uint32_t NODE_ID;
 
 #define ENTERING    printf("%s:%d...\r\n", __FUNCTION__, __LINE__)
@@ -25,6 +28,11 @@ extern "C" void __wrap_platformRadioInit(void)
 {
     extern void __real_platformRadioInit(void);
     ENTERING;
+    if(cl_init(CL_ATTACHQ)!=CL_SUCCESS) {
+        ERROR("commline init failed, exiting...\n");
+        exit(1);
+    }
+    INFO("Whitefield commline init success\r\n");
     return __real_platformRadioInit();
 }
 
@@ -34,67 +42,6 @@ extern "C" void __wrap_platformRadioDeinit(void)
     ENTERING;
     return __real_platformRadioDeinit();
 }
-
-#if 0
-#define COPY_BUF(DST, DSTLEN, SRC, SRCLEN)  \
-    if(DSTLEN > SRCLEN) {\
-        printf("DSTLEN:%d exceeded SRCLEN:%d\n", DSTLEN, SRCLEN);\
-        return;\
-    }\
-    memcpy(DST, SRC, DSTLEN);\
-    (SRCLEN)-=(DSTLEN);
-
-#define FRAME_TYPE_BEACON   0x0
-#define FRAME_TYPE_DATA     0x1
-#define FRAME_TYPE_ACK      0x2
-#define FRAME_TYPE_CMD      0x3
-
-#define HDR_FRAME_TYPE      0x0007  //bits 0-2 Frame type
-#define HDR_SECURITY_EN     0x0008  //bit 3 security enabled?
-#define HDR_FRAME_PEND      0x0010  //bit 4 frame pending?
-#define HDR_ACK_REQ         0x0020  //bit 5 ack requested?
-#define HDR_INTRA_PAN       0x0040  //bit 6 intra pan?
-#define HDR_RESV1           0x0380  //bits 7-9 reserved
-#define HDR_DST_ADDR_MODE   0x0c00  //bits 10-11 dst address mode
-#define HDR_RESV2           0x3000  //bits 12-13 reserved
-#define HDR_SRC_ADDR_MODE   0xc000  //bits 14-15 src address mode
-
-void decode_802154_hdr(uint8_t *buf, int buflen)
-{
-    uint8_t frame_type;
-    uint16_t frame_ctrl;
-
-    COPY_BUF(&frame_ctrl, 2, buf, buflen);
-    frame_type = frame_ctrl & HDR_FRAME_TYPE;
-    printf("frame_ctrl:%x\r\n", frame_ctrl);
-    printf("frame_type:%02x\r\n", frame_type);
-    switch(frame_type) {
-        case FRAME_TYPE_BEACON:
-            printf("BEACON:");
-            break;
-        case FRAME_TYPE_DATA:
-            printf("DATA:");
-            break;
-        case FRAME_TYPE_ACK:
-            printf("ACK:");
-            break;
-        case FRAME_TYPE_CMD:
-            printf("CMD:");
-            break;
-        default:
-            printf("ERROR: Unknown frame_type:%d\n", frame_ctrl & HDR_FRAME_TYPE);
-            return;
-    }
-    printf("sec=%d, frm_pending=%d, ack_req=%d, intra_pan=%d, dst_mode=%d, src_mode=%d\r\n", 
-        (frame_ctrl&HDR_SECURITY_EN)>>3,
-        (frame_ctrl&HDR_FRAME_PEND)>>4,
-        (frame_ctrl&HDR_ACK_REQ)>>5,
-        (frame_ctrl&HDR_INTRA_PAN)>>6,
-        (frame_ctrl&HDR_DST_ADDR_MODE)>>10,
-        (frame_ctrl&HDR_SRC_ADDR_MODE)>>14
-        );
-}
-#endif
 
 void dump_pcap(const uint8_t *buf, int buflen)
 {
@@ -127,14 +74,26 @@ void prn_buffer(const char *str, uint8_t *buf, int buflen)
         }
     }
     printf("\r\n");
-    //decode_802154_hdr(buf, buflen);
-    //dump_pcap(buf, buflen);
+    dump_pcap(buf, buflen);
+}
+
+void commline_sendto(const uint8_t *buf, int buflen)
+{
+    DEFINE_MBUF(mbuf);
+    mbuf->len = buflen;
+    memcpy(mbuf->buf, buf, buflen);
+    mbuf->src_id = 0xffff;
+    mbuf->dst_id = 0xffff;
+    if(CL_SUCCESS != cl_sendto_q(MTYPE(AIRLINE, CL_MGR_ID), mbuf, mbuf->len + sizeof(msg_buf_t))) {
+        ERROR("cl_sendto_q failed. utter failure!\r\n");
+    }
 }
 
 extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame)
 {
     extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
-    prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
+    //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
+    commline_sendto(aFrame->mPsdu, aFrame->mLength);
     fprintf(stdin, "\nhelp\n");
     return __real_otPlatRadioTransmit(aInstance, aFrame);
 }

@@ -23,6 +23,10 @@
 
 #include <sys/time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define	CL_SUCCESS	0
 #define	CL_FAILURE	-1
 
@@ -143,5 +147,9 @@ enum {
 
 // Stackline Helpers
 #include "cl_stackline_helpers.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	//_COMMLINE_H_

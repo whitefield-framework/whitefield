@@ -15,10 +15,15 @@ WFOTBIN=$(BINDIR)/wf_openthread
 OTLIBPATH=$(STACKLINE_OPENTHREAD)/output/x86_64-unknown-linux-gnu/lib
 OTLIBNAME=openthread-posix openthread-platform-utils openthread-cli-ftd openthread-ftd mbedcrypto openthread-posix openthread-diag
 OTLIBS=$(addprefix -l,$(OTLIBNAME))
-
+CFLAGS+=-Isrc
+LDFLAGS+=-L$(BINDIR) -lwf_commline
 endif
 
 COMMA:=,
+#Whitefield OpenThread(OT) stackline adpater overrides foll OT APIs to work out simulation.
+#This way I don't need to add Whitefield as a platform in OpenThread. Thus
+#works out of box for any openthread version (unless ofcourse there are changes
+#in these APIs itself).
 OVERRIDE_API=platformRadioInit otPlatRadioTransmit otPlatRadioGetIeeeEui64 otPlatRadioSetExtendedAddress \
                 otPlatRadioSetShortAddress otPlatRadioEnable otPlatRadioDisable otPlatRadioIsEnabled    \
                 otPlatRadioReceive otPlatRadioReceiveDone otPlatRadioTxStarted otPlatRadioTxDone        \
@@ -31,7 +36,7 @@ $(OTLIBPATH):
 	cd $(STACKLINE_OPENTHREAD); ./configure; make -f examples/Makefile-posix; cd -
 
 $(WFOTBIN): $(OTLIBPATH) $(SRC)
-	$(CPP) $(CFLAGS) $(LDFLAGS) -o $(WFOTBIN) -I$(STACKLINE_OPENTHREAD)/include -I $(STACKLINE_OPENTHREAD)/src/core $(SRC) -L$(OTLIBPATH) $(OTLIBS) $(WRAP_LIST)
+	$(CPP) $(CFLAGS) $(LDFLAGS) -o $(WFOTBIN) -I$(STACKLINE_OPENTHREAD)/include -I $(STACKLINE_OPENTHREAD)/src/core $(SRC) -L$(OTLIBPATH) $(OTLIBS) $(WRAP_LIST) $(LDFLAGS)
 
 clean:
 	@rm -f $(WFOTBIN)
