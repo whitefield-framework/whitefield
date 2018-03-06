@@ -10,7 +10,7 @@ endif
 
 ifneq ("$(wildcard $(STACKLINE_OPENTHREAD))", "")
 WFOTDIR=src/stackline/wf_openthread
-SRC=$(WFOTDIR)/wfot_main.c $(WFOTDIR)/wfot_radio_wrapper.c
+SRC=$(WFOTDIR)/wfot_main.c $(WFOTDIR)/wfot_radio_wrapper.c $(WFOTDIR)/pcap_util.c
 WFOTBIN=$(BINDIR)/wf_openthread
 OTLIBPATH=$(STACKLINE_OPENTHREAD)/output/x86_64-unknown-linux-gnu/lib
 OTLIBNAME=openthread-posix openthread-platform-utils openthread-cli-ftd openthread-ftd mbedcrypto openthread-posix openthread-diag
