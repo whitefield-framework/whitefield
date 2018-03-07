@@ -1,5 +1,9 @@
 #define _WFOT_MAIN_C_
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 #include <openthread/config.h>
 #include <openthread-core-config.h>
 #include <assert.h>
@@ -10,6 +14,11 @@
 #include <openthread/platform/platform.h>
 #include <openthread/platform/logging.h>
 
+#include <openthread/platform/debug_uart.h>
+#include <openthread/platform/uart.h>
+
+#include <commline/commline.h>
+
 #if OPENTHREAD_ENABLE_MULTIPLE_INSTANCES
 #error "Does not support multiple instances"
 #endif
@@ -17,6 +26,26 @@
 void otTaskletsSignalPending(otInstance *aInstance)
 {
     (void)aInstance;
+}
+
+void wfot_handle_ini(const char *ini)
+{
+    FILE *fp;
+    char line[512], *ptr;
+
+    if(!ini) return;
+    fp = fopen(ini, "rt");
+    if(!fp) {
+        ERROR("Error opening INI file <%s>\n", ini);
+        exit(1);
+    }
+    while((ptr = fgets(line, sizeof(line), fp))) {
+        while(isspace(*ptr)) ptr++;
+        if(!(*ptr) || *ptr=='#') continue;
+        otPlatUartReceived((uint8_t*)ptr, strlen(ptr));
+    }
+    fclose(fp);
+    INFO("Finished with openthread ini <%s>\r\n", ini);
 }
 
 int main(int argc, char *argv[])
@@ -33,6 +62,7 @@ int main(int argc, char *argv[])
 #if OPENTHREAD_ENABLE_DIAG
     otDiagInit(sInstance);
 #endif
+    wfot_handle_ini(getenv("INI"));
 
     while (1)
     {

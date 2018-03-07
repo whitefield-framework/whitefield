@@ -91,11 +91,10 @@ void commline_sendto(const uint8_t *buf, int buflen)
 
 extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame)
 {
-    extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
+    //extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
     //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
     commline_sendto(aFrame->mPsdu, aFrame->mLength);
-    fprintf(stdin, "\nhelp\n");
-    return __real_otPlatRadioTransmit(aInstance, aFrame);
+    return OT_ERROR_NONE;//__real_otPlatRadioTransmit(aInstance, aFrame);
 }
 
 extern "C" void __wrap_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64)
@@ -181,4 +180,11 @@ extern "C" otRadioCaps __wrap_otPlatRadioGetCaps(otInstance *aInstance)
     extern otRadioCaps __real_otPlatRadioGetCaps(otInstance *aInstance);
     ENTERING;
     return __real_otPlatRadioGetCaps(aInstance);
+}
+
+extern "C" otError __wrap_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength)
+{
+    extern otError __real_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength);
+    //Send buffer to the remote
+    return __real_otPlatUartSend(aBuf, aBufLength);
 }
