@@ -62,12 +62,10 @@ $./scripts/wfshell help
 #Stop whitefield
 $./scripts/wfshell stop_whitefield
 ```
-### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
-
-### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
-
-### [Whitefield compared to Cooja/NS3](docs/wf-vs-cooja.md "Whitefield compared to Cooja/NS3")
-
-### [Module support table](docs/README.md "Module support table")
-
-### [Forum](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
+* ### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
+* ### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
+* ### [Using RIOT/Contiki with Whitefield TODO](docs/wf_using_riot_contiki.md "Whitefield with Contiki/RIOT")
+* ### [Using OpenThread with Whitefield TODO](docs/wf_using_openthread.md "Whitefield with OpenThread")
+* ### [Whitefield compared to Cooja/NS3](docs/wf-vs-cooja.md "Whitefield compared to Cooja/NS3")
+* ### [Module support table](docs/README.md "Module support table")
+* ### [Forum](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
