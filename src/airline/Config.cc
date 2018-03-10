@@ -224,6 +224,10 @@ int Config::setConfigurationFromFile(const char *fname)
 					ERROR << "Configuration should first contain the numOfNodes cfg\n";
 					return FAILURE;
 				}
+                if(end_range >= getNumberOfNodes()) {
+                    ERROR << "node index " << end_range << " out of bounds. Max nodes:" << getNumberOfNodes() << "\n";
+                    return FAILURE;
+                }
 				if(key == "nodeExec") {
 					setNodeSetExec(value, beg_range, end_range);
 				} else if(key == "captureFile") {

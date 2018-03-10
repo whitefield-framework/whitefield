@@ -118,6 +118,8 @@ stop_whitefield()
 	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
 	echo "Stopped Whitefield"
 	sleep 1
+	wfpid=`wf_get_pid`
+	[[ "$wfpid" != "" ]] && echo "Whitefield not stopped cleanly. Terminating forcefully!" && kill -9 $wfpid
 	echo ;
 }
 

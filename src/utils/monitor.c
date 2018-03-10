@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2017 Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * This file is subject to the terms and conditions of the GNU
+ * General Public License v2. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     stackline
+ * @{
+ *
+ * @file
+ * @brief       OAM Monitor thread in forker
+ *
+ * @author      Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * @}
+ */
+
 #define	_MONITOR_C_
 
 #include <stdio.h>
@@ -126,7 +146,8 @@ int start_monitor_thread(void)
 		return CL_FAILURE;
 	}
 	if(pthread_create(&tid, NULL, monitor_thread, NULL) < 0) {
-		close(gMonitorFD);
+        ERROR("failure creating monitor thread %m\n");
+		CLOSE(gMonitorFD);
 		return CL_FAILURE;
 	}
 	pthread_detach(tid);

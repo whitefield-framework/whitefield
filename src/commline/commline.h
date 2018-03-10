@@ -99,7 +99,7 @@ enum {
 		gettimeofday(&tv, NULL);\
 		printf("%s [%ld:%ld] [%s:%d] ", STR, tv.tv_sec, tv.tv_usec, __FUNCTION__, __LINE__);\
 		printf(__VA_ARGS__);\
-		fflush(stdout);\
+		fflush(NULL);\
 	}
 #define	ERROR(...) PRN("ERROR", __VA_ARGS__)
 #define	INFO(...)  PRN("INFO ", __VA_ARGS__)
@@ -143,6 +143,12 @@ enum {
 		printf("%02x ", (uint8_t)BUF[i]);\
 	}\
 	printf("\n");\
+}
+
+#define CLOSE(FD)   \
+if(FD >= 0) {\
+    close(FD);\
+    FD=-1;\
 }
 
 // Stackline Helpers

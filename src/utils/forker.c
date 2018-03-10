@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2017 Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * This file is subject to the terms and conditions of the GNU
+ * General Public License v2. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     stackline
+ * @{
+ *
+ * @file
+ * @brief       Stackline process forker
+ *
+ * @author      Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * @}
+ */
+
 #define	_FORKER_C_
 
 #define	_GNU_SOURCE
@@ -11,8 +31,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <pty.h>
 #include <sys/prctl.h>
+#include <sys/socket.h>
 #include "commline/commline.h"
+#include "utils/forker_common.h"
+
+child_psinfo_t g_child_info[MAX_CHILD_PROCESS];
 
 void redirect_stdout_to_log(int nodeid)
 {
@@ -42,22 +67,23 @@ int chk_executable(char *bin)
 	return CL_SUCCESS;
 }
 
-#define	MAX_CHILD_PROCESS	8000
-pid_t gChildProcess[MAX_CHILD_PROCESS];
 #define	SET_ARG_ENV(BUF)	\
-	if(strchr(BUF, '=')) {\
-		envp[e++]=BUF;\
-	} else {\
-		argv[i++]=BUF;\
-	}
+    if(strstr(BUF, "PTY=1")) {\
+        pty=1;\
+    } else {\
+        if(strchr(BUF, '=')) {\
+            envp[e++]=BUF;\
+        } else {\
+            argv[i++]=BUF;\
+        }\
+    }
 
 int fork_n_exec(uint16_t nodeid, char *buf)
 {
-	char *argv[20] = {NULL};
-	char *envp[20] = {NULL};
-	int i=0, e=0;
-	char *ptr=NULL;
+	char *argv[20]={NULL}, *envp[20]={NULL}, *ptr=NULL;
+	int i=0, e=0, pty=0;
 
+    INFO("fork_n_exec: buf=[%s]\n", buf);
 	while((ptr=strchr(buf, '|'))) {
 		*ptr++=0;
 		SET_ARG_ENV(buf);
@@ -75,21 +101,37 @@ int fork_n_exec(uint16_t nodeid, char *buf)
 
 	if(chk_executable(argv[0])) return -1;
 
-	gChildProcess[nodeid] = fork();
-	if(0 == gChildProcess[nodeid]) {
-
-		/* If parent dies, so does the child processes */
+    if(pty) {
+        g_child_info[nodeid].pid = forkpty(&g_child_info[nodeid].master, NULL, NULL, NULL);
+    } else {
+        g_child_info[nodeid].pid = fork();
+    }
+	if(g_child_info[nodeid].pid < 0) {
+		ERROR("fork failed!!!pty:%d\n", pty);
+        return CL_FAILURE;
+	}
+	if(0 == g_child_info[nodeid].pid) {
 		prctl(PR_SET_PDEATHSIG, SIGKILL);	//If forker dies then it should send SIGKILL to all kids i.e. stackline processes
-
-		/* Redirect stderr/out to the log files */
-		redirect_stdout_to_log(nodeid);
-
+        if(!pty) redirect_stdout_to_log(nodeid);
 		execvpe(argv[0], argv, envp);
 		ERROR("Could not execv [%s]. Check if the cmdname/path is correct.Aborting...\n", argv[0]);
 		exit(0);
-	} else if(gChildProcess[nodeid] < 0) {
-		ERROR("fork failed!!!\n");
 	}
+    if(pty) {
+        struct termios tios;
+
+        tcgetattr(g_child_info[nodeid].master, &tios);
+        tios.c_lflag &= ~(ECHO | ECHONL);
+        tcsetattr(g_child_info[nodeid].master, TCSAFLUSH, &tios);
+        g_child_info[nodeid].uds_fd = uds_open(nodeid);
+        if(g_child_info[nodeid].uds_fd < 0) {
+            ERROR("Failed to open unix domain sock\n");
+            //Dont bother to cleanup since everything will stop after this failure
+            return CL_FAILURE;
+        }
+        pty_add_fd(nodeid, g_child_info[nodeid].uds_fd, 0);
+        pty_add_fd(nodeid, g_child_info[nodeid].master, 1);
+    }
 	return CL_SUCCESS;
 }
 
@@ -97,8 +139,8 @@ void killall_childprocess(void)
 {
 	int i;
 	for(i=0;i<MAX_CHILD_PROCESS;i++) {
-		if(gChildProcess[i] <= 0) continue;
-		kill(gChildProcess[i], SIGKILL);
+		if(g_child_info[i].pid <= 0) continue;
+		kill(g_child_info[i].pid, SIGKILL);
 	}
 }
 
@@ -120,14 +162,16 @@ void wait_on_q(void)
 	INFO("Quitting forker process\n");
 }
 
-extern int start_monitor_thread(void);
-
 int main(void)
 {
     redirect_stdout_to_log(-1);
 	INFO("Starting forker...\n");
 	if(CL_SUCCESS != cl_init(CL_ATTACHQ)) {
 		ERROR("forker: failure to cl_init()\n");
+		return 1;
+	}
+	if(CL_SUCCESS != start_pty_thread()) {
+		ERROR("start_monitor_thread failed... exiting process!!\n");
 		return 1;
 	}
 	if(CL_SUCCESS != start_monitor_thread()) {
