@@ -112,11 +112,12 @@ int fork_n_exec(uint16_t nodeid, char *buf)
 	}
 	if(0 == g_child_info[nodeid].pid) {
 		prctl(PR_SET_PDEATHSIG, SIGKILL);	//If forker dies then it should send SIGKILL to all kids i.e. stackline processes
-        if(!pty) redirect_stdout_to_log(nodeid);
+        redirect_stdout_to_log(nodeid);
 		execvpe(argv[0], argv, envp);
 		ERROR("Could not execv [%s]. Check if the cmdname/path is correct.Aborting...\n", argv[0]);
 		exit(0);
 	}
+#if 0
     if(pty) {
         struct termios tios;
 
@@ -132,6 +133,7 @@ int fork_n_exec(uint16_t nodeid, char *buf)
         pty_add_fd(nodeid, g_child_info[nodeid].uds_fd, 0);
         pty_add_fd(nodeid, g_child_info[nodeid].master, 1);
     }
+#endif
 	return CL_SUCCESS;
 }
 

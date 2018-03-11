@@ -1,13 +1,17 @@
 # Whitefield
 
-Framework for realistic RF simulation with real-world protocol stacks
+Simulation Framework for Wireless Sensor Networks
 
 ---
-## Rationale
+## Yet another framework!
 
-- Wireless technologies in last-mile IoT
-    - 802.15.4, TISCH, BLE, 802.11-OCB...
-    - 6lo, RPL, 6top...
+- Does real-world protocol stacks (Contiki/RIOT/OpenThread)
+- With realistic RF simulation (NS3/..)
+- At scale!
+- Currently works for 802.15.4 but can be extended for
+    - BLE
+    - 802.11-OCB, 802.11s
+    - 802.15.4 TSCH
 - Protocol Design/performance/efficiency
     - Dependency on link layer tech
     - Asymmetric links

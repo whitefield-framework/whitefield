@@ -10,6 +10,10 @@ STACKLINE_DEP+=contiki
 STACKLINE_DEPCLEAN+=contiki_clean
 endif
 
+ifneq ($(STACKLINE_OPENTHREAD),)
+STACKLINE_DEP+=openthread
+endif
+
 ifneq ($(AIRLINE_NS3),)
 AIRLINE_DEP+=ns3
 AIRLINE_DEPCLEAN+=ns3_clean
@@ -36,6 +40,9 @@ contiki:
 
 contiki_clean:
 	make -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield clean
+
+openthread:
+	make -f src/stackline/wf_openthread/Makefile.openthread
 
 ns3:
 	make -C $(AIRLINE_NS3)

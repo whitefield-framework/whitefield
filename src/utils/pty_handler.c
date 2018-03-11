@@ -39,25 +39,31 @@ extern child_psinfo_t g_child_info[];
 #define MASTER_FD   g_child_info[nodeid].master
 #define UDS_FD      g_child_info[nodeid].uds_fd
 #define PEER        g_child_info[nodeid].peer
+#define PEERLEN     g_child_info[nodeid].peerlen
 int handle_pty_event(int nodeid, int ismaster)
 {
     char buf[1024];
     int n;
-    socklen_t peerlen;
 
     if(ismaster) {
         n = read(MASTER_FD, buf, sizeof(buf));
-        if(n > 0) {
-            n = sendto(UDS_FD, buf, n, 0, (struct sockaddr *)&PEER, sizeof(PEER));
+        INFO("master read n=%d, peerset=%d\n", n, PEERLEN);
+        INFO("master data:\n%.*s\n", n, buf);
+        if(n > 0 && PEERLEN) {
+            n = sendto(UDS_FD, buf, n, 0, (struct sockaddr *)&PEER, PEERLEN);
         }
     } else {
-        n = recvfrom(UDS_FD, buf, sizeof(buf), 0, (struct sockaddr *)&PEER, &peerlen);
+        PEERLEN = sizeof(PEER);
+        n = recvfrom(UDS_FD, buf, sizeof(buf), 0, (struct sockaddr *)&PEER, &PEERLEN);
+        INFO("uds read n=%d, peerset=%d\n", n, PEERLEN);
         if(n > 0) {
             n = write(MASTER_FD, buf, n);
+        } else {
+            PEERLEN = 0;
         }
     }
     if(n <= 0) {
-        ERROR("nodeid:%d, read on pty failed ismaster:%d\n", nodeid, ismaster);
+        ERROR("[%m] nodeid:%d, write failed ismaster:%d n=%d\n", nodeid, ismaster, n);
         return CL_FAILURE;
     }
     return CL_SUCCESS;

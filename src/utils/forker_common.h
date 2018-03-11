@@ -10,6 +10,7 @@ typedef struct _child_info_
     int master;
     int uds_fd;
     struct sockaddr_un peer;
+    socklen_t peerlen;
 }child_psinfo_t;
 
 // pty_handler.c exported functions

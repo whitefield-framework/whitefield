@@ -182,9 +182,10 @@ extern "C" otRadioCaps __wrap_otPlatRadioGetCaps(otInstance *aInstance)
     return __real_otPlatRadioGetCaps(aInstance);
 }
 
+extern int uds_send(char *buf, int buflen);
 extern "C" otError __wrap_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength)
 {
     extern otError __real_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength);
-    //Send buffer to the remote
+    uds_send((char*)aBuf, aBufLength);
     return __real_otPlatUartSend(aBuf, aBufLength);
 }

@@ -48,6 +48,14 @@ void wfot_handle_ini(const char *ini)
     INFO("Finished with openthread ini <%s>\r\n", ini);
 }
 
+void pty_send_cmd(char *buf, int buflen)
+{
+    INFO("Sending buf:[%.*s]\r\n", buflen, buf);
+    otPlatUartReceived((uint8_t*)buf, buflen);
+}
+
+extern int start_pty_thread(int);
+extern int NODE_ID;
 int main(int argc, char *argv[])
 {
     otInstance *sInstance;
@@ -63,6 +71,7 @@ int main(int argc, char *argv[])
     otDiagInit(sInstance);
 #endif
     wfot_handle_ini(getenv("INI"));
+    start_pty_thread(NODE_ID-1);
 
     while (1)
     {
