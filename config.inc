@@ -5,7 +5,7 @@ STACKLINE_CONTIKI=thirdparty/contiki
 
 STACKLINE_RIOT=thirdparty/RIOT
 
-STACKLINE_OPENTHREAD=/home/rahul/rnd/openthread
+STACKLINE_OPENTHREAD=thirdparty/openthread
 
 REL=debug
 BINDIR=bin

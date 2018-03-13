@@ -142,7 +142,7 @@ void killall_childprocess(void)
 	int i;
 	for(i=0;i<MAX_CHILD_PROCESS;i++) {
 		if(g_child_info[i].pid <= 0) continue;
-		kill(g_child_info[i].pid, SIGKILL);
+		kill(g_child_info[i].pid, SIGINT);
 	}
 }
 

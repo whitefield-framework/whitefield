@@ -138,6 +138,11 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
 		return;
 	}
+	int numNodes = stoi(CFG("numOfNodes"));
+	if(!IN_RANGE(mbuf->src_id, 0, numNodes)) {
+        ERROR << "rcvd src id=" << mbuf->src_id << " out of range!!\n";
+		return;
+	}
 	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
 	if(!nodeApp) {
 		ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;

@@ -11,7 +11,7 @@
 #include <openthread/cli.h>
 #include <openthread/diag.h>
 #include <openthread/openthread.h>
-#include <openthread/platform/platform.h>
+#include "platform.h"
 #include <openthread/platform/logging.h>
 
 #include <openthread/platform/alarm-milli.h>
@@ -189,3 +189,4 @@ extern "C" otError __wrap_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLengt
     uds_send((char*)aBuf, aBufLength);
     return __real_otPlatUartSend(aBuf, aBufLength);
 }
+

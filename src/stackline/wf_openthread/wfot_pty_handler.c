@@ -24,7 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <pthread.h>
+#include <poll.h>
+#include <errno.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -41,46 +42,34 @@ if(FD>=0) {\
 int g_uds_fd=-1, g_uds_childfd=-1;
 
 extern void pty_send_cmd(char *buf, int buflen);
-void *pty_handler_thread(void*arg)
-{
-    char buf[1024];
-    ssize_t n;
-
-    while(1) {
-        g_uds_childfd = -1;
-        INFO("waiting on accept\r\n");
-        g_uds_childfd = accept(g_uds_fd, NULL, NULL);
-        INFO("accepted fd=%d\r\n", g_uds_childfd);
-        while(1) {
-            n = recv(g_uds_childfd, buf, sizeof(buf), 0);
-            if(n > 0) {
-                pty_send_cmd(buf, n);
-            } else if(n == 0) {
-                INFO("breaking n:%ld\n", n);
-                break;
-            }
-        }
-    }
-}
-
+extern int NODE_ID;
 int uds_send(char *buf, int buflen)
 {
-    if(g_uds_childfd <= 0) {
-        return 0;
-    }
-    return send(g_uds_childfd, buf, buflen, 0);
+    if(g_uds_childfd <= 0) return 0;
+    return send(g_uds_childfd, buf, buflen?buflen:strlen(buf), 0);
 }
 
-int uds_get_path(int nodeid, char *path, int maxlen)
+int uds_get_path(char *path, int maxlen)
 {
-    char *uds=getenv("UDS");
+    char *uds=getenv("UDSPATH");
     if(uds) {
-        return snprintf(path, maxlen, "%s", uds);
+        return snprintf(path, maxlen, "%s/%04x.uds", uds, NODE_ID-1);
     }
-    return snprintf(path, maxlen, "%04x.uds", nodeid);
+    return snprintf(path, maxlen, "%04x.uds", NODE_ID-1);
 }
 
-int uds_open(int nodeid)
+void uds_close(void)
+{
+    char udspath[512];
+    if(g_uds_fd) {
+        uds_get_path(udspath, sizeof(udspath));
+        unlink(udspath);
+        CLOSE(g_uds_fd);
+    }
+    INFO("exiting...\r\n");
+}
+
+int uds_open(void)
 {
     struct sockaddr_un addr;
 
@@ -91,7 +80,7 @@ int uds_open(int nodeid)
     }   
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-    uds_get_path(nodeid, addr.sun_path, sizeof(addr.sun_path));
+    uds_get_path(addr.sun_path, sizeof(addr.sun_path));
     unlink(addr.sun_path);
 
     INFO("binding to unix domain sock:[%s]\r\n", addr.sun_path);
@@ -101,24 +90,72 @@ int uds_open(int nodeid)
         ERROR("UDS bind/listen error %m");
         return -1;
     }
+    atexit(uds_close);
     return g_uds_fd; 
 }
 
-int start_pty_thread(int nodeid)
+#define ADD_TO_FDSET(FD)    \
+    if(aReadFdSet && (FD >= 0)) {\
+        FD_SET(FD, aReadFdSet);\
+        if(aErrorFdSet) {\
+            FD_SET(FD, aErrorFdSet);\
+        }\
+        if(aMaxFd && *aMaxFd < FD) {\
+            *aMaxFd = FD;\
+        }\
+    }
+
+extern "C" void __wrap_platformUartUpdateFdSet(fd_set *aReadFdSet, fd_set *aWriteFdSet, fd_set *aErrorFdSet, int *aMaxFd)
 {
-    pthread_t tid;
+    extern void __real_platformUartUpdateFdSet(fd_set *aReadFdSet, fd_set *aWriteFdSet, fd_set *aErrorFdSet, int *aMaxFd);
+    ADD_TO_FDSET(g_uds_childfd);
+    if(g_uds_childfd < 0) {
+        ADD_TO_FDSET(g_uds_fd);
+    }
+    return __real_platformUartUpdateFdSet(aReadFdSet, aWriteFdSet, aErrorFdSet, aMaxFd);
+}
 
-    if(uds_open(nodeid)<0) {
-        ERROR("uds_open failed\n");
-        return -1;
+void wfHandlePtyEvent(void)
+{
+    char buf[1024];
+    ssize_t rval;
+    const int error_flags = POLLERR | POLLNVAL | POLLHUP;
+    struct pollfd pollfd[] =
+    {
+        { g_uds_childfd>=0?g_uds_childfd:g_uds_fd,  POLLIN  | error_flags, 0 },
+    };
+
+    errno = 0;
+    rval = poll(pollfd, 1, 0);
+    if (rval < 0) {
+        perror("wfpoll");
+        exit(1);
     }
 
-    if(pthread_create(&tid, NULL, pty_handler_thread, NULL)) {
-        CLOSE(g_uds_fd);
-        ERROR("failure creating pty handler thread %m\n");
-        return -1;
+    if (rval > 0) {
+        if ((pollfd[0].revents & error_flags) != 0) {
+            if(g_uds_childfd >= 0) {
+                CLOSE(g_uds_childfd);
+            }
+        }
+
+        if (pollfd[0].revents & POLLIN) {
+            if(g_uds_childfd >= 0) {
+                rval = recv(g_uds_childfd, buf, sizeof(buf), 0);
+                if (rval <= 0) {
+                    INFO("Closing child conn:%d\n", g_uds_childfd);
+                    CLOSE(g_uds_childfd);
+                } else {
+                    pty_send_cmd(buf, rval);
+                }
+            } else {
+                g_uds_childfd = accept(g_uds_fd, NULL, NULL);
+                if(g_uds_childfd < 0) {
+                    perror("wfHandlePtyEvent accept");
+                    exit(1);
+                }
+            }
+        }
     }
-	pthread_detach(tid);
-    return 0;
 }
 

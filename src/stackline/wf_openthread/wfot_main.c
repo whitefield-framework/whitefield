@@ -1,21 +1,41 @@
+/*
+ * Copyright (C) 2017 Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * This file is subject to the terms and conditions of the GNU
+ * General Public License v2. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     stackline
+ * @{
+ *
+ * @file
+ * @brief       Whitefield Openthread executable
+ *
+ * @author      Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * @}
+ */
+
 #define _WFOT_MAIN_C_
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-#include <openthread/config.h>
 #include <openthread-core-config.h>
+#include <openthread/config.h>
 #include <assert.h>
 
 #include <openthread/cli.h>
 #include <openthread/diag.h>
 #include <openthread/openthread.h>
-#include <openthread/platform/platform.h>
 #include <openthread/platform/logging.h>
 
-#include <openthread/platform/debug_uart.h>
 #include <openthread/platform/uart.h>
+
+#include "platform.h"
 
 #include <commline/commline.h>
 
@@ -48,14 +68,19 @@ void wfot_handle_ini(const char *ini)
     INFO("Finished with openthread ini <%s>\r\n", ini);
 }
 
+extern int uds_send(char *buf, int buflen);
+extern int uds_open(void);
+extern void wfHandlePtyEvent(void);
 void pty_send_cmd(char *buf, int buflen)
 {
+    if(!strncasecmp(buf, "exit", sizeof("exit")-1)) {
+        uds_send((char*)"[Ctrl-C] to exit from this shell..\n", 0);
+        return;
+    }
     INFO("Sending buf:[%.*s]\r\n", buflen, buf);
     otPlatUartReceived((uint8_t*)buf, buflen);
 }
 
-extern int start_pty_thread(int);
-extern int NODE_ID;
 int main(int argc, char *argv[])
 {
     otInstance *sInstance;
@@ -71,12 +96,13 @@ int main(int argc, char *argv[])
     otDiagInit(sInstance);
 #endif
     wfot_handle_ini(getenv("INI"));
-    start_pty_thread(NODE_ID-1);
+    uds_open();
 
     while (1)
     {
         otTaskletsProcess(sInstance);
         PlatformProcessDrivers(sInstance);
+        wfHandlePtyEvent();
     }
     return 0;
 }
