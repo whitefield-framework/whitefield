@@ -143,6 +143,13 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
         ERROR << "rcvd src id=" << mbuf->src_id << " out of range!!\n";
 		return;
 	}
+    if(mbuf->dst_id == CL_DSTID_MACHDR_PRESENT) {
+        if(CFG_INT("macHeaderAdd", 1)) {
+            ERROR << "rcvd a packet from stackline with DSTID_MACHDR_PRESENT set but config file does not have macHeaderAdd=0\n";
+            ERROR << "If you are using openthread, please set macHeaderAdd=0 to prevent Airline from adding its own mac hdr\n";
+            return;
+        }
+    }
 	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
 	if(!nodeApp) {
 		ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
@@ -179,6 +186,22 @@ void AirlineManager::setNodeSpecificPosition(NodeContainer & nodes)
 	}
 }
 
+void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
+{
+    bool macAdd=CFG_INT("macHeaderAdd", 1);
+    if(macAdd) {
+        return;
+    }
+	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
+	{ 
+		Ptr<Node> node = *i; 
+		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
+        if(dev) {
+            dev->SetMacHeaderAdd(macAdd);
+        }
+	}
+}
+
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	try {
@@ -206,6 +229,8 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 			INFO << "NS3 Capture File:" << ns3_capfile << endl;
 			lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
 		}
+
+        setMacHeaderAdd(nodes);
 
 		AirlineHelper airlineApp;
 		ApplicationContainer apps = airlineApp.Install(nodes);

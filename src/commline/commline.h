@@ -88,7 +88,12 @@ enum {
 	MONITOR,
 };
 
-#define	CL_MGR_ID	0xffff
+//In case of Openthread stackline, the packet already contains the machdr
+//formed. Thus Airline needs to be informed by setting
+//mbuf->dst_id=DSTID_MACHDR_PRESENT.
+#define CL_DSTID_MACHDR_PRESENT    0xfffe
+
+#define	CL_MGR_ID	        0xffff
 
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
 

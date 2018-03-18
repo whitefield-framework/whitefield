@@ -41,6 +41,7 @@ private:
 	int cmd_set_node_position(uint16_t id, char *buf, int buflen);
 	void setPositionAllocator(NodeContainer & nodes);
 	void setNodeSpecificPosition(NodeContainer & nodes);
+    void setMacHeaderAdd(NodeContainer & nodes);
 	void msgReader(void);
 	void ScheduleCommlineRX(void);
 	EventId m_sendEvent;

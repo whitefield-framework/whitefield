@@ -51,8 +51,10 @@ namespace wf
 	class Config;
 };
 extern wf::Config WF_config;
-#define	CFG(...)	WF_config.get(__VA_ARGS__)
-#define	CFG_PANID	stoi(WF_config.get("panID"), nullptr, 0)
+
+#define	CFG(...)	            WF_config.get(__VA_ARGS__)
+#define	CFG_INT(STR, DEF_VAL)	stoi(CFG(STR, #DEF_VAL), nullptr, 0)
+#define	CFG_PANID	            stoi(CFG("panID", "0xface"), nullptr, 0)
 #define	SPAWN_STACKLINE(NODEID)	WF_config.spawnStackline(NODEID)
 #define WF_STOP	raise(SIGINT)
 

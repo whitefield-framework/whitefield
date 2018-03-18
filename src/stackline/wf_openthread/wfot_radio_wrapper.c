@@ -51,7 +51,7 @@ void dump_pcap(const uint8_t *buf, int buflen)
 
     if(!handle) {
         char fname[512];
-        snprintf(fname, sizeof(fname), "openthread_%04x.pcap", NODE_ID);
+        snprintf(fname, sizeof(fname), "openthread_%04x.pcap", NODE_ID-1);
         handle = pcap_init(fname);
     }
     pcap_write(handle, buf, buflen);
@@ -82,8 +82,9 @@ void commline_sendto(const uint8_t *buf, int buflen)
     DEFINE_MBUF(mbuf);
     mbuf->len = buflen;
     memcpy(mbuf->buf, buf, buflen);
-    mbuf->src_id = 0xffff;
-    mbuf->dst_id = 0xffff;
+    mbuf->src_id = NODE_ID-1;   //-1 since OT NODE_ID = WF NODEID-1
+    mbuf->dst_id = CL_DSTID_MACHDR_PRESENT;   //Openthread already prepares its 802.15.4 machdr
+    INFO("sending packet len=%d, src_id=%d\n", buflen, mbuf->src_id);
     if(CL_SUCCESS != cl_sendto_q(MTYPE(AIRLINE, CL_MGR_ID), mbuf, mbuf->len + sizeof(msg_buf_t))) {
         ERROR("cl_sendto_q failed. utter failure!\r\n");
     }
