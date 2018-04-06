@@ -121,7 +121,7 @@ namespace ns3
 		//INFO << "Airline application started ID:"<< GetNode()->GetId() << endl;
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		setDeviceAddress();
-		dev->GetMac()->SetMacMaxFrameRetries(stoi(CFG("macMaxRetry")));
+		dev->GetMac()->SetMacMaxFrameRetries(CFG_INT("macMaxRetry", 3));
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));
 		SPAWN_STACKLINE(GetNode()->GetId());

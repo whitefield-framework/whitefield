@@ -30,14 +30,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <netinet/in.h>
-
-#define ERROR   printf
-#define INFO    printf
-#define CLOSE(FD)   \
-if(FD>=0) {\
-    close(FD);\
-    FD=-1;\
-}
+#include <commline/commline.h>
 
 int g_uds_fd=-1, g_uds_childfd=-1;
 

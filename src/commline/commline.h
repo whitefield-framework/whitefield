@@ -30,12 +30,15 @@ extern "C" {
 #define	CL_SUCCESS	0
 #define	CL_FAILURE	-1
 
+#define USE_UNIX_SOCKETS
+
 #define	COMMLINE_MAX_BUF	2048
 
 #define	CL_CREATEQ	(1<<0)	//Used by airline
 #define	CL_ATTACHQ	(1<<1)	//Used by stackline
 
-int cl_init(const uint8_t flags);
+int cl_init(const long my_mtype, const uint8_t flags);
+int cl_bind(const long my_mtype);
 void cl_cleanup(void);
 
 //msg_buf_t::flags defined
@@ -46,7 +49,11 @@ void cl_cleanup(void);
 #pragma pack(push,1)
 typedef struct _msg_buf_
 {
+#ifdef USE_UNIX_SOCKETS
+	int mtype;
+#else
 	long mtype;
+#endif
 	uint16_t src_id;
 	uint16_t dst_id;
 	uint8_t flags;
@@ -86,6 +93,7 @@ enum {
 	AIRLINE,
 	FORKER,
 	MONITOR,
+    MAX_CL_LINE
 };
 
 //In case of Openthread stackline, the packet already contains the machdr
@@ -96,6 +104,7 @@ enum {
 #define	CL_MGR_ID	        0xffff
 
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
+#define GET_LINE(MT)    (MT>>16)
 
 #ifndef	ERROR
 #define	PRN(STR, ...)	\

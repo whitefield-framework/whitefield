@@ -168,8 +168,12 @@ int main(void)
 {
     redirect_stdout_to_log(-1);
 	INFO("Starting forker...\n");
-	if(CL_SUCCESS != cl_init(CL_ATTACHQ)) {
+	if(CL_SUCCESS != cl_init(MTYPE(FORKER, CL_MGR_ID), CL_ATTACHQ)) {
 		ERROR("forker: failure to cl_init()\n");
+		return 1;
+	}
+	if(CL_SUCCESS != cl_bind(MTYPE(MONITOR, CL_MGR_ID))) {
+		ERROR("forker: failure to cl_bind()\n");
 		return 1;
 	}
 	if(CL_SUCCESS != start_pty_thread()) {

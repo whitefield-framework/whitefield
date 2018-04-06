@@ -17,7 +17,8 @@ export FORKER=$BINDIR/wf_forker
 export LOGPATH=log
 export MONITOR_PORT=$MONITOR_PORT
 export AIRLINE_ERR=$LOGPATH/airline_error.log
-export NS_LOG="*=level_warn"
+export AIRLINE_LOG=$LOGPATH/airline.log
+#export NS_LOG="*=level_warn:LrWpanMac=level_all"
 
 func_childret()
 {
@@ -29,7 +30,7 @@ mkdir $LOGPATH pcap 2>/dev/null
 if [ "$cmdprefix" == "" ]; then #Regular execution
 	trap func_childret SIGCHLD
 	set -m
-	$BINDIR/whitefield $* 2>$AIRLINE_ERR &
+	$BINDIR/whitefield $* 1>$AIRLINE_LOG 2>$AIRLINE_ERR &
 	sleep 1
 	echo ;
 else #GDB execution

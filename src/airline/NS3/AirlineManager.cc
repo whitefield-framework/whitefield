@@ -197,7 +197,12 @@ void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
 		Ptr<Node> node = *i; 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
         if(dev) {
-            dev->SetMacHeaderAdd(macAdd);
+            dev->GetMac()->SetMacHeaderAdd(macAdd);
+
+            //In case where stackline itself add mac header, the airline needs
+            //to be set in promiscuous mode so that all the packets with
+            //headers are transmitted as is to the stackline on reception
+            //dev->GetMac()->SetPromiscuousMode(1);
         }
 	}
 }
@@ -205,7 +210,8 @@ void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	try {
-		GlobalValue::Bind ("ChecksumEnabled", BooleanValue (true));
+		GlobalValue::Bind ("ChecksumEnabled", 
+            BooleanValue (CFG_INT("macChecksumEnabled", 1)));
 		GlobalValue::Bind ("SimulatorImplementationType", 
 		   StringValue ("ns3::RealtimeSimulatorImpl"));
 

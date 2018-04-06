@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2017 Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * This file is subject to the terms and conditions of the GNU
+ * General Public License v2. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     stackline
+ * @{
+ *
+ * @file
+ * @brief       Overrided Openthread interfaces by whitefield
+ *
+ * @author      Rahul Jadhav <nyrahul@gmail.com>
+ *
+ * @}
+ */
+
 #define _WFOT_RADIO_WRAPPER_C_
 
 #include <stdio.h>
@@ -28,7 +48,7 @@ extern "C" void __wrap_platformRadioInit(void)
 {
     extern void __real_platformRadioInit(void);
     ENTERING;
-    if(cl_init(CL_ATTACHQ)!=CL_SUCCESS) {
+    if(cl_init(MTYPE(STACKLINE, NODE_ID-1), CL_ATTACHQ)!=CL_SUCCESS) {
         ERROR("commline init failed, exiting...\n");
         exit(1);
     }
@@ -57,7 +77,7 @@ void dump_pcap(const uint8_t *buf, int buflen)
     pcap_write(handle, buf, buflen);
 }
 
-void prn_buffer(const char *str, uint8_t *buf, int buflen)
+void prn_buffer(const char *str, const uint8_t *buf, const int buflen)
 {
     int i;
     if(str) {
@@ -74,7 +94,6 @@ void prn_buffer(const char *str, uint8_t *buf, int buflen)
         }
     }
     printf("\r\n");
-    dump_pcap(buf, buflen);
 }
 
 void commline_sendto(const uint8_t *buf, int buflen)
@@ -94,6 +113,7 @@ extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFram
 {
     //extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
     //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
+    dump_pcap(aFrame->mPsdu, aFrame->mLength);
     commline_sendto(aFrame->mPsdu, aFrame->mLength);
     return OT_ERROR_NONE;//__real_otPlatRadioTransmit(aInstance, aFrame);
 }
@@ -111,6 +131,7 @@ extern "C" void __wrap_otPlatRadioSetExtendedAddress(otInstance *aInstance,
     extern void __real_otPlatRadioSetExtendedAddress(otInstance *aInstance,
                     const otExtAddress *aExtAddress);
     ENTERING;
+    prn_buffer("SetExtAddr", aExtAddress->m8, OT_EXT_ADDRESS_SIZE);
     return __real_otPlatRadioSetExtendedAddress(aInstance, aExtAddress);
 }
 
@@ -119,7 +140,7 @@ extern "C" void __wrap_otPlatRadioSetShortAddress(otInstance *aInstance,
 {
     extern void __real_otPlatRadioSetShortAddress(otInstance *aInstance,
                     uint16_t aShortAddress);
-    ENTERING;
+    INFO("Set Short Addr: %04x\n", aShortAddress);
     return __real_otPlatRadioSetShortAddress(aInstance, aShortAddress);
 }
 
@@ -189,5 +210,18 @@ extern "C" otError __wrap_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLengt
     extern otError __real_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength);
     uds_send((char*)aBuf, aBufLength);
     return __real_otPlatUartSend(aBuf, aBufLength);
+}
+
+void wfHandleCommlineEvent(void)
+{
+    DEFINE_MBUF(mbuf);
+    int ret;
+
+    ret = cl_recvfrom_q(MTYPE(STACKLINE, NODE_ID-1), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
+    if(0 == mbuf->len) {
+        INFO("No pkt on commline\n");
+        return;
+    }
+    INFO("rcvd pkt len:%d on commline ret:%d\n", mbuf->len, ret);
 }
 

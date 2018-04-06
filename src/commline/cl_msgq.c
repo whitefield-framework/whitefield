@@ -34,10 +34,6 @@
 #include <commline.h>
 #include <cl_msgq.h>
 
-#define	MAKE_MTYPE(MTYPE, LINE, ID)	\
-	(MTYPE) = LINE << 16;\
-	(MTYPE) |= ID;
-
 int gMsgQ_id=-1;
 key_t get_msgq_key(void)
 {
@@ -45,7 +41,7 @@ key_t get_msgq_key(void)
 	return ftok(getcwd(buf, sizeof(buf)), 0xab);
 }
 
-int msgq_init(const uint8_t flags)
+int msgq_init(const long my_mtype, const uint8_t flags)
 {
 	key_t key;
 	int msgflag=0666 | IPC_CREAT;

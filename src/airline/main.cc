@@ -89,7 +89,7 @@ int main(const int argc, const char *argv[])
 	//signal(SIGSEGV, sig_handler);
 	signal(SIGCHLD, sig_handler);
 
-	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
+	if(CL_SUCCESS != cl_init(MTYPE(AIRLINE, CL_MGR_ID), CL_CREATEQ)) {
 		ERROR << "Whitefield is already running\n";
 		sig_handler(1);
 	}
