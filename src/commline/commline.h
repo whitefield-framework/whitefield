@@ -23,15 +23,22 @@
 
 #include <sys/time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define	CL_SUCCESS	0
 #define	CL_FAILURE	-1
+
+#define USE_UNIX_SOCKETS
 
 #define	COMMLINE_MAX_BUF	2048
 
 #define	CL_CREATEQ	(1<<0)	//Used by airline
 #define	CL_ATTACHQ	(1<<1)	//Used by stackline
 
-int cl_init(const uint8_t flags);
+int cl_init(const long my_mtype, const uint8_t flags);
+int cl_bind(const long my_mtype);
 void cl_cleanup(void);
 
 //msg_buf_t::flags defined
@@ -42,7 +49,11 @@ void cl_cleanup(void);
 #pragma pack(push,1)
 typedef struct _msg_buf_
 {
+#ifdef USE_UNIX_SOCKETS
+	int mtype;
+#else
 	long mtype;
+#endif
 	uint16_t src_id;
 	uint16_t dst_id;
 	uint8_t flags;
@@ -82,11 +93,18 @@ enum {
 	AIRLINE,
 	FORKER,
 	MONITOR,
+    MAX_CL_LINE
 };
 
-#define	CL_MGR_ID	0xffff
+//In case of Openthread stackline, the packet already contains the machdr
+//formed. Thus Airline needs to be informed by setting
+//mbuf->dst_id=DSTID_MACHDR_PRESENT.
+#define CL_DSTID_MACHDR_PRESENT    0xfffe
+
+#define	CL_MGR_ID	        0xffff
 
 #define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
+#define GET_LINE(MT)    (MT>>16)
 
 #ifndef	ERROR
 #define	PRN(STR, ...)	\
@@ -95,7 +113,7 @@ enum {
 		gettimeofday(&tv, NULL);\
 		printf("%s [%ld:%ld] [%s:%d] ", STR, tv.tv_sec, tv.tv_usec, __FUNCTION__, __LINE__);\
 		printf(__VA_ARGS__);\
-		fflush(stdout);\
+		fflush(NULL);\
 	}
 #define	ERROR(...) PRN("ERROR", __VA_ARGS__)
 #define	INFO(...)  PRN("INFO ", __VA_ARGS__)
@@ -141,7 +159,17 @@ enum {
 	printf("\n");\
 }
 
+#define CLOSE(FD)   \
+if(FD >= 0) {\
+    close(FD);\
+    FD=-1;\
+}
+
 // Stackline Helpers
 #include "cl_stackline_helpers.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	//_COMMLINE_H_

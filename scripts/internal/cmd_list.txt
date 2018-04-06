@@ -16,5 +16,6 @@ fw stop_whitefield
 fw plot_network_graph
 fw path_upstream
 fw path_downstream
+fw native_shell
 fw help
 fw exit

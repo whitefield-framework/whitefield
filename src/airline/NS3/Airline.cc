@@ -92,7 +92,7 @@ namespace ns3
 		McpsDataRequestParams params;
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
-		params.m_dstPanId = CFG_PANID;
+        params.m_dstPanId = CFG_PANID;
 		params.m_dstAddr = id2addr(mbuf->dst_id);
 		params.m_msduHandle = 0;
 		params.m_txOptions = TX_OPTION_NONE;
@@ -100,11 +100,6 @@ namespace ns3
 			params.m_txOptions = TX_OPTION_ACK;
 		}
 		pktq.push(params);
-#if 0
-		if(GetNode()->GetId() == 1) {
-			INFO << GetNode()->GetId() << " packet q size:" << (int)pktq.size() << endl;
-		}
-#endif
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
 
@@ -126,7 +121,7 @@ namespace ns3
 		//INFO << "Airline application started ID:"<< GetNode()->GetId() << endl;
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		setDeviceAddress();
-		dev->GetMac()->SetMacMaxFrameRetries(stoi(CFG("macMaxRetry")));
+		dev->GetMac()->SetMacMaxFrameRetries(CFG_INT("macMaxRetry", 3));
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));
 		SPAWN_STACKLINE(GetNode()->GetId());
@@ -190,11 +185,6 @@ namespace ns3
 			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
 			return;
 		}
-#if 0
-		if(GetNode()->GetId() == 1) {
-			INFO << GetNode()->GetId() << " rcvd confirm ind\n";
-		}
-#endif
 		McpsDataRequestParams drparams = pktq.front();
 		if(drparams.m_txOptions == TX_OPTION_ACK) {
 			DEFINE_MBUF(mbuf);

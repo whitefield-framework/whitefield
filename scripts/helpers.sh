@@ -118,6 +118,8 @@ stop_whitefield()
 	[[ $? -ne 0 ]] && echo "Problem stopping whitefield [$wfpid]" && return
 	echo "Stopped Whitefield"
 	sleep 1
+	wfpid=`wf_get_pid`
+	[[ "$wfpid" != "" ]] && echo "Whitefield not stopped cleanly. Terminating forcefully!" && kill -9 $wfpid
 	echo ;
 }
 
@@ -139,4 +141,14 @@ path_upstream()
 path_downstream()
 {
     $DIR/node_path.sh down $1
+}
+
+native_shell()
+{
+    [[ "$1" == "" ]] && echo "Usage: native_shell <nodeid>" && return
+    udspath=`printf "log/%04x.uds" $1`
+    echo -en "connecting to [$udspath]..."
+    echo "" | socat UNIX:$udspath -
+    [[ $? -ne 0 ]] && return
+    socat UNIX:$udspath -
 }

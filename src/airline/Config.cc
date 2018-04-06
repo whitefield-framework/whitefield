@@ -72,12 +72,25 @@ char *Config::getNextCmdToken(char *ptr, char **state, char *tok, int tok_len)
 
 void Config::resolveToken(char *tok, int tok_len, uint16_t nodeID)
 {
-	char tmp[128];
+	char tmp[32];
 	char *ptr = strchr(tok, '$'); 
 	if(!ptr) return;
-	if(!strncmp(ptr, "$NODEID", sizeof("$NODEID")-1)) {
+
+    /*
+     * RJ: I dont like this handling at all .. but for openthread we needed
+     * something like NODEID+1 since openthread's nodeid begins from 1 and not
+     * 0.
+     */
+	if(!strncmp(ptr, "$NODEID+", sizeof("$NODEID+")-1)) {
+		char *eptr = ptr + sizeof("$NODEID+X")-1;
+		int len=snprintf(tmp, sizeof(tmp), "%d", nodeID+atoi(ptr+sizeof("$NODEID+")-1));
+		strncpy(ptr, tmp, len);
+		ptr[len]=0;
+		strcat(ptr, eptr);
+		return;
+	} else if(!strncmp(ptr, "$NODEID", sizeof("$NODEID")-1)) {
 		char *eptr = ptr + sizeof("$NODEID")-1;
-		int len=sprintf(tmp, "%d", nodeID);
+		int len=snprintf(tmp, sizeof(tmp), "%d", nodeID);
 		strncpy(ptr, tmp, len);
 		ptr[len]=0;
 		strcat(ptr, eptr);
@@ -105,6 +118,7 @@ void Config::cmdParser(string & cmd, uint16_t nodeID)
 	}
 	string str(buf);
 	cmd = str;
+    //INFO << str << "\n";
 }
 
 void Config::spawnStackline(const uint16_t nodeID)
@@ -224,6 +238,10 @@ int Config::setConfigurationFromFile(const char *fname)
 					ERROR << "Configuration should first contain the numOfNodes cfg\n";
 					return FAILURE;
 				}
+                if(end_range >= getNumberOfNodes()) {
+                    ERROR << "node index " << end_range << " out of bounds. Max nodes:" << getNumberOfNodes() << "\n";
+                    return FAILURE;
+                }
 				if(key == "nodeExec") {
 					setNodeSetExec(value, beg_range, end_range);
 				} else if(key == "captureFile") {

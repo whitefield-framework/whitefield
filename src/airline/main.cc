@@ -32,7 +32,7 @@ extern "C" {
 void sig_handler(int signum)
 {
 	if(signum > 1) {
-		INFO << "Caught signal " << signum << endl;
+		INFO << "Airline Caught signal " << signum << endl;
 	}
 	cl_cleanup();
 	INFO << "Sayonara " << signum << "...\n";
@@ -86,10 +86,10 @@ int main(const int argc, const char *argv[])
 	signal(SIGINT, sig_handler);
 	signal(SIGKILL, sig_handler);
 	signal(SIGTERM, sig_handler);
-	signal(SIGSEGV, sig_handler);
+	//signal(SIGSEGV, sig_handler);
 	signal(SIGCHLD, sig_handler);
 
-	if(CL_SUCCESS != cl_init(CL_CREATEQ)) {
+	if(CL_SUCCESS != cl_init(MTYPE(AIRLINE, CL_MGR_ID), CL_CREATEQ)) {
 		ERROR << "Whitefield is already running\n";
 		sig_handler(1);
 	}

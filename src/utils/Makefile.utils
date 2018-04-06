@@ -8,14 +8,14 @@ CFLAGS+=-g
 endif
 
 UTIL=src/utils
-SRC=$(UTIL)/forker.c $(UTIL)/monitor.c
+SRC=$(UTIL)/forker.c $(UTIL)/monitor.c $(UTIL)/pty_handler.c
 FORKER=$(BINDIR)/wf_forker
 UDP_CMD=$(BINDIR)/udp_cmd
 
 all: $(FORKER) $(UDP_CMD)
 
 $(FORKER): $(SRC)
-	gcc -o $(FORKER) $(SRC) -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline
+	gcc -o $(FORKER) $(SRC) -Isrc $(CFLAGS) $(LDFLAGS) -L$(BINDIR) -lwf_commline -lutil
 
 $(UDP_CMD): $(UTIL)/udp_cmd.c
 	gcc -o $(UDP_CMD) $(UTIL)/udp_cmd.c

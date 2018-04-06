@@ -8,3 +8,7 @@
 	path = thirdparty/RIOT
 	url = https://github.com/whitefield-framework/RIOT
 	branch = master
+[submodule "thirdparty/openthread"]
+	path = thirdparty/openthread
+	url = https://github.com/whitefield-framework/openthread
+	branch = master

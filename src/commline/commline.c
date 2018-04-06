@@ -25,16 +25,30 @@
 #include <stdint.h>
 #include <commline.h>
 #include <errno.h>
-#include <cl_msgq.h>
 
-int cl_init(const uint8_t flags)
+#ifdef  USE_UNIX_SOCKETS
+#include <cl_usock.h>
+#else
+#include <cl_msgq.h>
+#endif
+
+int cl_init(const long my_mtype, const uint8_t flags)
 {
-	return msgq_init(flags);
+	return CL_INIT(my_mtype, flags);
+}
+
+int cl_bind(const long my_mtype)
+{
+#ifdef  USE_UNIX_SOCKETS
+	return CL_INIT(my_mtype, 0);
+#else
+    return CL_SUCCESS;
+#endif
 }
 
 void cl_cleanup(void)
 {
-	msgq_cleanup();
+	CL_CLEANUP();
 }
 
 int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
@@ -43,7 +57,7 @@ int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
 		ERROR("sendto invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
 		return CL_FAILURE;
 	}
-	return msgq_sendto(mtype, mbuf, len);
+	return CL_SENDTO(mtype, mbuf, len);
 }
 
 int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags)
@@ -53,6 +67,6 @@ int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flag
 		return CL_FAILURE;
 	}
 	memset(mbuf, 0, sizeof(msg_buf_t));
-	return msgq_recvfrom(mtype, mbuf, len, flags);
+	return CL_RECVFROM(mtype, mbuf, len, flags);
 }
 
