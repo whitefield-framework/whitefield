@@ -70,3 +70,13 @@ int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flag
 	return CL_RECVFROM(mtype, mbuf, len, flags);
 }
 
+int cl_get_descriptor(const long mtype)
+{
+#ifdef  USE_UNIX_SOCKETS
+    return CL_GET_DESCRIPTOR(mtype);
+#else
+    ERROR("Get descriptor not supported for used IPC\n");
+    return CL_FAILURE;
+#endif
+}
+

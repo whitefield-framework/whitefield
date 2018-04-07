@@ -100,10 +100,15 @@ int uds_open(void)
 
 extern "C" void __wrap_platformUartUpdateFdSet(fd_set *aReadFdSet, fd_set *aWriteFdSet, fd_set *aErrorFdSet, int *aMaxFd)
 {
+    int commline_fd;
     extern void __real_platformUartUpdateFdSet(fd_set *aReadFdSet, fd_set *aWriteFdSet, fd_set *aErrorFdSet, int *aMaxFd);
     ADD_TO_FDSET(g_uds_childfd);
     if(g_uds_childfd < 0) {
         ADD_TO_FDSET(g_uds_fd);
+    }
+    commline_fd = cl_get_descriptor(MTYPE(STACKLINE, NODE_ID-1));
+    if(commline_fd > 0) {
+        ADD_TO_FDSET(commline_fd);
     }
     return __real_platformUartUpdateFdSet(aReadFdSet, aWriteFdSet, aErrorFdSet, aMaxFd);
 }
