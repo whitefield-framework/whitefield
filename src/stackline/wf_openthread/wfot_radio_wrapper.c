@@ -219,7 +219,6 @@ void wfHandleCommlineEvent(void)
 
     ret = cl_recvfrom_q(MTYPE(STACKLINE, NODE_ID-1), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
     if(0 == mbuf->len) {
-        INFO("No pkt on commline\n");
         return;
     }
     INFO("rcvd pkt len:%d on commline ret:%d\n", mbuf->len, ret);

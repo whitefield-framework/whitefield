@@ -89,6 +89,11 @@ int usock_recvfrom(const long my_mtype, msg_buf_t *mbuf, uint16_t len, uint16_t 
 	int ret;
     int line=GET_LINE(my_mtype);
 
+    if(!IN_RANGE(line, 1, MAX_CL_LINE)) {
+        ERROR("my_mtype:%08lx not in range!\n", my_mtype);
+        return CL_FAILURE;
+    }
+
 	mbuf->len=0;
     ret = recvfrom(g_usock_fd[line], (void*)mbuf, len, (flags & CL_FLAG_NOWAIT)?MSG_DONTWAIT:0, NULL, 0);
 	if(ret>0 && ret+4<sizeof(msg_buf_t)) //Rahul: +4 is added for bins compiled with -m32. sizeof(long) issue.
@@ -96,9 +101,6 @@ int usock_recvfrom(const long my_mtype, msg_buf_t *mbuf, uint16_t len, uint16_t 
 		ERROR("problem ... recvfrom len(%d) not enough sizeof:%zu\n", ret, sizeof(msg_buf_t));
 		return CL_FAILURE;
 	}
-    if(ret > 0) {
-        INFO("usock recvfrom ret:%d\n", ret);
-    }
 	return ret;
 }
 
@@ -119,3 +121,17 @@ int usock_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
 	return CL_SUCCESS;
 }
 
+int usock_get_descriptor(const long mtype)
+{
+    int line=GET_LINE(mtype);
+    if(!IN_RANGE(line, 1, MAX_CL_LINE)) {
+        ERROR("my_mtype:%08lx not in range!\n", mtype);
+        return CL_FAILURE;
+    }
+    if(g_usock_fd[line] <= 0) {
+        ERROR("mtype:%08lx line:%d no fd here\n", mtype, line);
+        return CL_FAILURE;
+    }
+
+    return g_usock_fd[line];
+}

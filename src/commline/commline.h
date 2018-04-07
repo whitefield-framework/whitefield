@@ -87,6 +87,7 @@ typedef struct _msg_buf_
 #define	CL_FLAG_NOWAIT	(1<<1)
 int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);
 int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len);
+int cl_get_descriptor(const long mtype);
 
 enum {
 	STACKLINE=1,
