@@ -114,7 +114,7 @@ extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFram
 {
     //extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
     //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
-    dump_pcap(aFrame->mPsdu, aFrame->mLength);
+    //dump_pcap(aFrame->mPsdu, aFrame->mLength);
     commline_sendto(aFrame->mPsdu, aFrame->mLength);
     return OT_ERROR_NONE;//__real_otPlatRadioTransmit(aInstance, aFrame);
 }

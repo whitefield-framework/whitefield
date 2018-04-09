@@ -33,6 +33,7 @@ if [ "$cmdprefix" == "" ]; then #Regular execution
 	$BINDIR/whitefield $* 1>$AIRLINE_LOG 2>$AIRLINE_ERR &
 	sleep 1
 	echo ;
+    cat $AIRLINE_ERR 2>/dev/null
 else #GDB execution
 	$cmdprefix $BINDIR/whitefield $*
 fi
