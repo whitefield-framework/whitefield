@@ -49,7 +49,7 @@ parse_cmdargs()
 get_pkt_details()
 {
     echo "filtering [$1] ..."
-    tshark -nr $PCAP_FILE "$1" -w $TMP_CAP 2>/dev/null
+    tshark -nr $PCAP_FILE -Y "$1" -w $TMP_CAP 2>/dev/null
     capinfos $TMP_CAP -icd -Tm | tail -1 > $TMP_TXT
     num_of_pkts=`cut -f2 -d, $TMP_TXT`
     pkts_sz=`cut -f3 -d, $TMP_TXT`
