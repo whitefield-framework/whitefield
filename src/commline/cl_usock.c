@@ -112,7 +112,7 @@ int usock_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
 
 	mbuf->mtype=mtype;
     slen = usock_setabsaddr(mtype, &addr);
-    INFO("sendto: mtype=%08lx, len=%d mbuf->len:%d\n", (long)mbuf->mtype, len, mbuf->len);
+    //INFO("sendto: mtype=%08lx, len=%d mbuf->len:%d\n", (long)mbuf->mtype, len, mbuf->len);
     ret = sendto(g_usock_fd[g_def_line], (void*)mbuf, len, 0, (struct sockaddr *)&addr, slen);
 	if(ret != len) {
 		ERROR("usock sendto failed! errno=%d\n", errno);
