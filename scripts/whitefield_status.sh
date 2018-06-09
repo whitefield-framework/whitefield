@@ -30,7 +30,7 @@ function main()
 	elap_time
 	echo "Simulation elapsed time: $wf_elap_time"
 
-	msgq_status
+	#msgq_status
 
 	get_node_list
 	echo "Node count: $nodecnt"

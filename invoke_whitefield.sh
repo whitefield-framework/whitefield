@@ -26,6 +26,9 @@ func_childret()
 	exit $?
 }
 
+wfpid=$(pgrep -u `whoami` -x whitefield)
+[[ $? -eq 0 ]] && echo "Whitefield(pid=$wfpid) is already in execution!" && exit 1
+
 mkdir $LOGPATH pcap 2>/dev/null
 if [ "$cmdprefix" == "" ]; then #Regular execution
 	trap func_childret SIGCHLD
@@ -33,6 +36,7 @@ if [ "$cmdprefix" == "" ]; then #Regular execution
 	$BINDIR/whitefield $* 1>$AIRLINE_LOG 2>$AIRLINE_ERR &
 	sleep 1
 	echo ;
+    cat $AIRLINE_ERR
 else #GDB execution
 	$cmdprefix $BINDIR/whitefield $*
 fi

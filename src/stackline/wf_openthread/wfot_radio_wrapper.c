@@ -39,6 +39,7 @@
 #include <openthread/platform/radio.h>
 
 #include <commline/commline.h>  //Whitefield COMMLINE
+#include <commline/cl_stackline_helpers.h>
 #include "wfot_common.h"
 
 extern uint32_t NODE_ID;
@@ -113,7 +114,7 @@ extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFram
 {
     //extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
     //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
-    dump_pcap(aFrame->mPsdu, aFrame->mLength);
+    //dump_pcap(aFrame->mPsdu, aFrame->mLength);
     commline_sendto(aFrame->mPsdu, aFrame->mLength);
     return OT_ERROR_NONE;//__real_otPlatRadioTransmit(aInstance, aFrame);
 }
@@ -212,6 +213,7 @@ extern "C" otError __wrap_otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLengt
     return __real_otPlatUartSend(aBuf, aBufLength);
 }
 
+extern void sl_handle_cmd(msg_buf_t *mbuf);
 void wfHandleCommlineEvent(void)
 {
     DEFINE_MBUF(mbuf);
@@ -219,6 +221,11 @@ void wfHandleCommlineEvent(void)
 
     ret = cl_recvfrom_q(MTYPE(STACKLINE, NODE_ID-1), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
     if(0 == mbuf->len) {
+        return;
+    }
+    if(mbuf->flags & MBUF_IS_CMD) {
+        INFO("Handle CMD\n");
+        sl_handle_cmd(mbuf);
         return;
     }
     INFO("rcvd pkt len:%d on commline ret:%d\n", mbuf->len, ret);
