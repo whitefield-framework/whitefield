@@ -44,7 +44,7 @@
 
 extern uint32_t NODE_ID;
 
-#define ENTERING    printf("%s:%d...\r\n", __FUNCTION__, __LINE__)
+#define ENTERING    printf("XXXX %s:%d...\r\n", __FUNCTION__, __LINE__)
 extern "C" void __wrap_platformRadioInit(void)
 {
     extern void __real_platformRadioInit(void);
@@ -121,9 +121,12 @@ extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFram
 
 extern "C" void __wrap_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64)
 {
-    extern void __real_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64);
     ENTERING;
-    return __real_otPlatRadioGetIeeeEui64(aInstance, aIeeeEui64);
+    cl_get_id2longaddr(NODE_ID, aIeeeEui64, 8);
+    prn_buffer("GetIeeeEui64", aIeeeEui64, 8);
+    //extern void __real_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64);
+    //__real_otPlatRadioGetIeeeEui64(aInstance, aIeeeEui64);
+    return;
 }
 
 extern "C" void __wrap_otPlatRadioSetExtendedAddress(otInstance *aInstance,
@@ -136,6 +139,17 @@ extern "C" void __wrap_otPlatRadioSetExtendedAddress(otInstance *aInstance,
     return __real_otPlatRadioSetExtendedAddress(aInstance, aExtAddress);
 }
 
+extern "C" void __wrap_otPlatRadioSetPanId(otInstance *aInstance,
+                    uint16_t panID)
+{
+    extern void __real_otPlatRadioSetPanId(otInstance *aInstance,
+                    uint16_t panID);
+    ENTERING;
+    INFO("set pan id:%x\n", panID);
+    //TODO Send this to the Airline and set the pan ID
+    return __real_otPlatRadioSetPanId(aInstance, panID);
+}
+
 extern "C" void __wrap_otPlatRadioSetShortAddress(otInstance *aInstance,
                     uint16_t aShortAddress)
 {
@@ -143,6 +157,7 @@ extern "C" void __wrap_otPlatRadioSetShortAddress(otInstance *aInstance,
                     uint16_t aShortAddress);
     INFO("Set Short Addr: %04x\n", aShortAddress);
     return __real_otPlatRadioSetShortAddress(aInstance, aShortAddress);
+    return;
 }
 
 extern "C" otError __wrap_otPlatRadioEnable(otInstance *aInstance)
