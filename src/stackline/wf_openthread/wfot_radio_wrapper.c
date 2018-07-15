@@ -44,7 +44,7 @@
 
 extern uint32_t NODE_ID;
 
-#define ENTERING    printf("%s:%d...\r\n", __FUNCTION__, __LINE__)
+#define ENTERING    printf("XXXX %s:%d...\r\n", __FUNCTION__, __LINE__)
 extern "C" void __wrap_platformRadioInit(void)
 {
     extern void __real_platformRadioInit(void);
@@ -97,14 +97,15 @@ void prn_buffer(const char *str, const uint8_t *buf, const int buflen)
     printf("\r\n");
 }
 
-void commline_sendto(const uint8_t *buf, int buflen)
+void commline_sendto(const uint8_t *buf, int buflen, int flags)
 {
     DEFINE_MBUF(mbuf);
-    mbuf->len = buflen;
     memcpy(mbuf->buf, buf, buflen);
+    mbuf->len    = buflen;
     mbuf->src_id = NODE_ID-1;   //-1 since OT NODE_ID = WF NODEID-1
-    mbuf->dst_id = CL_DSTID_MACHDR_PRESENT;   //Openthread already prepares its 802.15.4 machdr
-    INFO("sending packet len=%d, src_id=%d\n", buflen, mbuf->src_id);
+    mbuf->flags  = flags;
+    mbuf->dst_id = CL_DSTID_MACHDR_PRESENT;   //Openthread already prepares its 802.15.4 machdr; For cmds this field is NA
+    INFO("sending packet len=%d, src_id=%d flags=%d\n", buflen, mbuf->src_id, flags);
     if(CL_SUCCESS != cl_sendto_q(MTYPE(AIRLINE, CL_MGR_ID), mbuf, mbuf->len + sizeof(msg_buf_t))) {
         ERROR("cl_sendto_q failed. utter failure!\r\n");
     }
@@ -115,34 +116,68 @@ extern "C" otError __wrap_otPlatRadioTransmit(otInstance *aInstance, otRadioFram
     //extern otError __real_otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame);
     //prn_buffer("Frame", aFrame->mPsdu, aFrame->mLength);
     //dump_pcap(aFrame->mPsdu, aFrame->mLength);
-    commline_sendto(aFrame->mPsdu, aFrame->mLength);
+    commline_sendto(aFrame->mPsdu, aFrame->mLength, 0);
     return OT_ERROR_NONE;//__real_otPlatRadioTransmit(aInstance, aFrame);
 }
 
 extern "C" void __wrap_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64)
 {
-    extern void __real_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64);
     ENTERING;
-    return __real_otPlatRadioGetIeeeEui64(aInstance, aIeeeEui64);
+    cl_get_id2longaddr(NODE_ID, aIeeeEui64, 8);
+    prn_buffer("GetIeeeEui64", aIeeeEui64, 8);
+    //extern void __real_otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64);
+    //__real_otPlatRadioGetIeeeEui64(aInstance, aIeeeEui64);
+    return;
 }
 
 extern "C" void __wrap_otPlatRadioSetExtendedAddress(otInstance *aInstance,
                     const otExtAddress *aExtAddress)
 {
+    char buf[256];
+    int buflen=0;
     extern void __real_otPlatRadioSetExtendedAddress(otInstance *aInstance,
                     const otExtAddress *aExtAddress);
     ENTERING;
-    prn_buffer("SetExtAddr", aExtAddress->m8, OT_EXT_ADDRESS_SIZE);
-    return __real_otPlatRadioSetExtendedAddress(aInstance, aExtAddress);
+    buflen += snprintf(buf, sizeof(buf), "cmd_802154_set_ext_addr");
+    for(int i=0;i<8;i++) {
+        buflen += snprintf(buf+buflen, sizeof(buf)-buflen, ":%02x", 
+            aExtAddress->m8[i]);
+    }
+    INFO("setting extended address to [%s]\n", buf);
+    commline_sendto((uint8_t *)buf, buflen, MBUF_IS_CMD | MBUF_DO_NOT_RESPOND);
+    //return __real_otPlatRadioSetExtendedAddress(aInstance, aExtAddress);
+    return;
+}
+
+extern "C" void __wrap_otPlatRadioSetPanId(otInstance *aInstance,
+                    uint16_t panID)
+{
+    char buf[64];
+    int buflen;
+    extern void __real_otPlatRadioSetPanId(otInstance *aInstance,
+                    uint16_t panID);
+    ENTERING;
+    INFO("set pan id:%x\n", panID);
+    buflen = snprintf(buf, sizeof(buf), "cmd_802154_set_panid:%d", panID);
+    //TODO Send this to the Airline and set the pan ID
+    commline_sendto((uint8_t *)buf, buflen, MBUF_IS_CMD | MBUF_DO_NOT_RESPOND);
+    //return __real_otPlatRadioSetPanId(aInstance, panID);
+    return;
 }
 
 extern "C" void __wrap_otPlatRadioSetShortAddress(otInstance *aInstance,
                     uint16_t aShortAddress)
 {
+    char strbuf[256];
+    int len;
+
+    len = snprintf(strbuf, sizeof(strbuf), "%s:%d", "cmd_802154_set_short_addr", aShortAddress);
     extern void __real_otPlatRadioSetShortAddress(otInstance *aInstance,
                     uint16_t aShortAddress);
     INFO("Set Short Addr: %04x\n", aShortAddress);
-    return __real_otPlatRadioSetShortAddress(aInstance, aShortAddress);
+    commline_sendto((uint8_t *)strbuf, len, MBUF_IS_CMD | MBUF_DO_NOT_RESPOND);
+    //return __real_otPlatRadioSetShortAddress(aInstance, aShortAddress);
+    return;
 }
 
 extern "C" otError __wrap_otPlatRadioEnable(otInstance *aInstance)

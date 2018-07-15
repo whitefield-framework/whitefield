@@ -39,6 +39,9 @@ private:
 	void nodePos(NodeContainer const & nodes, uint16_t id, double & x, double & y, double & z);
 	int cmd_node_position(uint16_t id, char *buf, int buflen);
 	int cmd_set_node_position(uint16_t id, char *buf, int buflen);
+    int cmd_802154_set_short_addr(uint16_t id, char *buf, int buflen);
+    int cmd_802154_set_ext_addr(uint16_t id, char *buf, int buflen);
+    int cmd_802154_set_panid(uint16_t id, char *buf, int buflen);
 	void setPositionAllocator(NodeContainer & nodes);
 	void setNodeSpecificPosition(NodeContainer & nodes);
     void setMacHeaderAdd(NodeContainer & nodes);

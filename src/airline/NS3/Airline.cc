@@ -103,24 +103,42 @@ namespace ns3
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
 
-	void Airline::setDeviceAddress(void)
+	void Airline::setShortAddress(int shaddr)
 	{
 		Mac16Address address;
 		uint8_t idBuf[2];
-		uint16_t id = GetNode()->GetId();
+		uint16_t id = shaddr >= 0? (uint16_t)shaddr : GetNode()->GetId();
 		Ptr<LrWpanNetDevice> device = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 
 		idBuf[0] = (id >> 8) & 0xff;
 		idBuf[1] = (id >> 0) & 0xff;
 		address.CopyFrom (idBuf);
-		device->GetMac ()->SetShortAddress (address);
+		device->GetMac()->SetShortAddress (address);
+	};
+
+	void Airline::setPanID(const uint16_t panid)
+	{
+		Ptr<LrWpanNetDevice> device = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
+
+        INFO << "Setting PAN ID:" << panid << "\n";
+        fflush(stdout);
+		device->GetMac()->SetPanId (panid);
+	};
+
+	void Airline::setExtendedAddress(const char *buf)
+	{
+		Mac64Address address(buf);
+		Ptr<LrWpanNetDevice> device = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
+
+        INFO << "Setting Ext Addr:" << buf << "\n";
+		device->GetMac()->SetExtendedAddress (address);
 	};
 
 	void Airline::StartApplication()
 	{
 		//INFO << "Airline application started ID:"<< GetNode()->GetId() << endl;
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
-		setDeviceAddress();
+		setShortAddress();
 		dev->GetMac()->SetMacMaxFrameRetries(CFG_INT("macMaxRetry", 3));
 		dev->GetMac()->SetMcpsDataConfirmCallback(MakeBoundCallback(&Airline::DataConfirm, this, dev));
 		dev->GetMac()->SetMcpsDataIndicationCallback(MakeBoundCallback (&Airline::DataIndication, this, dev));

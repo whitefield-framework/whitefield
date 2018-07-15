@@ -42,8 +42,9 @@ int cl_bind(const long my_mtype);
 void cl_cleanup(void);
 
 //msg_buf_t::flags defined
-#define	MBUF_IS_ACK	(1<<0)
-#define	MBUF_IS_CMD	(1<<1)
+#define	MBUF_IS_ACK	            (1<<0)  //Mbuf is an ACK
+#define	MBUF_IS_CMD	            (1<<1)  //Mbuf is a cmd
+#define	MBUF_DO_NOT_RESPOND 	(1<<2)  //Cmd does not need a response
 //#define	MBUF_OUTPUT_JSON	(1<<2)
 
 #pragma pack(push,1)

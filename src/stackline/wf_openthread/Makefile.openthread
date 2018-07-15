@@ -25,10 +25,11 @@ COMMA:=,
 #This way I don't need to add Whitefield as a platform in OpenThread. Thus
 #works out of box for any openthread version (unless ofcourse there are changes
 #in these APIs itself).
-OVERRIDE_API=platformRadioInit otPlatRadioTransmit otPlatRadioGetIeeeEui64 otPlatRadioSetExtendedAddress \
-                otPlatRadioSetShortAddress otPlatRadioEnable otPlatRadioDisable otPlatRadioIsEnabled    \
-                otPlatRadioReceive otPlatRadioReceiveDone otPlatRadioTxStarted otPlatRadioTxDone        \
-                otPlatRadioGetCaps platformRadioDeinit otPlatUartSend platformUartUpdateFdSet
+OVERRIDE_API=platformRadioInit otPlatRadioTransmit otPlatRadioGetIeeeEui64 otPlatRadioSetExtendedAddress    \
+                otPlatRadioSetShortAddress otPlatRadioEnable otPlatRadioDisable otPlatRadioIsEnabled        \
+                otPlatRadioReceive otPlatRadioReceiveDone otPlatRadioTxStarted otPlatRadioTxDone            \
+                otPlatRadioGetCaps platformRadioDeinit otPlatUartSend platformUartUpdateFdSet               \
+                otPlatRadioSetPanId
 WRAP_LIST=$(addprefix -Wl$(COMMA)-wrap$(COMMA),$(OVERRIDE_API))
 
 all: $(WFOTBIN)
