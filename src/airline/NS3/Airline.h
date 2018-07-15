@@ -46,6 +46,9 @@ namespace ns3
 			Airline();
 			virtual ~Airline() {
 			};
+			void setShortAddress(int shaddr=-1);
+            void setPanID(const uint16_t panid);
+            void setExtendedAddress(const char *buf);
 			void tx(msg_buf_t *mbuf);
 		private:
 			uint8_t m_macpktqlen;
@@ -65,7 +68,6 @@ namespace ns3
 			 * \brief Stop the application.
 			 */
 			virtual void StopApplication ();
-			void setDeviceAddress(void);
 			uint32_t m_xyz;	//delete in the future...
 	};
 

@@ -96,6 +96,51 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 	mobility.Install (nodes);
 }
 
+int AirlineManager::cmd_802154_set_short_addr(uint16_t id, char *buf, int buflen)
+{
+	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+
+	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
+	if(!nodeApp) {
+		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
+		return snprintf(buf, buflen, "could not get node app");
+	}
+	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+    INFO << "id " << id << " Got a cmd to set SHORT ADDRESS " << buf << "\n";
+	aline->setShortAddress(atoi(buf));
+    return snprintf(buf, buflen, "SUCCESS");
+}
+
+int AirlineManager::cmd_802154_set_ext_addr(uint16_t id, char *buf, int buflen)
+{
+	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+
+	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
+	if(!nodeApp) {
+		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
+		return snprintf(buf, buflen, "could not get node app");
+	}
+	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+    INFO << "id " << id << " Got a cmd to set EXT ADDRESS " << buf << "\n";
+	aline->setExtendedAddress(buf);
+    return snprintf(buf, buflen, "SUCCESS");
+}
+
+int AirlineManager::cmd_802154_set_panid(uint16_t id, char *buf, int buflen)
+{
+	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
+
+	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
+	if(!nodeApp) {
+		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
+		return snprintf(buf, buflen, "could not get node app");
+	}
+	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
+    INFO << "id " << id << " Got a cmd to set PANID " << buf << "\n";
+	aline->setPanID(atoi(buf));
+    return snprintf(buf, buflen, "SUCCESS");
+}
+
 int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
 {
 	char *ptr, *saveptr;
@@ -127,18 +172,23 @@ int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
 void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 {
 	NodeContainer const & n = NodeContainer::GetGlobal (); 
+	int numNodes = stoi(CFG("numOfNodes"));
 
 	if(mbuf->flags & MBUF_IS_CMD) {
-		if(0) { } 
-		HANDLE_CMD(mbuf, cmd_node_position)	//NS3 Airline specific command
-		HANDLE_CMD(mbuf, cmd_set_node_position)	//NS3 Airline specific command
+        if(0) {}
+		HANDLE_CMD(mbuf, cmd_node_position)
+		HANDLE_CMD(mbuf, cmd_set_node_position)
+		HANDLE_CMD(mbuf, cmd_802154_set_short_addr)
+		HANDLE_CMD(mbuf, cmd_802154_set_ext_addr)	
+		HANDLE_CMD(mbuf, cmd_802154_set_panid)	
 		else {
 			al_handle_cmd(mbuf);
 		}
-		cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+        if(!(mbuf->flags & MBUF_DO_NOT_RESPOND)) {
+            cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+        }
 		return;
 	}
-	int numNodes = stoi(CFG("numOfNodes"));
 	if(!IN_RANGE(mbuf->src_id, 0, numNodes)) {
         ERROR << "rcvd src id=" << mbuf->src_id << " out of range!!\n";
 		return;
