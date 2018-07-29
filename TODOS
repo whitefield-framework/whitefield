@@ -1,0 +1,8 @@
+Why does the wireshark not show ipv6 packets?
+    -
+
+Why do i receive ACK in the stackline for multicast packets?
+    - 
+
+Why is the posix PlatformInit() called ?
+    - It results in ports been binded to.
