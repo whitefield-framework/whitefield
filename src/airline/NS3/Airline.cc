@@ -77,6 +77,8 @@ namespace ns3
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
 	void Airline::tx(msg_buf_t *mbuf)
 	{
+		McpsDataRequestParams params;
+
 		if(mbuf->flags & MBUF_IS_CMD) {
 			ERROR << "MBUF CMD not handled in Airline... No need!" << endl;
 			return;
@@ -89,13 +91,12 @@ namespace ns3
 
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		Ptr<Packet> p0 = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
-		McpsDataRequestParams params;
 		params.m_srcAddrMode = SHORT_ADDR;
 		params.m_dstAddrMode = SHORT_ADDR;
-        params.m_dstPanId = CFG_PANID;
-		params.m_dstAddr = id2addr(mbuf->dst_id);
-		params.m_msduHandle = 0;
-		params.m_txOptions = TX_OPTION_NONE;
+        params.m_dstPanId    = CFG_PANID;
+		params.m_dstAddr     = id2addr(mbuf->dst_id);
+		params.m_msduHandle  = 0;
+		params.m_txOptions   = TX_OPTION_NONE;
 		if(mbuf->dst_id != 0xffff) {
 			params.m_txOptions = TX_OPTION_ACK;
 		}
@@ -152,15 +153,17 @@ namespace ns3
 
 	void Airline::SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p)
 	{
+		uint16_t node_id;
 		DEFINE_MBUF(mbuf);
-		uint16_t node_id=GetNode()->GetId();
 
-		mbuf->src_id = addr2id(params.m_srcAddr);
-		mbuf->dst_id = addr2id(params.m_dstAddr);
-		mbuf->info.sig.lqi = params.m_mpduLinkQuality;
-		mbuf->len = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
+		node_id             = GetNode()->GetId();
+		mbuf->len           = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
+		mbuf->src_id        = addr2id(params.m_srcAddr);
+		mbuf->dst_id        = addr2id(params.m_dstAddr);
+		mbuf->info.sig.lqi  = params.m_mpduLinkQuality;
 		wf::Macstats::set_stats(AL_RX, mbuf);
 		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
+        INFO << "rcvd pkt len:" << mbuf->len << "\n";
 	};
 
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)

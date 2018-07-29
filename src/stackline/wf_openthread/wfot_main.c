@@ -81,7 +81,7 @@ void pty_send_cmd(char *buf, int buflen)
     otPlatUartReceived((uint8_t*)buf, buflen);
 }
 
-extern void wfHandleCommlineEvent(void);
+extern void wfHandleCommlineEvent(otInstance *);
 int main(int argc, char *argv[])
 {
     otInstance *sInstance;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
         otTaskletsProcess(sInstance);
         PlatformProcessDrivers(sInstance);
         wfHandlePtyEvent();
-        wfHandleCommlineEvent();
+        wfHandleCommlineEvent(sInstance);
     }
     return 0;
 }

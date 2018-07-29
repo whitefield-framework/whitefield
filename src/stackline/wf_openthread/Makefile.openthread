@@ -27,9 +27,9 @@ COMMA:=,
 #in these APIs itself).
 OVERRIDE_API=platformRadioInit otPlatRadioTransmit otPlatRadioGetIeeeEui64 otPlatRadioSetExtendedAddress    \
                 otPlatRadioSetShortAddress otPlatRadioEnable otPlatRadioDisable otPlatRadioIsEnabled        \
-                otPlatRadioReceive otPlatRadioReceiveDone otPlatRadioTxStarted otPlatRadioTxDone            \
+                otPlatRadioReceive otPlatRadioReceiveDone otPlatRadioTxStarted                              \
                 otPlatRadioGetCaps platformRadioDeinit otPlatUartSend platformUartUpdateFdSet               \
-                otPlatRadioSetPanId
+                otPlatRadioSetPanId otPlatRadioGetTransmitBuffer otPlatRadioSleep
 WRAP_LIST=$(addprefix -Wl$(COMMA)-wrap$(COMMA),$(OVERRIDE_API))
 
 all: $(WFOTBIN)
