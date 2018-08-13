@@ -41,7 +41,7 @@ contiki_clean:
 
 openthread:
 	if [ -d $(STACKLINE_OPENTHREAD) ]; then make -f src/stackline/wf_openthread/Makefile.openthread; fi
- 
+
 ns3:
 	make -C $(AIRLINE_NS3)
 
