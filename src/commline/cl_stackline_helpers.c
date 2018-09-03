@@ -129,6 +129,7 @@ void sl_handle_cmd(msg_buf_t *mbuf)
 	PLAY_CMD(mbuf, cmd_tcp_stats)
 	PLAY_CMD(mbuf, cmd_config_info)
 	PLAY_CMD(mbuf, cmd_start_udp)
+    PLAY_CMD(mbuf, cmd_get_udpapp_stat)
 	else {
 		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
 	}   
