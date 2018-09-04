@@ -40,8 +40,10 @@ sl_cmd()
 get_node_list()
 {
 	usr=`whoami`
-	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a")
+	readarray nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a" | grep -v "defunct")
+	readarray dead_nodelist < <(ps -h --ppid `pgrep -u $usr -x $FORKER_PNAME` -o "%p %a" | grep "defunct")
 	nodecnt=${#nodelist[@]}
+	dead_nodecnt=${#dead_nodelist[@]}
 }
 
 get_node_range()

@@ -34,6 +34,7 @@ function main()
 
 	get_node_list
 	echo "Node count: $nodecnt"
+	[[ $dead_nodecnt -gt 0 ]] && echo "ALARM: $dead_nodecnt NODES DEFUNCT! CHECK STACKLINE."
 	get_route_list
 	echo ;
 
