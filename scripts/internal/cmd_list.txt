@@ -7,8 +7,10 @@ sl cmd_ipv6_stats
 sl cmd_nd6_stats
 sl cmd_icmp_stats
 sl cmd_udp_stats
+sl cmd_get_udpapp_stat
 sl cmd_tcp_stats
 sl cmd_config_info
+sl cmd_start_udp
 al cmd_mac_stats
 al cmd_set_node_position
 al cmd_node_position
