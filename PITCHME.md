@@ -33,11 +33,8 @@ Simulation Framework for Wireless Sensor Networks
 - Works for 802.15.4 today but can be extended for
     - BLE, 802.11-OCB, 802.11s
 
----?image=docs/res/module_design.png&size=contain
+---?image=docs/res/module_design.png&size=auto 50%
 ## Whitefield - High Level Design
-
-![Whitefield Design](docs/res/module_design.png)
-![Whitefield Layering](docs/res/stacking.png)
 
 ---?image=docs/res/Whitefield%20-%20HLD.png&size=auto 50%
 ## Whitefield - Design
