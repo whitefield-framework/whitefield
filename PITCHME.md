@@ -46,16 +46,10 @@ Simulation Framework for Wireless Sensor Networks
 ![Stack](docs/res/stacking.png)
 @divend
 
----
-#### Whitefield - In more details
-
-@div[center-50]
-<br><br>
-![Stack](docs/res/whitefield_hld.png)
-@divend
+---?image=docs/res/whitefield_hld.png&size=contain
 
 ---
-### Our Experience
+Our Experience
 - Lets talk practical IoT
 - We implemented and tested,
     - IETF RFCs, and drafts
@@ -66,7 +60,7 @@ Simulation Framework for Wireless Sensor Networks
     - Does not report data on real world protocol stacks
 
 ---
-## experience(contd)
+experience(contd)
 - Performance@scale
     - example, routing/adhoc issues @ scale
 - Design@scale
