@@ -47,9 +47,9 @@ Simulation Framework for Wireless Sensor Networks
 @divend
 
 ---
-### Whitefield - In more details
+#### Whitefield - In more details
 
-@div[center]
+@div[center-50]
 <br><br>
 ![Stack](docs/res/whitefield_hld.png)
 @divend
