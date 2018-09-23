@@ -81,5 +81,5 @@ Example execution
 ---
 @css[title-top-right](Whitefield demo)
 
-![Whitefield Demo](https://vimeo.com/291394049)
+![Whitefield Demo](https://player.vimeo.com/video/291394049)
 
