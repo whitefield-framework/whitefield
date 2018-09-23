@@ -79,6 +79,7 @@ Example execution
 7. pcap, logging
 
 ---
-Video
-![Whitefield Demo](docs/res/whitefield_demo.mkv)
+@css[title-top-right](Whitefield demo)
+
+![Whitefield Demo](https://vimeo.com/291394049)
 
