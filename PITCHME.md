@@ -34,7 +34,7 @@ Simulation Framework for Wireless Sensor Networks
     - BLE, 802.11-OCB, 802.11s
 
 ---?image=docs/res/module_design.png&size=auto 50%
-## Whitefield - High Level Design
+### Whitefield - High Level Design
 
 ---?image=docs/res/Whitefield%20-%20HLD.png&size=auto 50%
 ## Whitefield - Design
