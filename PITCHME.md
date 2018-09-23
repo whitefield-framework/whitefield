@@ -36,8 +36,6 @@ Simulation Framework for Wireless Sensor Networks
 ---?image=docs/res/Whitefield%20-%20HLD.png&size=auto 50%
 ## Whitefield - Design
 
-![Whitefield Design](docs/res/Whitefield%20-%20HLD.png)
-
 ---
 ## Our Experience
 - Lets talk practical IoT
