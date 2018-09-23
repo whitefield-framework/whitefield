@@ -3,7 +3,7 @@
 Simulation Framework for Wireless Sensor Networks
 
 ---
-## Yet another framework!
+### Yet another framework!
 
 - But we already have
     - NS3/Omnet++
@@ -23,7 +23,7 @@ Simulation Framework for Wireless Sensor Networks
     - Asymmetric/Transient links
 
 ---
-## Whitefield - a quick overview
+### Whitefield - a quick overview
 
 - Plugs in real-world protocols stacks with realistic RF
 - Real-world protocol stacks (Contiki/RIOT)
@@ -47,10 +47,11 @@ Simulation Framework for Wireless Sensor Networks
 @divend
 
 ---?image=docs/res/whitefield_hld.png&size=auto 70%&position=bottom
+
 ### Whitefield - Design
 
 ---
-## Our Experience
+### Our Experience
 - Lets talk practical IoT
 - We implemented and tested,
     - IETF RFCs, and drafts
