@@ -34,9 +34,9 @@ Simulation Framework for Wireless Sensor Networks
     - BLE, 802.11-OCB, 802.11s
 
 ---
-## Whitefield - Design rationale
+## Whitefield - Design
 
-![Whitefield Design](https://github.com/whitefield-framework/whitefield/blob/master/docs/res/Whitefield%20-%20HLD.png)
+![Whitefield Design](docs/res/Whitefield%20-%20HLD.png)
 
 ---
 ## Our Experience
