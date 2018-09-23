@@ -69,12 +69,16 @@ experience(contd)
 - Rarely you see pratical prototypes with 100s/1000s of nodes
 
 ---
-## Screenshots
+Example execution
 1. configuration
 2. start whitefield
 3. monitor network
 4. monitor network with canvas
 5. OAM - wfshell
 6. OAM - monitor routing table agnostic of the OS stack used
-7. pcap
-8. logging
+7. pcap, logging
+
+---
+Video
+![Whitefield Demo](docs/res/whitefield_demo.mkv)
+
