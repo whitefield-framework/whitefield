@@ -14,7 +14,7 @@ chk_cmd_present()
 
 chk_prerequisite()
 {
-	sudo apt install libc6-dev-i386 git make gcc g++ automake m4 libtool
+	sudo apt install libc6-dev-i386 git make gcc g++ automake m4 libtool graphviz
 	chk_cmd_present git
 	chk_cmd_present make
 	chk_cmd_present gcc
@@ -22,6 +22,7 @@ chk_prerequisite()
 	chk_cmd_present automake
 	chk_cmd_present m4
 	chk_cmd_present libtoolize libtool
+	chk_cmd_present dot graphviz
 }
 
 chk_prerequisite
