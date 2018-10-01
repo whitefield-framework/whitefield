@@ -69,5 +69,5 @@ $./scripts/wfshell stop_whitefield
 ### Work done in Whitefield
 
 * ### [RPL Efficient Route Invalidation](https://github.com/nyrahul/ietf-data/blob/master/DCO_performance_report.md)
-* ### [6Lo Fragment Forwarding](https://github.com/nyrahul/ietf-data/blob/master/6lo-fragfwd-perf-report.md)
+* ### [6Lo Fragment Forwarding](https://github.com/nyrahul/ietf-data/blob/master/6lo-fragfwd-perf-report.rst)
 
