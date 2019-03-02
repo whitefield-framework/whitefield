@@ -53,7 +53,7 @@ function main()
 
 	echo ;
 	echo ;
-	echo "Press [?] for wfshell, any other key to exit..."
+	echo "Press [Ctrl-C] to Exit, use [$DIR/wfshell] command to use Whitefield Shell..."
 }
 
 #Processing begins here...
