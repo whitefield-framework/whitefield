@@ -16,7 +16,7 @@ inc_testcase()
 	str=`$WFSH cmd_def_route 0`
 	echoscr "cmd_def_route=$str"
 	[[ "$str" != "[NONE]" ]] && tc_set_msg "Exp def_route=[NONE] on BR. Actual [$str]" && return 1
-    sleep 1
+    sleep 5
 	str=`$WFSH cmd_def_route 1`
 	echoscr "cmd_def_route=$str"
 	[[ "$str" != "fe80::302:304:506:0" ]] && tc_set_msg "Exp def_route=fe80::302:304:506:0 on node. Actual [$str]" && return 1
