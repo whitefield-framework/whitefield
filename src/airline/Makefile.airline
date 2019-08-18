@@ -2,7 +2,7 @@ include config.inc
 
 ifneq ($(AIRLINE_NS3),)
 CFLAGS+=-I$(AIRLINE_NS3)/build
-LIBS+=-L$(AIRLINE_NS3)/build -L$(AIRLINE_NS3)/build/lib -lns3-dev-core-$(REL) -lns3-dev-lr-wpan-$(REL) -lns3-dev-network-$(REL) -lns3-dev-spectrum-$(REL) -lns3-dev-mobility-$(REL) -lns3-dev-propagation-$(REL) -lns3-dev-stats-$(REL) -lns3-dev-antenna-$(REL)
+LIBS+=-L$(AIRLINE_NS3)/build/lib -lns3-dev-core-$(REL) -lns3-dev-lr-wpan-$(REL) -lns3-dev-network-$(REL) -lns3-dev-spectrum-$(REL) -lns3-dev-mobility-$(REL) -lns3-dev-propagation-$(REL) -lns3-dev-stats-$(REL) -lns3-dev-antenna-$(REL)
 endif
 
 SRC=src/airline
