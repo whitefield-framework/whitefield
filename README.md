@@ -1,6 +1,8 @@
 ![Alt text](docs/res/Logo.png "Whitefield Logo")
 
+[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/nyrahul/whitefield)
 [![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
+[![Doc status](https://readthedocs.org/projects/whitefield/badge/?version=latest)](https://whitefield.readthedocs.io/en/latest/)
 [![Join the chat at https://gitter.im/whitefield-fw](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/whitefield-fw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Whitefield provides a simulation environment for wireless sensor network by combining realistic RF simulation with the native mode use of popular IoT stacks/OSes such as [Contiki](http://www.contiki-os.org/)/[RIOT](https://riot-os.org/)/[OpenThread](https://openthread.io/). Thus one can use existing stack implementation as is and test it on top of realistic RF simulation.
@@ -24,15 +26,11 @@ Typical use of Whitefield:
 [Stackline](src/stackline): 6lowpan/Network layer and above protocol stack provided by thirdparty IoT OSes such as Contiki/RIOT. A new platform is added in such OSes to interface with Whitefield. The protocol stack with application will be used as-is from these OSes.
 
 ### Setup Instructions
-Tested on: Ubuntu >= 16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
+Tested on: Ubuntu 16.04 (xenial), Debian GNU/Linux 8.7 (jessie), Ubuntu 18.04 (bionic beaver)
 
 **System Requirements**:
 
 Disk Space: ~1.5GB
-```
-sudo apt-get update
-sudo apt-get install git graphviz build-essential
-```
 **Build Instructions**:
 
 Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-udp)
@@ -45,7 +43,6 @@ git submodule foreach git pull origin master
 ```
 **Execute Instructions**:
 ```
-#modify configuration (for e.g. config/wf.cfg) as required
 #Start Whitefield
 $./invoke_whitefield.sh config/wf.cfg
 
@@ -53,15 +50,16 @@ $./invoke_whitefield.sh config/wf.cfg
 $./scripts/monitor.sh
 
 #View live network toplogy
-$./canvas/canvas.py 
+$./canvas/canvas.py
 #open http://localhost:8080/ in a browser
 
-#OAM commands
+#Whitefield shell
 $./scripts/wfshell help
 
 #Stop whitefield
 $./scripts/wfshell stop_whitefield
 ```
+
 * ### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
 * ### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
 * ### [Using RIOT/Contiki with Whitefield](docs/wf_using_riot_contiki.md "Whitefield with Contiki/RIOT")
@@ -69,3 +67,9 @@ $./scripts/wfshell stop_whitefield
 * ### [Whitefield compared to Cooja/NS3](docs/wf-vs-cooja.md "Whitefield compared to Cooja/NS3")
 * ### [Module support table](docs/README.md "Module support table")
 * ### [Forum](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
+
+### Work done in Whitefield
+
+* ### [RPL Efficient Route Invalidation](https://github.com/nyrahul/ietf-data/blob/master/DCO_performance_report.md)
+* ### [6Lo Fragment Forwarding](https://github.com/nyrahul/ietf-data/blob/master/6lo-fragfwd-perf-report.rst)
+

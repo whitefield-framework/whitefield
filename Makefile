@@ -1,5 +1,7 @@
 include config.inc
 
+MAKE=make -s
+
 ifneq ($(STACKLINE_RIOT),)
 STACKLINE_DEP+=riot
 STACKLINE_DEPCLEAN+=riot_clean
@@ -12,6 +14,7 @@ endif
 
 ifneq ($(STACKLINE_OPENTHREAD),)
 STACKLINE_DEP+=openthread
+STACKLINE_DEPCLEAN+=openthread_clean
 endif
 
 ifneq ($(AIRLINE_NS3),)
@@ -23,36 +26,48 @@ endif
 all: $(AIRLINE_DEP) whitefield $(STACKLINE_DEP)
 
 whitefield:
-	make -f src/commline/Makefile.commline all
-	make -f src/utils/Makefile.utils all
-	make -f src/airline/Makefile.airline all
+	$(MAKE) -f src/commline/Makefile.commline all
+	$(MAKE) -f src/utils/Makefile.utils all
+	$(MAKE) -f src/airline/Makefile.airline all
 
 riot:
-	make -C $(STACKLINE_RIOT)/tests/whitefield
+	$(MAKE) -C $(STACKLINE_RIOT)/tests/whitefield
 
 riot_clean:
-	make -C $(STACKLINE_RIOT)/tests/whitefield clean
+	$(MAKE) -C $(STACKLINE_RIOT)/tests/whitefield clean
 
 contiki:
-	make -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield
+	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield
 
 contiki_clean:
-	make -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield clean
+	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield clean
 
 openthread:
-	if [ -d $(STACKLINE_OPENTHREAD) ]; then make -f src/stackline/wf_openthread/Makefile.openthread; fi
+	@if [ -d $(STACKLINE_OPENTHREAD) ]; then \
+		cd $(STACKLINE_OPENTHREAD); \
+		if [ ! -d output ]; then \
+			echo "Bootstrapping OpenThread...";\
+			./bootstrap; \
+		fi; \
+		$(MAKE) -f examples/Makefile-whitefield ALL_LOGS=1; \
+	fi
+	#if [ -d $(STACKLINE_OPENTHREAD) ]; then $(MAKE) -f src/stackline/wf_openthread/Makefile.openthread; fi
+
+openthread_clean: 
+	cd $(STACKLINE_OPENTHREAD); $(MAKE) -f examples/Makefile-whitefield clean
 
 ns3:
-	make -C $(AIRLINE_NS3)
+	$(MAKE) -C $(AIRLINE_NS3)
 
 ns3_clean:
-	make -C $(AIRLINE_NS3) clean
+	$(MAKE) -C $(AIRLINE_NS3) clean
 
 clean:
 	@rm -rf bin log pcap
 
 allclean: $(STACKLINE_DEPCLEAN)
-	make clean
+	$(MAKE) clean
 
 tests:
 	regression/regress.sh regression/full.set
+

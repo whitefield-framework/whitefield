@@ -34,6 +34,7 @@ function main()
 
 	get_node_list
 	echo "Node count: $nodecnt"
+	[[ $dead_nodecnt -gt 0 ]] && echo "ALARM: $dead_nodecnt NODES DEFUNCT! CHECK STACKLINE."
 	get_route_list
 	echo ;
 
@@ -52,7 +53,7 @@ function main()
 
 	echo ;
 	echo ;
-	echo "Press [?] for wfshell, any other key to exit..."
+	echo "Press [Ctrl-C] to Exit, use [$DIR/wfshell] command to use Whitefield Shell..."
 }
 
 #Processing begins here...

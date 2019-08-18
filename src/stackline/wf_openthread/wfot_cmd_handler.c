@@ -54,6 +54,12 @@ int cmd_route_table(uint16_t id, char *buf, int buflen)
     return 0;
 }
 
+int cmd_start_udp(uint16_t id, char *buf, int buflen)
+{
+    INFO("handling cmd=%s\n", __FUNCTION__);
+    return 0;
+}
+
 int cmd_node_osname(uint16_t id, char *buf, int buflen)
 {
     INFO("handling cmd=%s\n", __FUNCTION__);
@@ -91,6 +97,12 @@ int cmd_tcp_stats(uint16_t id, char *buf, int buflen)
 }
 
 int cmd_config_info(uint16_t id, char *buf, int buflen)
+{
+    INFO("handling cmd=%s\n", __FUNCTION__);
+    return 0;
+}
+
+int cmd_get_udpapp_stat(uint16_t id, char *buf, int buflen)
 {
     INFO("handling cmd=%s\n", __FUNCTION__);
     return 0;
