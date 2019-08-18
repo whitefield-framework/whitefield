@@ -1,7 +1,7 @@
 include config.inc
 
 CPP=g++
-LDFLAGS=-fPIC -lpthread
+LDFLAGS=-lpthread
 CFLAGS=-Wall
 
 ifeq ($(REL),debug)
@@ -13,7 +13,7 @@ WFOTDIR=src/stackline/wf_openthread
 SRC=$(WFOTDIR)/wfot_main.c $(WFOTDIR)/wfot_radio_wrapper.c $(WFOTDIR)/pcap_util.c $(WFOTDIR)/wfot_pty_handler.c $(WFOTDIR)/wfot_cmd_handler.c
 WFOTBIN=$(BINDIR)/wf_openthread
 
-OTLIBPATH=$(STACKLINE_OPENTHREAD)/build/x86_64-unknown-linux-gnu
+OTLIBPATH=$(STACKLINE_OPENTHREAD)/output/x86_64-unknown-linux-gnu
 OTLIBNAME=openthread-posix openthread-platform-utils openthread-cli-ftd openthread-ftd mbedcrypto openthread-posix openthread-diag
 OTLIBS=$(addprefix -l,$(OTLIBNAME))
 CFLAGS+=-Isrc
@@ -38,7 +38,7 @@ $(OTLIBPATH):
 	cd $(STACKLINE_OPENTHREAD); ./bootstrap && ./configure && make distclean && make -f examples/Makefile-posix; cd -
 
 $(WFOTBIN): $(OTLIBPATH) $(SRC)
-	$(CPP) $(CFLAGS) $(LDFLAGS) -o $(WFOTBIN) -I$(STACKLINE_OPENTHREAD)/include -I$(OTLIBPATH)/include -I$(STACKLINE_OPENTHREAD)/src/core -I$(STACKLINE_OPENTHREAD)/examples/platforms $(SRC) -L$(OTLIBPATH)/examples/platforms/posix -L$(OTLIBPATH)/src/core -L$(OTLIBPATH)/examples/platforms/utils -L$(OTLIBPATH)/src/cli -L$(OTLIBPATH)/third_party/mbedtls -L$(OTLIBPATH)/src/diag $(OTLIBS) $(WRAP_LIST) $(LDFLAGS)
+	$(CPP) $(CFLAGS) $(LDFLAGS) -o $(WFOTBIN) -I$(STACKLINE_OPENTHREAD)/output/include -I$(STACKLINE_OPENTHREAD)/src/core -I$(STACKLINE_OPENTHREAD)/examples/platforms $(SRC) -L$(OTLIBPATH)/examples/platforms/posix -L$(OTLIBPATH)/src/core -L$(OTLIBPATH)/examples/platforms/utils -L$(OTLIBPATH)/src/cli -L$(OTLIBPATH)/third_party/mbedtls -L$(OTLIBPATH)/src/diag $(OTLIBS) $(WRAP_LIST) $(LDFLAGS)
 
 clean:
 	@rm -f $(WFOTBIN)

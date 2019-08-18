@@ -24,8 +24,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <openthread-core-config.h>
-#include <openthread/config.h>
+//#include <openthread-core-config.h>
+//#include <openthread/config.h>
 #include <assert.h>
 
 #include <openthread/cli.h>

@@ -113,7 +113,9 @@ enum {
 	{\
 		struct timeval tv;\
 		gettimeofday(&tv, NULL);\
-		printf("%s [%ld:%ld] [%s:%d] ", STR, tv.tv_sec, tv.tv_usec, __FUNCTION__, __LINE__);\
+        printf("%s %5ld:%-4ld[%s:%d] ", STR, \
+            tv.tv_sec % 100000, tv.tv_usec / 1000,\
+            __func__, __LINE__);\
 		printf(__VA_ARGS__);\
 		fflush(NULL);\
 	}
