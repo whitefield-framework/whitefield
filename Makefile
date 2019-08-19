@@ -1,6 +1,6 @@
 include config.inc
 
-MAKE=make -s
+MAKE=make
 
 ifneq ($(STACKLINE_RIOT),)
 STACKLINE_DEP+=riot

@@ -5,3 +5,6 @@ tags
 regression/testcase_report.log
 docs/_build/
 *.swp
+compile_commands.json
+*.out
+tmp/

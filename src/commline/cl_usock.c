@@ -41,7 +41,7 @@ socklen_t usock_setabsaddr(const long mtype, struct sockaddr_un *addr)
 
     addr->sun_family  = AF_UNIX;
     addr->sun_path[0] = 0;
-    len               = snprintf(&addr->sun_path[1], sizeof(addr->sun_path) - 1, "/%08lx", mtype);
+    len               = snprintf(&addr->sun_path[1], sizeof(addr->sun_path) - 1, "/WHITEFIELD_%08lx", mtype);
     return sizeof(sa_family_t) + len + 1;
 }
 
@@ -63,6 +63,7 @@ int usock_init(const long my_mtype, const uint8_t flags)
     }
 
     slen = usock_setabsaddr(my_mtype, &addr);
+    INFO("USOCK binding to [%s]\n", &addr.sun_path[1]);
 
     if (bind(g_usock_fd[line], (struct sockaddr *)&addr, slen)) {
         CLOSE(g_usock_fd[line]);
