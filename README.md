@@ -7,7 +7,7 @@
 
 Whitefield provides a simulation environment for wireless sensor network by combining realistic RF simulation with the native mode use of popular IoT stacks/OSes such as [Contiki](http://www.contiki-os.org/)/[RIOT](https://riot-os.org/)/[OpenThread](https://openthread.io/). Thus one can use existing stack implementation as is and test it on top of realistic RF simulation.
 
-Whitefield uses PHY/MAC layer provided by popular simulators (such as NS3) and loosely couples it with the constrained network stacks supported by Contiki/RIOT, thus providing the best of both worlds by simply glueing things. It provides common visualization and OAM tools (logs, pcap, shell) which simplifies monitoring and troubleshooting.
+Whitefield uses PHY/MAC layer provided by popular simulators (such as [NS3-lrwpan]) and loosely couples it with the constrained network stacks supported by Contiki/RIOT, thus providing the best of both worlds by simply glueing things. It provides common visualization and OAM tools (logs, pcap, shell) which simplifies monitoring and troubleshooting.
 
 Typical use of Whitefield:
 1. Large scale testing of sensor networks
@@ -73,3 +73,4 @@ $./scripts/wfshell stop_whitefield
 * ### [RPL Efficient Route Invalidation](https://github.com/nyrahul/ietf-data/blob/master/DCO_performance_report.md)
 * ### [6Lo Fragment Forwarding](https://github.com/nyrahul/ietf-data/blob/master/6lo-fragfwd-perf-report.rst)
 
+[NS3-lrwpan]: https://www.nsnam.org/docs/models/html/lr-wpan.html

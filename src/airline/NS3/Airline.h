@@ -18,8 +18,8 @@
  * @}
  */
 
-#ifndef	_AIRLINE_H_
-#define	_AIRLINE_H_
+#ifndef _AIRLINE_H_
+#define _AIRLINE_H_
 
 #include <stdint.h>
 #include <queue>
@@ -35,72 +35,70 @@ extern "C" {
 }
 #include "mac_stats.h"
 
-namespace ns3
-{
-	class Airline : public Application
-	{
-		public:
-			static void DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p);
-			static void DataConfirm (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params);
-			static TypeId GetTypeId();
-			Airline();
-			virtual ~Airline() {
-			};
-			void setShortAddress(int shaddr=-1);
-            void setPanID(const uint16_t panid);
-            void setExtendedAddress(const char *buf);
-			void tx(msg_buf_t *mbuf);
-		private:
-			uint8_t m_macpktqlen;
-			queue<McpsDataRequestParams> pktq;
-			void SendSamplePacket(void);
-			Mac16Address id2addr(const uint16_t id);
-			uint16_t addr2id(const Mac16Address addr);
-			void SendPacketToStackline(McpsDataIndicationParams & params, Ptr<Packet> p);
-			uint8_t wf_ack_status(LrWpanMcpsDataConfirmStatus status);
-			void SendAckToStackline(McpsDataConfirmParams & params);
-			/**
+namespace ns3 {
+class Airline : public Application {
+public:
+    static void   DataIndication(Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p);
+    static void   DataConfirm(Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params);
+    static TypeId GetTypeId();
+    Airline();
+    virtual ~Airline(){};
+    void setShortAddress(int shaddr = -1);
+    void setPanID(const uint16_t panid);
+    void setExtendedAddress(const char *buf);
+    void tx(msg_buf_t *mbuf);
+
+private:
+    uint8_t                      m_macpktqlen;
+    queue<McpsDataRequestParams> pktq;
+    void                         SendSamplePacket(void);
+    Mac16Address                 id2addr(const uint16_t id);
+    uint16_t                     addr2id(const Mac16Address addr);
+    void                         SendPacketToStackline(McpsDataIndicationParams &params, Ptr<Packet> p);
+    uint8_t                      wf_ack_status(LrWpanMcpsDataConfirmStatus status);
+    void                         SendAckToStackline(McpsDataConfirmParams &params);
+    /**
 			 * \brief Start the application.
 			 */
-			virtual void StartApplication ();
+    virtual void StartApplication();
 
-			/**
+    /**
 			 * \brief Stop the application.
 			 */
-			virtual void StopApplication ();
-			uint32_t m_xyz;	//delete in the future...
-	};
+    virtual void StopApplication();
+    uint32_t     m_xyz; //delete in the future...
+};
 
-	class AirlineHelper
-	{
-		public:
-			AirlineHelper() {
-				m_factory.SetTypeId(Airline::GetTypeId());
-			};
+class AirlineHelper {
+public:
+    AirlineHelper()
+    {
+        m_factory.SetTypeId(Airline::GetTypeId());
+    };
 
-			/**
+    /**
 			 * \brief Install the application in Nodes.
 			 * \param c list of Nodes
 			 * \return application container
 			 */
-			ApplicationContainer Install (NodeContainer c)
-			{
-				ApplicationContainer apps;
-				for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
-				{
-					Ptr<Node> node = *i;
-					Ptr<Airline> client = m_factory.Create<Airline> ();
-					node->AddApplication (client);
-					apps.Add (client);
-				}
-				return apps;
-			}
-		private:
-			/**
+    ApplicationContainer Install(NodeContainer c)
+    {
+        ApplicationContainer apps;
+        for (NodeContainer::Iterator i = c.Begin(); i != c.End(); ++i) {
+            Ptr<Node>    node   = *i;
+            Ptr<Airline> client = m_factory.Create<Airline>();
+            node->AddApplication(client);
+            apps.Add(client);
+        }
+        return apps;
+    }
+
+private:
+    /**
 			 * \brief An object factory.
 			 */
-			ObjectFactory m_factory;
-	};
-}
+    ObjectFactory m_factory;
+};
+} // namespace ns3
 
 #endif //	_AIRLINE_H_
