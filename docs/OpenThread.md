@@ -13,6 +13,9 @@ Using Whitefield it should be possible to test following:
     * Network convergence time
     * Node join time
     * packet delivery rate
+    * Control Overhead incurred under different scenarios
+    * Repair time (involving router failure, leader failure, BR failure)
+    * Reboot handling of Router/Leader/BR
 3. Possible to simulate following scenarios
     * High node density scenario
     * Variable data-rate per node
