@@ -25,14 +25,13 @@
 #include <Nodeinfo.h>
 #include <Config.h>
 
-class Manager
-{
+class Manager {
 private:
-  int startManager(wf::Config & cfg);
+    int startManager(wf::Config &cfg);
 
 public:
-  Manager() {};
-  Manager(wf::Config & cfg);
+    Manager(){};
+    Manager(wf::Config &cfg);
 };
 
 #endif //_MANAGER_H_

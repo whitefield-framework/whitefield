@@ -18,19 +18,19 @@
  * @}
  */
 
-#ifndef	_CL_USOCK_H_
-#define	_CL_USOCK_H_
+#ifndef _CL_USOCK_H_
+#define _CL_USOCK_H_
 
-int usock_init(const long my_mtype, const uint8_t flags);
+int  usock_init(const long my_mtype, const uint8_t flags);
 void usock_cleanup(void);
-int usock_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);
-int usock_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len);
-int usock_get_descriptor(const long mtype);
+int  usock_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);
+int  usock_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len);
+int  usock_get_descriptor(const long mtype);
 
-#define CL_INIT             usock_init
-#define CL_CLEANUP          usock_cleanup
-#define CL_RECVFROM         usock_recvfrom
-#define CL_SENDTO           usock_sendto
-#define CL_GET_DESCRIPTOR   usock_get_descriptor
+#define CL_INIT           usock_init
+#define CL_CLEANUP        usock_cleanup
+#define CL_RECVFROM       usock_recvfrom
+#define CL_SENDTO         usock_sendto
+#define CL_GET_DESCRIPTOR usock_get_descriptor
 
 #endif //_CL_MSGQ_H_

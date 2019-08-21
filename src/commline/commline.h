@@ -18,8 +18,8 @@
  * @}
  */
 
-#ifndef	_COMMLINE_H_
-#define	_COMMLINE_H_
+#ifndef _COMMLINE_H_
+#define _COMMLINE_H_
 
 #include <sys/time.h>
 
@@ -27,147 +27,148 @@
 extern "C" {
 #endif
 
-#define	CL_SUCCESS	0
-#define	CL_FAILURE	-1
+#define CL_SUCCESS 0
+#define CL_FAILURE -1
 
 #define USE_UNIX_SOCKETS
 
-#define	COMMLINE_MAX_BUF	2048
+#define COMMLINE_MAX_BUF 2048
 
-#define	CL_CREATEQ	(1<<0)	//Used by airline
-#define	CL_ATTACHQ	(1<<1)	//Used by stackline
+#define CL_CREATEQ (1 << 0) //Used by airline
+#define CL_ATTACHQ (1 << 1) //Used by stackline
 
-int cl_init(const long my_mtype, const uint8_t flags);
-int cl_bind(const long my_mtype);
+int  cl_init(const long my_mtype, const uint8_t flags);
+int  cl_bind(const long my_mtype);
 void cl_cleanup(void);
 
 //msg_buf_t::flags defined
-#define	MBUF_IS_ACK	            (1<<0)  //Mbuf is an ACK
-#define	MBUF_IS_CMD	            (1<<1)  //Mbuf is a cmd
-#define	MBUF_DO_NOT_RESPOND 	(1<<2)  //Cmd does not need a response
+#define MBUF_IS_ACK         (1 << 0) //Mbuf is an ACK
+#define MBUF_IS_CMD         (1 << 1) //Mbuf is a cmd
+#define MBUF_DO_NOT_RESPOND (1 << 2) //Cmd does not need a response
 //#define	MBUF_OUTPUT_JSON	(1<<2)
 
-#pragma pack(push,1)
-typedef struct _msg_buf_
-{
+#pragma pack(push, 1)
+typedef struct _msg_buf_ {
 #ifdef USE_UNIX_SOCKETS
-	int mtype;
+    int mtype;
 #else
-	long mtype;
+    long mtype;
 #endif
-	uint16_t src_id;
-	uint16_t dst_id;
-	uint8_t flags;
-	union {
-		struct {
-			//Note that you can have one or both or none of the indicators.
-			//Value is 0 if not present. NS3 provides LQI only. Castalia provides RSSI.
-			uint8_t lqi;	//Link Quality Indicator 
-			int8_t rssi;	//Rcvd Signal Strength Indicator
-		}sig;
-		struct {
-			uint8_t retries;
-			uint8_t status;
-		}ack;
-	} info;
-	uint16_t len, max_len; // length of the buf only
-	uint8_t buf[1];
-}msg_buf_t;
+    uint16_t src_id;
+    uint16_t dst_id;
+    uint8_t  flags;
+    union {
+        struct {
+            //Note that you can have one or both or none of the indicators.
+            //Value is 0 if not present. NS3 provides LQI only. Castalia provides RSSI.
+            uint8_t lqi;  //Link Quality Indicator
+            int8_t  rssi; //Rcvd Signal Strength Indicator
+        } sig;
+        struct {
+            uint8_t retries;
+            uint8_t status;
+        } ack;
+    } info;
+    uint16_t len, max_len; // length of the buf only
+    uint8_t  buf[1];
+} msg_buf_t;
 #pragma pack(pop)
 
-#define	DEFINE_MBUF_SZ(MBUF, SZ)	\
-    uint8_t MBUF##_buf[sizeof(msg_buf_t)+SZ];\
-    msg_buf_t *MBUF = (msg_buf_t *)MBUF##_buf;\
-    memset(MBUF##_buf, 0, sizeof(MBUF##_buf));\
+#define DEFINE_MBUF_SZ(MBUF, SZ)                   \
+    uint8_t    MBUF##_buf[sizeof(msg_buf_t) + SZ]; \
+    msg_buf_t *MBUF = (msg_buf_t *)MBUF##_buf;     \
+    memset(MBUF##_buf, 0, sizeof(MBUF##_buf));     \
     MBUF->max_len = SZ;
 
-#define	DEFINE_MBUF(MBUF)	DEFINE_MBUF_SZ(MBUF, COMMLINE_MAX_BUF)
+#define DEFINE_MBUF(MBUF) DEFINE_MBUF_SZ(MBUF, COMMLINE_MAX_BUF)
 
-#define MAX_CMD_RSP_SZ  4096
+#define MAX_CMD_RSP_SZ 4096
 
-#define	CL_FLAG_NOWAIT	(1<<1)
+#define CL_FLAG_NOWAIT (1 << 1)
 int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flags);
 int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len);
 int cl_get_descriptor(const long mtype);
 
 enum {
-	STACKLINE=1,
-	AIRLINE,
-	FORKER,
-	MONITOR,
+    STACKLINE = 1,
+    AIRLINE,
+    FORKER,
+    MONITOR,
     MAX_CL_LINE
 };
 
 //In case of Openthread stackline, the packet already contains the machdr
 //formed. Thus Airline needs to be informed by setting
 //mbuf->dst_id=DSTID_MACHDR_PRESENT.
-#define CL_DSTID_MACHDR_PRESENT    0xfffe
+#define CL_DSTID_MACHDR_PRESENT 0xfffe
 
-#define	CL_MGR_ID	        0xffff
+#define CL_MGR_ID 0xffff
 
-#define	MTYPE(LINE,ID)	(((LINE)<<16)|(ID))
-#define GET_LINE(MT)    (MT>>16)
+#define MTYPE(LINE, ID) (((LINE) << 16) | (ID))
+#define GET_LINE(MT)    (MT >> 16)
 
-#ifndef	ERROR
-#define	PRN(STR, ...)	\
-	{\
-		struct timeval tv;\
-		gettimeofday(&tv, NULL);\
-        printf("%s %5ld:%-4ld[%s:%d] ", STR, \
-            tv.tv_sec % 100000, tv.tv_usec / 1000,\
-            __func__, __LINE__);\
-		printf(__VA_ARGS__);\
-		fflush(NULL);\
-	}
-#define	ERROR(...) PRN("ERROR", __VA_ARGS__)
-#define	INFO(...)  PRN("INFO ", __VA_ARGS__)
-#define	WARN(...)  PRN("WARN "__VA_ARGS__)
+#ifndef ERROR
+#define PRN(STR, ...)                                 \
+    {                                                 \
+        struct timeval tv;                            \
+        gettimeofday(&tv, NULL);                      \
+        printf("%s %5ld:%-4ld[%s:%d] ", STR,          \
+               tv.tv_sec % 100000, tv.tv_usec / 1000, \
+               __func__, __LINE__);                   \
+        printf(__VA_ARGS__);                          \
+        fflush(NULL);                                 \
+    }
+#define ERROR(...) PRN("ERROR", __VA_ARGS__)
+#define INFO(...)  PRN("INFO ", __VA_ARGS__)
+#define WARN(...)  PRN("WARN " __VA_ARGS__)
 #endif //ERROR
 
 /* MAC DataConfirmation status */
 enum {
-	WF_STATUS_ACK_OK,
-	WF_STATUS_NO_ACK,
-	WF_STATUS_ERR,
-	WF_STATUS_FATAL,
+    WF_STATUS_ACK_OK,
+    WF_STATUS_NO_ACK,
+    WF_STATUS_ERR,
+    WF_STATUS_FATAL,
 };
 
-#define	memcpy_s(DST, DSTLEN, SRC, SRCLEN)	\
-	memcpy(DST, SRC, DSTLEN<SRCLEN?DSTLEN:SRCLEN);
+#define memcpy_s(DST, DSTLEN, SRC, SRCLEN) \
+    memcpy(DST, SRC, DSTLEN < SRCLEN ? DSTLEN : SRCLEN);
 
-#define	IN_RANGE(VAL, MIN_N, MAX_N)	((VAL)>=(MIN_N) && (VAL)<(MAX_N))
+#define IN_RANGE(VAL, MIN_N, MAX_N) ((VAL) >= (MIN_N) && (VAL) < (MAX_N))
 
-#define	HANDLE_CMD(MBUF, CMD)	\
-	else if(!strncasecmp((char*)(MBUF)->buf, #CMD, sizeof(#CMD)-1))	\
-	{\
-		int aux_len=0;\
-		char *colon_ptr = strchr((char*)(MBUF)->buf, ':');\
-		if(colon_ptr) {\
-			*colon_ptr++=0;\
-			aux_len = strlen(colon_ptr);\
-			memmove((MBUF)->buf, colon_ptr, aux_len);\
-		}\
-		(MBUF)->buf[aux_len] = 0;\
-		(MBUF)->len = CMD(mbuf->src_id, (char*)(MBUF)->buf, COMMLINE_MAX_BUF);\
-	}
+#define HANDLE_CMD(MBUF, CMD)                                                            \
+    else if (!strncasecmp((char *)(MBUF)->buf, #CMD, sizeof(#CMD) - 1))                  \
+    {                                                                                    \
+        int   aux_len   = 0;                                                             \
+        char *colon_ptr = strchr((char *)(MBUF)->buf, ':');                              \
+        if (colon_ptr) {                                                                 \
+            *colon_ptr++ = 0;                                                            \
+            aux_len      = strlen(colon_ptr);                                            \
+            memmove((MBUF)->buf, colon_ptr, aux_len);                                    \
+        }                                                                                \
+        (MBUF)->buf[aux_len] = 0;                                                        \
+        (MBUF)->len          = CMD(mbuf->src_id, (char *)(MBUF)->buf, COMMLINE_MAX_BUF); \
+    }
 
-#define	PRINT_HEX(BUF, LEN, ...)	\
-{\
-	int i;\
-	printf(__VA_ARGS__);\
-	for(i=0;i<LEN;i++) {\
-		if(i && !(i%16)) printf("\n");\
-		else if(i && !(i%8)) printf("\t");\
-		printf("%02x ", (uint8_t)BUF[i]);\
-	}\
-	printf("\n");\
-}
+#define PRINT_HEX(BUF, LEN, ...)              \
+    {                                         \
+        int i;                                \
+        printf(__VA_ARGS__);                  \
+        for (i = 0; i < LEN; i++) {           \
+            if (i && !(i % 16))               \
+                printf("\n");                 \
+            else if (i && !(i % 8))           \
+                printf("\t");                 \
+            printf("%02x ", (uint8_t)BUF[i]); \
+        }                                     \
+        printf("\n");                         \
+    }
 
-#define CLOSE(FD)   \
-if(FD >= 0) {\
-    close(FD);\
-    FD=-1;\
-}
+#define CLOSE(FD)  \
+    if (FD >= 0) { \
+        close(FD); \
+        FD = -1;   \
+    }
 
 // Stackline Helpers
 #include "cl_stackline_helpers.h"
@@ -176,4 +177,4 @@ if(FD >= 0) {\
 }
 #endif
 
-#endif	//_COMMLINE_H_
+#endif //_COMMLINE_H_

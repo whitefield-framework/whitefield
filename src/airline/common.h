@@ -36,26 +36,26 @@ using namespace std;
 #define SUCCESS 0
 #define FAILURE -1
 
-#define INFO cout
+#define INFO  cout
 #define ERROR cerr
-#define WARN cerr
+#define WARN  cerr
 
-string& ltrim(string& s, const char* t = " \t\n\r\f\v");
-string& rtrim(string& s, const char* t = " \t\n\r\f\v");
-string& trim(string& s, const char* t = " \t\n\r\f\v");
+string &ltrim(string &s, const char *t = " \t\n\r\f\v");
+string &rtrim(string &s, const char *t = " \t\n\r\f\v");
+string &trim(string &s, const char *t = " \t\n\r\f\v");
+
 vector<string> split(const string &s, char delim);
 
 //#include <Config.h>
-namespace wf
-{
-	class Config;
+namespace wf {
+class Config;
 };
 extern wf::Config WF_config;
 
-#define	CFG(...)	            WF_config.get(__VA_ARGS__)
-#define	CFG_INT(STR, DEF_VAL)	stoi(CFG(STR, #DEF_VAL), nullptr, 0)
-#define	CFG_PANID	            stoi(CFG("panID", "0xface"), nullptr, 0)
-#define	SPAWN_STACKLINE(NODEID)	WF_config.spawnStackline(NODEID)
-#define WF_STOP	raise(SIGINT)
+#define CFG(...)                WF_config.get(__VA_ARGS__)
+#define CFG_INT(STR, DEF_VAL)   stoi(CFG(STR, #DEF_VAL), nullptr, 0)
+#define CFG_PANID               stoi(CFG("panID", "0xface"), nullptr, 0)
+#define SPAWN_STACKLINE(NODEID) WF_config.spawnStackline(NODEID)
+#define WF_STOP                 raise(SIGINT)
 
 #endif //_COMMON_H_

@@ -1,6 +1,6 @@
 include config.inc
 
-MAKE=make -s
+MAKE=make
 
 ifneq ($(STACKLINE_RIOT),)
 STACKLINE_DEP+=riot
@@ -51,7 +51,6 @@ openthread:
 		fi; \
 		$(MAKE) -f examples/Makefile-whitefield ALL_LOGS=1; \
 	fi
-	#if [ -d $(STACKLINE_OPENTHREAD) ]; then $(MAKE) -f src/stackline/wf_openthread/Makefile.openthread; fi
 
 openthread_clean: 
 	cd $(STACKLINE_OPENTHREAD); $(MAKE) -f examples/Makefile-whitefield clean

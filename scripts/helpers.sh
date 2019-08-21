@@ -150,7 +150,7 @@ path_downstream()
 native_shell()
 {
     [[ "$1" == "" ]] && echo "Usage: native_shell <nodeid>" && return
-    udspath=`printf "log/%04x.uds" $(($1 + 1))`
+    udspath=`printf "log/%04x.uds" $1`
     echo -en "connecting to [$udspath]..."
     echo "" | socat UNIX:$udspath -
     [[ $? -ne 0 ]] && return

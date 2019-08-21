@@ -11,26 +11,25 @@
  * @{
  *
  * @file
- * @brief       Stackline helpers APIs
+ * @brief       Pcap helpers APIs
  *
  * @author      Rahul Jadhav <nyrahul@gmail.com>
  *
  * @}
  */
 
-#ifndef _CL_STACKLINE_HELPERS_H_
-#define _CL_STACKLINE_HELPERS_H_
+#ifndef _PCAP_UTIL_H_
+#define _PCAP_UTIL_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int      cl_get_id2longaddr(const uint16_t id, uint8_t *addr, const int addrlen);
-uint16_t cl_get_longaddr2id(const uint8_t *addr);
-void     sl_handle_cmd(msg_buf_t *mbuf);
+void  pcap_write(void *handle, const uint8_t *buf, int buflen);
+void *pcap_init(const char *fname);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //_CL_STACKLINE_HELPERS_H_
+#endif //_PCAP_UTIL_H_
