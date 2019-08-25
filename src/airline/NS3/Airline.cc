@@ -84,10 +84,6 @@ namespace ns3
 			return;
 		}
 		wf::Macstats::set_stats(AL_TX, mbuf);
-		if(pktq.size() > m_macpktqlen) {
-			ERROR << (int)m_macpktqlen << " pktq size exceeded!!\n";
-			return;
-		}
 
 		Ptr<LrWpanNetDevice> dev = GetNode()->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		Ptr<Packet> p0 = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
@@ -100,7 +96,15 @@ namespace ns3
 		if(mbuf->dst_id != 0xffff) {
 			params.m_txOptions = TX_OPTION_ACK;
 		}
-		pktq.push(params);
+#if AIRLINE_PRN_DATA
+        INFO << "TX DATA: "
+             << " src_id=" << GetNode()->GetId()
+             << " dst_id=" << params.m_dstAddr
+             << " pktlen=" << (int)mbuf->len
+             << "\n";
+        fflush(stdout);
+#endif
+
 		Simulator::ScheduleNow (&LrWpanMac::McpsDataRequest, dev->GetMac(), params, p0);
 	};
 
@@ -163,7 +167,14 @@ namespace ns3
 		mbuf->info.sig.lqi  = params.m_mpduLinkQuality;
 		wf::Macstats::set_stats(AL_RX, mbuf);
 		cl_sendto_q(MTYPE(STACKLINE, node_id), mbuf, sizeof(msg_buf_t) + mbuf->len);
-        INFO << "rcvd pkt len:" << mbuf->len << "\n";
+#if AIRLINE_PRN_DATA
+        INFO << "RX data"
+             << " src_id=" << node_id
+             << " dst_id=" << mbuf->dst_id
+             << " lqi=" << (int)params.m_mpduLinkQuality
+             << " len=" << mbuf->len
+             << "\n";
+#endif
 	};
 
 	void Airline::DataIndication (Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p)
@@ -202,26 +213,35 @@ namespace ns3
 	//Send the Ack status with retry count to stackline
 	void Airline::SendAckToStackline(McpsDataConfirmParams & params)
 	{
-		if(pktq.empty()) {
-			ERROR << "How can the pktq be empty on dataconfirm ind?? Investigate.\n";
-			return;
-		}
-		McpsDataRequestParams drparams = pktq.front();
-		if(drparams.m_txOptions == TX_OPTION_ACK) {
-			DEFINE_MBUF(mbuf);
+        DEFINE_MBUF(mbuf);
+        uint16_t dst_id;
 
-			mbuf->src_id = GetNode()->GetId();
-			mbuf->dst_id = addr2id(drparams.m_dstAddr);
-			mbuf->info.ack.status = wf_ack_status(params.m_status);
-			if(mbuf->info.ack.status == WF_STATUS_ACK_OK) {
-				mbuf->info.ack.retries = params.m_retries+1;
-			}
-			mbuf->flags |= MBUF_IS_ACK;
-			mbuf->len = 1;
-			wf::Macstats::set_stats(AL_RX, mbuf);
-			cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
-		}
-		pktq.pop();
+        dst_id = addr2id(params.m_addrShortDstAddr);
+        // We recv this callback for all packets. We ignore broadcasts.
+        if(dst_id == 0xffff) {
+            return;
+        }
+#if AIRLINE_PRN_DATA
+        INFO << "Sending ACK status" 
+             << " src=" << GetNode()->GetId()
+             << " dst=" << dst_id
+             << " status=" << params.m_status
+             << " retries=" << (int)params.m_retries
+             << " pktSize(inc mac-hdr)=" << params.m_pktSz
+             << "\n";
+        fflush(stdout);
+#endif
+
+        mbuf->src_id = GetNode()->GetId();
+        mbuf->dst_id = dst_id;
+        mbuf->info.ack.status = wf_ack_status(params.m_status);
+        if(mbuf->info.ack.status == WF_STATUS_ACK_OK) {
+            mbuf->info.ack.retries = params.m_retries+1;
+        }
+        mbuf->flags |= MBUF_IS_ACK;
+        mbuf->len = 1;
+        wf::Macstats::set_stats(AL_RX, mbuf);
+        cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 	};
 
 	//MAC layer Ack handling
