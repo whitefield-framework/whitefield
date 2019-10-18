@@ -21,6 +21,7 @@ chk_prerequisite()
 	chk_cmd_present g++
 	chk_cmd_present automake
 	chk_cmd_present m4
+	chk_cmd_present jq
 	chk_cmd_present libtoolize libtool
 	chk_cmd_present dot graphviz
 }
