@@ -18,6 +18,7 @@ chk_prerequisite()
 	chk_cmd_present git
 	chk_cmd_present make
 	chk_cmd_present gcc
+	chk_cmd_present python
 	chk_cmd_present g++
 	chk_cmd_present automake
 	chk_cmd_present m4
