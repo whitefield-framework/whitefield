@@ -15,4 +15,3 @@
 [submodule "thirdparty/contiki-ng"]
 	path = thirdparty/contiki-ng
 	url = https://github.com/whitefield-framework/contiki-ng
-	branch = master
