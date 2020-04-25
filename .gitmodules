@@ -12,3 +12,6 @@
 	path = thirdparty/openthread
 	url = https://github.com/whitefield-framework/openthread
 	branch = master
+[submodule "thirdparty/contiki-ng"]
+	path = thirdparty/contiki-ng
+	url = https://github.com/whitefield-framework/contiki-ng
