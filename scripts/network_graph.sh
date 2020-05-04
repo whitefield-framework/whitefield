@@ -16,7 +16,8 @@ tree_graph() {
 	for((i=0;i<${#nodelist[@]};i++)); do
 		id=`echo ${nodelist[$i]} | awk '{ print $3 }'`
 		parent_ip=`sl_cmd "$id:cmd_def_route"`
-		if [ "$parent_ip" != "[NONE]" ]; then
+        echo "$id -> 0[ style = invis ];" >> $TMP
+		if [[ $parent_ip == [fF][eE]80::* ]]; then
 			prnt_id=`ip2id $parent_ip`
 			#echo "Node $id, parent $prnt_id"
 			echo "$id -> $prnt_id;" >> $TMP
@@ -38,7 +39,8 @@ position_graph() {
 	for((i=0;i<${#nodelist[@]};i++)); do
 		id=`echo ${nodelist[$i]} | awk '{ print $3 }'`
 		parent_ip=`sl_cmd "$id:cmd_def_route"`
-		if [ "$parent_ip" != "[NONE]" ]; then
+        echo "$id -> 0[ style = invis ];" >> $TMP
+		if [[ $parent_ip == [fF][eE]80::* ]]; then
 			prnt_id=`ip2id $parent_ip`
 			#echo "Node $id, parent $prnt_id"
 			echo "$id -> $prnt_id;" >> $TMP
