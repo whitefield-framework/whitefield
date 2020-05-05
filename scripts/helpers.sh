@@ -128,7 +128,14 @@ stop_whitefield()
 plot_network_graph() 
 {
 	[[ "$2" == "" ]] && echo "Usage: plot_network_graph <tree_png_outfile> <position_png_outfile>" && return
-	$DIR/network_graph.sh $1 $2
+    tplot="$1"
+    pplot="$2"
+    shift 2
+    while [ "$1" != "" ]; do
+        export $1
+        shift
+    done
+	$DIR/network_graph.sh $tplot $pplot
 }
 
 quit() {
