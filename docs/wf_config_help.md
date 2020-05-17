@@ -31,3 +31,7 @@ nodeExec[10-19]=/path/to/riot
 In the above configuration the first nodeExec=/path/to/contiki will result in the execuatable getting set for all nodes. 
 In the subsequent config statement, nodes[10-19] (inclusive) will override the nodeExec path. 
 Note that the sequence of configuration option is important in this particular case.
+
+### Sample layout for Grid topology
+
+![Alt text](docs/res/grid-top-layout.png "Grid Topology Layout")
