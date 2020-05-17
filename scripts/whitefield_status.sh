@@ -2,6 +2,7 @@
 
 DIR=`dirname $0`
 . $DIR/helpers.sh
+BR_ID=${1-0}
 
 function msgq_status()
 {
