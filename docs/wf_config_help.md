@@ -34,4 +34,4 @@ Note that the sequence of configuration option is important in this particular c
 
 ### Sample layout for Grid topology
 
-![Alt text](docs/res/grid-top-layout.png "Grid Topology Layout")
+![Alt text](res/grid-top-layout.png "Grid Topology Layout")
