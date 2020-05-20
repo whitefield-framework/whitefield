@@ -42,7 +42,7 @@ private:
     int     cmd_802154_set_ext_addr(uint16_t id, char *buf, int buflen);
     int     cmd_802154_set_panid(uint16_t id, char *buf, int buflen);
     void    setPositionAllocator(NodeContainer &nodes);
-    void    setNodeSpecificPosition(NodeContainer &nodes);
+    void    setNodeSpecificParam(NodeContainer &nodes);
     void    setMacHeaderAdd(NodeContainer &nodes);
     void    msgReader(void);
     void    ScheduleCommlineRX(void);

@@ -219,11 +219,12 @@ void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & 
 	mob.Install(nodes.Get(id));
 }
 
-void AirlineManager::setNodeSpecificPosition(NodeContainer & nodes) 
+void AirlineManager::setNodeSpecificParam(NodeContainer & nodes) 
 {
 	uint8_t is_set=0;
 	double x, y, z;
 	wf::Nodeinfo *ni=NULL;
+
 	for(int i=0;i<(int)nodes.GetN();i++) {
 		ni=WF_config.get_node_info(i);
 		if(!ni) {
@@ -231,8 +232,18 @@ void AirlineManager::setNodeSpecificPosition(NodeContainer & nodes)
 			return;
 		}
 		ni->getNodePosition(is_set, x, y, z);
-		if(!is_set) continue;
-		nodePos(nodes, i, x, y, z);
+		if(is_set) {
+    		nodePos(nodes, i, x, y, z);
+        }
+		if(ni->getPromisMode()) {
+            INFO << "Set promiscuous mode for node:" << i << "\n";
+            Ptr<Node> node = nodes.Get(i); 
+            Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
+            if (dev) {
+                INFO << "in Set promiscuous mode for node:" << i << "\n";
+                dev->GetMac()->SetPromiscuousMode(1);
+            }
+        }
 	}
 }
 
@@ -274,8 +285,6 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		setPositionAllocator(nodes);
 
-		setNodeSpecificPosition(nodes);
-
 		LrWpanHelper lrWpanHelper;
 		NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
 		lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
@@ -287,6 +296,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 		}
 
         setMacHeaderAdd(nodes);
+		setNodeSpecificParam(nodes);
 
 		AirlineHelper airlineApp;
 		ApplicationContainer apps = airlineApp.Install(nodes);

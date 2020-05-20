@@ -34,6 +34,7 @@ private:
     int setNodeSetExec(const string exec, int beg, int end);
     int setNodeSetCapFile(const string path, int beg, int end);
     int setNodePosition(const string position, int beg, int end);
+    int setNodePromis(const string pmode, int beg, int end);
 
     void   clearNodeArray(void);
     string getKeyRange(const string &keystr, int &beg_range, int &end_range);

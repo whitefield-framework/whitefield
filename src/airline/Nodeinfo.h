@@ -31,6 +31,7 @@ private:
     string  capFile;
     double  X, Y, Z;
     uint8_t pos_set;
+    uint8_t promis_mode;
 
 public:
     string getNodeExecutable(void)
@@ -44,6 +45,14 @@ public:
     void setNodeCaptureFile(const string path)
     {
         capFile = path;
+    };
+    void setPromisMode(int val)
+    {
+        promis_mode = !!val;
+    };
+    int getPromisMode(void)
+    {
+        return promis_mode;
     };
     void setNodePosition(const double x_pos, const double y_pos, const double z_pos)
     {
@@ -64,6 +73,7 @@ public:
     Nodeinfo()
     {
         pos_set = 0;
+        promis_mode = 0;
     };
 };
 } //namespace wf
