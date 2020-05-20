@@ -208,6 +208,15 @@ int Config::setNodePosition(const string position, int beg, int end)
 	return SUCCESS;
 }
 
+int Config::setNodePromis(const string pmode, int beg, int end)
+{
+	int i;
+	for(i=beg;i<=end;i++) {
+		nodeArray[i].setPromisMode(stoi(pmode));
+	}
+	return SUCCESS;
+}
+
 int Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
@@ -248,6 +257,8 @@ int Config::setConfigurationFromFile(const char *fname)
 					setNodeSetCapFile(value, beg_range, end_range);
 				} else if(key == "nodePosition") {
 					setNodePosition(value, beg_range, end_range);
+				} else if(key == "nodePromiscuous") {
+					setNodePromis(value, beg_range, end_range);
 				} else {
 					set(key, value);
 				}
