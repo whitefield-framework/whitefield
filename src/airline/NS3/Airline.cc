@@ -77,6 +77,7 @@ namespace ns3
 	//tx: usually called when packet is rcvd from node's stackline and to be sent on air interface
 	void Airline::tx(msg_buf_t *mbuf)
 	{
+        int numNodes = stoi(CFG("numOfNodes"));
 		McpsDataRequestParams params;
 
 		if(mbuf->flags & MBUF_IS_CMD) {
@@ -96,6 +97,15 @@ namespace ns3
 		if(mbuf->dst_id != 0xffff) {
 			params.m_txOptions = TX_OPTION_ACK;
 		}
+
+        // If the src node is in promiscuous mode then disable L2-ACK 
+        if(IN_RANGE(mbuf->src_id, 0, numNodes)) {
+            wf::Nodeinfo *ni=NULL;
+            ni = WF_config.get_node_info(mbuf->src_id);
+            if(ni && ni->getPromisMode()) {
+                params.m_txOptions   = TX_OPTION_NONE;
+            }
+        }
 #if AIRLINE_PRN_DATA
         INFO << "TX DATA: "
              << " src_id=" << GetNode()->GetId()
