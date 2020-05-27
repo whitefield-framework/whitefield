@@ -107,7 +107,12 @@ enum {
 #define MTYPE(LINE, ID) (((LINE) << 16) | (ID))
 #define GET_LINE(MT)    (MT >> 16)
 
+#define ms2hh (3600000)
+#define ms2mm (60000)
+#define ms2ss (1000)
+
 #ifndef ERROR
+#if BASIC_TS_PRN
 #define PRN(STR, ...)                                 \
     {                                                 \
         struct timeval tv;                            \
@@ -116,9 +121,32 @@ enum {
                tv.tv_sec % 100000, tv.tv_usec / 1000, \
                __func__, __LINE__);                   \
         printf(__VA_ARGS__);                          \
-        fflush(NULL);                                 \
     }
-#define ERROR(...) PRN("ERROR", __VA_ARGS__)
+#else
+
+#define GET_HH_MM_SS_MS(S, E) \
+        ms = (((E)->tv_sec  - (S)->tv_sec)  * 1000) + \
+             (((E)->tv_usec - (S)->tv_usec) / 1000);  \
+        hh = ms / ms2hh; ms = ms % ms2hh; \
+        mm = ms / ms2mm; ms = ms % ms2mm; \
+        ss = ms / ms2ss; ms = ms % ms2ss;
+
+#define PRN(STR, ...)                                 \
+    {                                                 \
+        uint32_t hh, mm, ss, ms;                      \
+        static struct timeval begin_tv;               \
+        struct timeval tv;                            \
+                                                      \
+        gettimeofday(&tv, NULL);                      \
+        if (!begin_tv.tv_sec)                         \
+            begin_tv = tv;                            \
+        GET_HH_MM_SS_MS(&begin_tv, &tv);              \
+        printf("%s %02u:%02u:%02u.%03u [%s:%d] ", STR,\
+               hh, mm, ss, ms, __func__, __LINE__);   \
+        printf(__VA_ARGS__);                          \
+    }
+#endif
+#define ERROR(...) PRN("ERROR", __VA_ARGS__);  fflush(NULL)
 #define INFO(...)  PRN("INFO ", __VA_ARGS__)
 #define WARN(...)  PRN("WARN " __VA_ARGS__)
 #endif //ERROR
