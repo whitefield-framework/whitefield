@@ -14,6 +14,7 @@ sl cmd_start_udp
 al cmd_mac_stats
 al cmd_set_node_position
 al cmd_node_position
+al cmd_node_exec
 fw stop_whitefield
 fw plot_network_graph
 fw path_upstream

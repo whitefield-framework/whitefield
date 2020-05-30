@@ -2,6 +2,7 @@
 
 DIR=`dirname $0`
 . $DIR/helpers.sh
+. $DIR/get_node_attr.sh
 TMP="/tmp/wf_graphviz_$$"
 POSF="/tmp/wf_node_pos_$$"
 
@@ -22,6 +23,10 @@ tree_graph() {
 			#echo "Node $id, parent $prnt_id"
 			echo "$id -> $prnt_id;" >> $TMP
 		fi
+	done
+	for((i=0;i<${#nodelist[@]};i++)); do
+        color=`get_node_color $i | jq -r .color`
+		echo "$i [ fillcolor=$color style=filled]" >> $TMP
 	done
 	echo "}" >> $TMP
 	dot -Tpng $TMP > $1
@@ -52,10 +57,11 @@ position_graph() {
 	readarray nodepos < $POSF
     [[ "$scale" == "" ]] && scale=1
 	for((i=0;i<${#nodepos[@]};i++)); do
+        color=`get_node_color $i | jq -r .color`
 		IFS=' ' read -r -a arr <<< "${nodepos[$i]}"
         xpos=`echo "${arr[3]}*$scale" | bc -q`
         ypos=`echo "${arr[4]}*$scale" | bc -q`
-		echo "${arr[1]} [ pos=\"${xpos},${ypos}!\"]" >> $TMP
+		echo "${arr[1]} [ pos=\"${xpos},${ypos}!\" fillcolor=$color style=filled]" >> $TMP
 	done
 
 	echo "}" >> $TMP
