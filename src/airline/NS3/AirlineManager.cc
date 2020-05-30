@@ -26,6 +26,28 @@
 #include "mac_stats.h"
 #include "Nodeinfo.h"
 
+int getNodeConfigVal(int id, char *key, char *val, int vallen)
+{
+	wf::Nodeinfo *ni=NULL;
+    ni=WF_config.get_node_info(id);
+    if (!ni) {
+        snprintf(val, vallen, "cudnot get nodeinfo id=%d", id);
+        ERROR << "Unable to get node config\n";
+        return 0;
+    }
+    if (!strcmp(key, "nodeexec")) {
+        return snprintf(val, vallen, "%s", (char *)ni->getNodeExecutable().c_str());
+    }
+    snprintf(val, vallen, "unknown key [%s]", key);
+    ERROR << "Unknown key " << key << "\n";
+    return 0;
+}
+
+int AirlineManager::cmd_node_exec(uint16_t id, char *buf, int buflen)
+{
+    return getNodeConfigVal(id, (char *)"nodeexec", buf, buflen);
+}
+
 int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 {
 	int n=0;
@@ -176,6 +198,7 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 
 	if(mbuf->flags & MBUF_IS_CMD) {
         if(0) {}
+		HANDLE_CMD(mbuf, cmd_node_exec)
 		HANDLE_CMD(mbuf, cmd_node_position)
 		HANDLE_CMD(mbuf, cmd_set_node_position)
 		HANDLE_CMD(mbuf, cmd_802154_set_short_addr)

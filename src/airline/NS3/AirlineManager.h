@@ -36,6 +36,7 @@ private:
     void    msgrecvCallback(msg_buf_t *mbuf);
     int     startNetwork(wf::Config &cfg);
     void    nodePos(NodeContainer const &nodes, uint16_t id, double &x, double &y, double &z);
+    int     cmd_node_exec(uint16_t id, char *buf, int buflen);
     int     cmd_node_position(uint16_t id, char *buf, int buflen);
     int     cmd_set_node_position(uint16_t id, char *buf, int buflen);
     int     cmd_802154_set_short_addr(uint16_t id, char *buf, int buflen);
