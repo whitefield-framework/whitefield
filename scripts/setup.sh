@@ -14,7 +14,7 @@ chk_cmd_present()
 
 chk_prerequisite()
 {
-	sudo apt install libc6-dev-i386 git make gcc g++ automake m4 libtool graphviz
+	sudo apt -y install libc6-dev-i386 git make gcc g++ automake m4 libtool graphviz jq python unzip
 	chk_cmd_present git
 	chk_cmd_present make
 	chk_cmd_present gcc
