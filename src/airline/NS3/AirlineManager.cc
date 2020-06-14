@@ -25,6 +25,9 @@
 #include "Command.h"
 #include "mac_stats.h"
 #include "Nodeinfo.h"
+#if PLC
+#include "PowerLineCommHandler.h"
+#endif
 
 int getNodeConfigVal(int id, char *key, char *val, int vallen)
 {
@@ -72,10 +75,11 @@ int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		if(id == 0xffff || id == node->GetId()) {
 			if(of.is_open()) {
-				of << "Node " << node->GetId() << " Location= " << pos.x << " " << pos.y << " " << pos.z 
-					  << "\n"; 
+				of << "Node " << node->GetId() << " Location= "
+                   << pos.x << " " << pos.y << " " << pos.z << "\n"; 
 			} else {
-				n += snprintf(buf+n, buflen-n, "%d loc= %.2f %.2f %.2f\n", node->GetId(), pos.x, pos.y, pos.z);
+				n += snprintf(buf+n, buflen-n, "%d loc= %.2f %.2f %.2f\n",
+                        node->GetId(), pos.x, pos.y, pos.z);
 				if(n > (buflen-50)) {
 					n += snprintf(buf+n, buflen-n, "[TRUNC]");
 					break;
@@ -171,7 +175,8 @@ int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
 	int numNodes = stoi(CFG("numOfNodes"));
 
 	if(!IN_RANGE(id, 0, numNodes)) {
-		return snprintf(buf, buflen, "NodeID mandatory for setting node pos id=%d", id);
+		return snprintf(buf, buflen,
+                "NodeID mandatory for setting node pos id=%d", id);
 	}
 	ptr = strtok_r(buf, " ", &saveptr);
 	if(!ptr) return snprintf(buf, buflen, "invalid loc format! No x pos!");
@@ -291,6 +296,35 @@ void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
 	}
 }
 
+int AirlineManager::phyInstall(NodeContainer & nodes)
+{
+    int ret = FAILURE;
+    string phy = CFG("PHY");
+
+    if (phy.compare("plc") == 0) {
+#if PLC
+        INFO << "Using PLC as PHY\n";
+        ret = plcInstall(nodes);
+#else
+        ERROR << "PLC phy is not enabled in NS3\n";
+#endif
+    } else {
+        LrWpanHelper lrWpanHelper;
+        NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
+        lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
+
+        INFO << "Using lr-wpan as PHY\n";
+        string ns3_capfile = CFG("NS3_captureFile");
+        if(!ns3_capfile.empty()) {
+            INFO << "NS3 Capture File:" << ns3_capfile << endl;
+            lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
+        }
+        setMacHeaderAdd(nodes);
+        ret = SUCCESS;
+    }
+    return ret;
+}
+
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	try {
@@ -308,17 +342,10 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		setPositionAllocator(nodes);
 
-		LrWpanHelper lrWpanHelper;
-		NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
-		lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
+        if (phyInstall(nodes) != SUCCESS) {
+            return FAILURE;
+        }
 
-		string ns3_capfile = CFG("NS3_captureFile");
-		if(!ns3_capfile.empty()) {
-			INFO << "NS3 Capture File:" << ns3_capfile << endl;
-			lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
-		}
-
-        setMacHeaderAdd(nodes);
 		setNodeSpecificParam(nodes);
 
 		AirlineHelper airlineApp;

@@ -32,8 +32,18 @@ private:
     double  X, Y, Z;
     uint8_t pos_set;
     uint8_t promis_mode;
+    map<string, string> keyval;
 
 public:
+    string getkv(string key, string def = std::string())
+    {
+        string out = keyval[key];
+        return out.empty() ? def : out;
+    };
+    void   setkv(string key, string val)
+    {
+        keyval[key] = val;
+    };
     string getNodeExecutable(void)
     {
         return nodeExec;
