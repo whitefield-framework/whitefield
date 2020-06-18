@@ -59,7 +59,9 @@ int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 	if(buf[0]) {
 		of.open(buf);
 		if(!of.is_open()) {
-			return snprintf(buf, buflen, "could not open file %s", buf);
+            char tmpbuf[256];
+            snprintf(tmpbuf, sizeof(tmpbuf), "%s", buf);
+			return snprintf(buf, buflen, "could not open file %s", tmpbuf);
 		} else {
 			n = snprintf(buf, buflen, "SUCCESS");
 		}
@@ -309,8 +311,8 @@ int AirlineManager::phyInstall(NodeContainer & nodes)
         ERROR << "PLC phy is not enabled in NS3\n";
 #endif
     } else {
-        LrWpanHelper lrWpanHelper;
-        NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
+        static LrWpanHelper lrWpanHelper;
+        static NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
         lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
 
         INFO << "Using lr-wpan as PHY\n";

@@ -33,7 +33,10 @@ void al_handle_cmd(msg_buf_t *mbuf)
 	if(0) { } 
 	HANDLE_CMD(mbuf, cmd_mac_stats)
 	else {
-		mbuf->len = sprintf((char*)mbuf->buf, "AL_INVALID_CMD(%s)", mbuf->buf);
+        char tmpbuf[256];
+        snprintf(tmpbuf, sizeof(tmpbuf), "%s", mbuf->buf);
+		mbuf->len = snprintf((char*)mbuf->buf, mbuf->max_len,
+                "AL_INVALID_CMD(%s)", tmpbuf);
 	}
 }
 

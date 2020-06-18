@@ -133,7 +133,9 @@ void sl_handle_cmd(msg_buf_t *mbuf)
     PLAY_CMD(mbuf, cmd_get_udpapp_stat)
     else
     {
-        mbuf->len = snprintf((char *)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", mbuf->buf);
+        char tmpbuf[256];
+        snprintf(tmpbuf, sizeof(tmpbuf), "%s", mbuf->buf);
+        mbuf->len = snprintf((char *)mbuf->buf, mbuf->max_len, "SL_INVALID_CMD(%s)", tmpbuf);
     }
 #endif
     INFO("responding with:<%s>\n", cbuf->buf);
