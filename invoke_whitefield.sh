@@ -1,5 +1,10 @@
 #!/bin/bash
 
+RED="\033[0;31m"
+BLUE="\033[0;34m"
+BLINK="\033[0;5m"
+NC="\033[0m"
+
 if [ "$1" == "gdb" ]; then
 	shift
 	cmdprefix="gdb --args"
@@ -19,10 +24,24 @@ export MONITOR_PORT=$MONITOR_PORT
 export AIRLINE_ERR=$LOGPATH/airline_error.log
 export AIRLINE_LOG=$LOGPATH/airline.log
 #export NS_LOG="*=level_warn:LrWpanMac=level_all"
+rm -f $LOGPATH/*.log 2>/dev/null
+
+diagnose()
+{
+    grep "^ERROR" $AIRLINE_LOG
+    echo -e "${BLINK}Start Failed.${NC}"
+    echo "1. Check logs in folder:$LOGPATH."
+    echo "2. Enable and check coredumps."
+    exit 1
+}
 
 func_childret()
 {
+    kill -0 $wf_ps 2>/dev/null
+    [[ $? -ne 0 ]] && diagnose
 	jobs -l | grep "Running" >/dev/null
+    echo "Started OK"
+    echo "Use './scripts/monitor.sh' to check status."
 	exit $?
 }
 
@@ -33,10 +52,10 @@ mkdir $LOGPATH pcap 2>/dev/null
 if [ "$cmdprefix" == "" ]; then #Regular execution
 	trap func_childret SIGCHLD
 	set -m
-	$BINDIR/whitefield $* 1>$AIRLINE_LOG 2>$AIRLINE_ERR &
+	$BINDIR/whitefield $* >$AIRLINE_LOG 2>&1 &
+    wf_ps=$!
 	sleep 1
 	echo ;
-    cat $AIRLINE_ERR
 else #GDB execution
 	$cmdprefix $BINDIR/whitefield $*
 fi

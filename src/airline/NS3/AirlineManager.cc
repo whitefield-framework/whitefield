@@ -20,6 +20,10 @@
 
 #define	_AIRLINEMANAGER_CC_
 
+#include <map>
+#include <string>
+#include <sstream>
+#include <iostream>
 #include "AirlineManager.h"
 #include "Airline.h"
 #include "Command.h"
@@ -249,7 +253,84 @@ void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & 
 	mob.Install(nodes.Get(id));
 }
 
-void AirlineManager::setNodeSpecificParam(NodeContainer & nodes) 
+Ptr <PropagationLossModel> getLogDistancePLM(map<string, string, ci_less> & m)
+{
+    Ptr <LogDistancePropagationLossModel> plm =
+        CreateObject<LogDistancePropagationLossModel> ();
+
+    if (!plm) {
+        ERROR << "Cud not get Log Distance prop loss model\n";
+        return plm;
+    }
+    if (!m["PathLossExp"].empty()) {
+        INFO << "using PathLossExp=" << m["PathLossExp"] << "\n";
+        plm->SetPathLossExponent(stod(m["PathLossExp"]));
+        m.erase("PathLossExp");
+    }
+    if (!m["refDist"].empty() && !m["refLoss"].empty()) {
+        INFO << "using refDist=" << m["refDist"]
+             << "refLoss=" << m["refLoss"] << "\n";
+        plm->SetReference(stod(m["refDist"]), stod(m["refLoss"]));
+        m.erase("refDist");
+        m.erase("refLoss");
+    }
+    return plm;
+}
+
+Ptr <PropagationLossModel> getFriisPLM(map<string, string, ci_less> & m)
+{
+    Ptr <FriisPropagationLossModel> plm =
+        CreateObject<FriisPropagationLossModel> ();
+
+    if (!plm) {
+        ERROR << "Cud not get Friis prop loss model\n";
+        return plm;
+    }
+    if (!m["freq"].empty()) {
+        INFO << "using freq=" << m["freq"] << "\n";
+        plm->SetFrequency(stod(m["freq"]));
+        m.erase("freq");
+    }
+    if (!m["minloss"].empty()) {
+        INFO << "using minloss=" << m["minloss"] << "\n";
+        plm->SetMinLoss(stod(m["minloss"]));
+        m.erase("minloss");
+    }
+    if (!m["sysloss"].empty()) {
+        INFO << "using sysloss=" << m["sysloss"] << "\n";
+        plm->SetSystemLoss(stod(m["sysloss"]));
+        m.erase("sysloss");
+    }
+    return plm;
+}
+
+/* Set Loss and Delay Propagation Model */
+int getLossModel(string loss_model, Ptr <PropagationLossModel> & plm)
+{
+    string cfg = CFG("lossModelParam");
+    auto cfgmap = splitKV(cfg);
+
+    INFO << "Using loss model [" << loss_model << "]\n";
+    if (stricmp(loss_model, "LogDistance") == 0) {
+        plm = getLogDistancePLM(cfgmap);
+    } else if (stricmp(loss_model, "Friis") == 0) {
+        plm = getFriisPLM(cfgmap);
+        plm = CreateObject<FriisPropagationLossModel> ();
+    } else {
+        ERROR << "Unknown loss model [" << loss_model << "]\n";
+        return FAILURE;
+    }
+    if (cfgmap.size() != 0) {
+        map<string, string, ci_less>::iterator i;
+        for (i = cfgmap.begin(); i != cfgmap.end(); ++i) {
+            ERROR << "Unprocessed loss model param: " 
+                  << i->first << "=" << i->second << "\n";
+        }
+    }
+    return SUCCESS;
+}
+
+void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 {
 	uint8_t is_set=0;
 	double x, y, z;
@@ -277,17 +358,30 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 	}
 }
 
-void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
+int AirlineManager::setAllNodesParam(NodeContainer & nodes)
 {
-    bool macAdd=CFG_INT("macHeaderAdd", 1);
-    if(macAdd) {
-        return;
+    Ptr<SingleModelSpectrumChannel> channel;
+    static Ptr <PropagationLossModel> plm;
+    string loss_model = CFG("lossModel");
+    bool macAdd = CFG_INT("macHeaderAdd", 1);
+
+    if (!loss_model.empty()) {
+        channel = CreateObject<SingleModelSpectrumChannel> ();
+        if (!channel || getLossModel(loss_model, plm) != SUCCESS) {
+            return FAILURE;
+        }
+        channel->AddPropagationLossModel(plm);
     }
+
 	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
 	{ 
 		Ptr<Node> node = *i; 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-        if(dev) {
+        if (!dev) {
+            ERROR << "Coud not get device\n";
+            continue;
+        }
+        if(!macAdd) {
             dev->GetMac()->SetMacHeaderAdd(macAdd);
 
             //In case where stackline itself add mac header, the airline needs
@@ -295,20 +389,26 @@ void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
             //headers are transmitted as is to the stackline on reception
             //dev->GetMac()->SetPromiscuousMode(1);
         }
+        if (!loss_model.empty()) {
+            dev->SetChannel (channel);
+        }
 	}
+    return SUCCESS;
 }
 
 int AirlineManager::phyInstall(NodeContainer & nodes)
 {
-    int ret = FAILURE;
     string phy = CFG("PHY");
 
-    if (phy.compare("plc") == 0) {
+    if (stricmp(phy, "plc") == 0) {
 #if PLC
         INFO << "Using PLC as PHY\n";
-        ret = plcInstall(nodes);
+        if (plcInstall(nodes) != SUCCESS) {
+            return FAILURE;
+        }
 #else
         ERROR << "PLC phy is not enabled in NS3\n";
+        return FAILURE;
 #endif
     } else {
         static LrWpanHelper lrWpanHelper;
@@ -321,10 +421,9 @@ int AirlineManager::phyInstall(NodeContainer & nodes)
             INFO << "NS3 Capture File:" << ns3_capfile << endl;
             lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
         }
-        setMacHeaderAdd(nodes);
-        ret = SUCCESS;
     }
-    return ret;
+
+    return setAllNodesParam(nodes);
 }
 
 int AirlineManager::startNetwork(wf::Config & cfg)
@@ -356,6 +455,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		ScheduleCommlineRX();
 		INFO << "NS3 Simulator::Run initiated...\n";
+        fflush(stdout);
 		Simulator::Run ();
 		pause();
 		Simulator::Destroy ();

@@ -28,6 +28,8 @@
 #include "ns3/core-module.h"
 #include "ns3/lr-wpan-module.h"
 #include "ns3/mobility-module.h"
+#include "ns3/propagation-loss-model.h"
+#include "ns3/single-model-spectrum-channel.h"
 
 using namespace ns3;
 
@@ -45,7 +47,7 @@ private:
     int     cmd_802154_set_panid(uint16_t id, char *buf, int buflen);
     void    setPositionAllocator(NodeContainer &nodes);
     void    setNodeSpecificParam(NodeContainer &nodes);
-    void    setMacHeaderAdd(NodeContainer &nodes);
+    int     setAllNodesParam(NodeContainer &nodes);
     void    msgReader(void);
     void    ScheduleCommlineRX(void);
     EventId m_sendEvent;

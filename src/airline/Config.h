@@ -28,7 +28,7 @@ class Config {
 private:
     Nodeinfo *          nodeArray;
     int                 numOfNodes;
-    map<string, string> keyval;
+    map<string, string, ci_less> keyval;
 
     int setNumberOfNodes(const int value);
     int setNodeSetExec(const string exec, int beg, int end);
