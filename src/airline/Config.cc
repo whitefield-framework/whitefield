@@ -148,7 +148,7 @@ void Config::spawnStackline(const uint16_t nodeID)
 	}
 }
 
-string Config::getKeyRange(const string & keystr, int & beg_range, int & end_range)
+string Config::getKeyRange(const string & keystr, int & beg_range, int & end_range, bool & explictRange)
 {
 	istringstream keyline(keystr);
 	string key=keystr;
@@ -156,7 +156,9 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 	
 	beg_range = 0;
 	end_range = numOfNodes-1;
+    explictRange = false;
 	if(!(ptr=strchr(keystr.c_str(), '['))) return key; //No range specified in the key
+    explictRange = true;
 	getline(keyline, key, '[');
 	ptr++;
 	beg_range = atoi(ptr);
@@ -217,6 +219,15 @@ int Config::setNodePromis(const string pmode, int beg, int end)
 	return SUCCESS;
 }
 
+int Config::setNodeKV(string key, string val, int beg, int end)
+{
+	int i;
+	for (i = beg; i <= end; i++) {
+		nodeArray[i].setkv(key, val);
+	}
+	return SUCCESS;
+}
+
 int Config::setConfigurationFromFile(const char *fname)
 {
 	int beg_range, end_range;
@@ -231,13 +242,15 @@ int Config::setConfigurationFromFile(const char *fname)
 		}
 		while(getline(infile, line))
 		{
+            bool explictRange = false;
 			istringstream is_line(line);
+
 			if(!getline(is_line, key, '=')) continue;
 			if(key[0] == '#') continue;
 			if(!getline(is_line, value, '#')) continue;
 			value = trim(value);
 			key = trim(key);
-			key = getKeyRange(key, beg_range, end_range);
+			key = getKeyRange(key, beg_range, end_range, explictRange);
 			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
@@ -259,8 +272,19 @@ int Config::setConfigurationFromFile(const char *fname)
 					setNodePosition(value, beg_range, end_range);
 				} else if(key == "nodePromiscuous") {
 					setNodePromis(value, beg_range, end_range);
+				} else if(key == "include") {
+                    if(setConfigurationFromFile((const char *)value.c_str()) 
+                            == FAILURE) {
+                        ERROR << "include file processing failed"
+                              << value << "\n";
+                        return FAILURE;
+                    }
 				} else {
-					set(key, value);
+                    if (explictRange) {
+                        setNodeKV(key, value, beg_range, end_range);
+                    } else {
+                        set(key, value);
+                    }
 				}
 			}
 		}

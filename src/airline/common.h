@@ -36,15 +36,32 @@ using namespace std;
 #define SUCCESS 0
 #define FAILURE -1
 
-#define INFO  cout
-#define ERROR cerr
-#define WARN  cerr
+#define INFO  cout << "INFO  "
+#define ERROR cerr << "ERROR "
+#define WARN  cerr << "WARN  "
 
 string &ltrim(string &s, const char *t = " \t\n\r\f\v");
 string &rtrim(string &s, const char *t = " \t\n\r\f\v");
 string &trim(string &s, const char *t = " \t\n\r\f\v");
 
 vector<string> split(const string &s, char delim);
+struct ci_less
+{
+    // case-independent (ci) compare_less binary function
+    struct nocase_compare
+    {
+        bool operator() (const unsigned char& c1, const unsigned char& c2) const {
+            return tolower (c1) < tolower (c2);
+        }
+    };
+    bool operator() (const std::string & s1, const std::string & s2) const {
+        return std::lexicographical_compare
+            (s1.begin (), s1.end (),   // source range
+             s2.begin (), s2.end (),   // dest range
+             nocase_compare ());  // comparison
+    }
+};
+map<string, string, ci_less> splitKV(string & s);
 
 //#include <Config.h>
 namespace wf {
@@ -57,5 +74,10 @@ extern wf::Config WF_config;
 #define CFG_PANID               stoi(CFG("panID", "0xface"), nullptr, 0)
 #define SPAWN_STACKLINE(NODEID) WF_config.spawnStackline(NODEID)
 #define WF_STOP                 raise(SIGINT)
+
+static inline int stricmp(string s1, string s2)
+{
+    return strcasecmp(s1.c_str(), s2.c_str());
+}
 
 #endif //_COMMON_H_

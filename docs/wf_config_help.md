@@ -20,6 +20,10 @@ stackline.
 |nodeExec[*]|/path/to/stackline.bin| Native compiled executable path for Contiki/RIOT nodes will be specified here|
 |captureFile[*]|/path/to/pcap_dir|Location where pcap will be stored ... Not supported currently, use NS3_captureFile instead|
 |NS3_captureFile|/path/to/pcap_dir|Uses NS3's inbuilt pcap capturing method |
+|include|/path/to/include_file|Include configuration from other file |
+|PHY|[plc,lr-wpan]|Default lr-wpan if this is not specified |
+|lossModel|[LogDistance](#LogDistance),Friis|Default none |
+|lossModelParam|key=value pairs|Dependent on corresponding lossModel |
 
 The configuration can be applied to only a set of nodes (for configuration options specified with [*]) by specifying the node index range (note, the first node has an index of zero). 
 For e.g.
@@ -32,6 +36,28 @@ nodeExec[10-19]=/path/to/riot
 In the above configuration the first nodeExec=/path/to/contiki will result in the execuatable getting set for all nodes. 
 In the subsequent config statement, nodes[10-19] (inclusive) will override the nodeExec path. 
 Note that the sequence of configuration option is important in this particular case.
+
+### LogDistance
+
+Check NS3 documentation for [LogDistancePropagationLossModel](https://www.nsnam.org/doxygen/classns3_1_1_log_distance_propagation_loss_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|PathLossExp|double|Check NS3 help|
+|RefDist|double|Check NS3 help|
+|RefLoss|double|Check NS3 help|
+
+Note: RefDist and RefLoss has to be specified together, otherwise individually it is ignored.
+
+### Friis
+
+Check NS3 documentation for [FriisPropagationLossModel](https://www.nsnam.org/doxygen/classns3_1_1_friis_propagation_loss_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|Freq|double|Frequency: Check NS3 help|
+|minLoss|double|MinLoss: Check NS3 help|
+|sysLoss|double|SystemLoss: Check NS3 help|
 
 ### Sample layout for Grid topology
 

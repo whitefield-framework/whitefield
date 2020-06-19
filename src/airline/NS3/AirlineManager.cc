@@ -20,11 +20,18 @@
 
 #define	_AIRLINEMANAGER_CC_
 
+#include <map>
+#include <string>
+#include <sstream>
+#include <iostream>
 #include "AirlineManager.h"
 #include "Airline.h"
 #include "Command.h"
 #include "mac_stats.h"
 #include "Nodeinfo.h"
+#if PLC
+#include "PowerLineCommHandler.h"
+#endif
 
 int getNodeConfigVal(int id, char *key, char *val, int vallen)
 {
@@ -56,7 +63,9 @@ int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 	if(buf[0]) {
 		of.open(buf);
 		if(!of.is_open()) {
-			return snprintf(buf, buflen, "could not open file %s", buf);
+            char tmpbuf[256];
+            snprintf(tmpbuf, sizeof(tmpbuf), "%s", buf);
+			return snprintf(buf, buflen, "could not open file %s", tmpbuf);
 		} else {
 			n = snprintf(buf, buflen, "SUCCESS");
 		}
@@ -72,10 +81,11 @@ int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		if(id == 0xffff || id == node->GetId()) {
 			if(of.is_open()) {
-				of << "Node " << node->GetId() << " Location= " << pos.x << " " << pos.y << " " << pos.z 
-					  << "\n"; 
+				of << "Node " << node->GetId() << " Location= "
+                   << pos.x << " " << pos.y << " " << pos.z << "\n"; 
 			} else {
-				n += snprintf(buf+n, buflen-n, "%d loc= %.2f %.2f %.2f\n", node->GetId(), pos.x, pos.y, pos.z);
+				n += snprintf(buf+n, buflen-n, "%d loc= %.2f %.2f %.2f\n",
+                        node->GetId(), pos.x, pos.y, pos.z);
 				if(n > (buflen-50)) {
 					n += snprintf(buf+n, buflen-n, "[TRUNC]");
 					break;
@@ -171,7 +181,8 @@ int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
 	int numNodes = stoi(CFG("numOfNodes"));
 
 	if(!IN_RANGE(id, 0, numNodes)) {
-		return snprintf(buf, buflen, "NodeID mandatory for setting node pos id=%d", id);
+		return snprintf(buf, buflen,
+                "NodeID mandatory for setting node pos id=%d", id);
 	}
 	ptr = strtok_r(buf, " ", &saveptr);
 	if(!ptr) return snprintf(buf, buflen, "invalid loc format! No x pos!");
@@ -242,7 +253,84 @@ void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & 
 	mob.Install(nodes.Get(id));
 }
 
-void AirlineManager::setNodeSpecificParam(NodeContainer & nodes) 
+Ptr <PropagationLossModel> getLogDistancePLM(map<string, string, ci_less> & m)
+{
+    Ptr <LogDistancePropagationLossModel> plm =
+        CreateObject<LogDistancePropagationLossModel> ();
+
+    if (!plm) {
+        ERROR << "Cud not get Log Distance prop loss model\n";
+        return plm;
+    }
+    if (!m["PathLossExp"].empty()) {
+        INFO << "using PathLossExp=" << m["PathLossExp"] << "\n";
+        plm->SetPathLossExponent(stod(m["PathLossExp"]));
+        m.erase("PathLossExp");
+    }
+    if (!m["refDist"].empty() && !m["refLoss"].empty()) {
+        INFO << "using refDist=" << m["refDist"]
+             << "refLoss=" << m["refLoss"] << "\n";
+        plm->SetReference(stod(m["refDist"]), stod(m["refLoss"]));
+        m.erase("refDist");
+        m.erase("refLoss");
+    }
+    return plm;
+}
+
+Ptr <PropagationLossModel> getFriisPLM(map<string, string, ci_less> & m)
+{
+    Ptr <FriisPropagationLossModel> plm =
+        CreateObject<FriisPropagationLossModel> ();
+
+    if (!plm) {
+        ERROR << "Cud not get Friis prop loss model\n";
+        return plm;
+    }
+    if (!m["freq"].empty()) {
+        INFO << "using freq=" << m["freq"] << "\n";
+        plm->SetFrequency(stod(m["freq"]));
+        m.erase("freq");
+    }
+    if (!m["minloss"].empty()) {
+        INFO << "using minloss=" << m["minloss"] << "\n";
+        plm->SetMinLoss(stod(m["minloss"]));
+        m.erase("minloss");
+    }
+    if (!m["sysloss"].empty()) {
+        INFO << "using sysloss=" << m["sysloss"] << "\n";
+        plm->SetSystemLoss(stod(m["sysloss"]));
+        m.erase("sysloss");
+    }
+    return plm;
+}
+
+/* Set Loss and Delay Propagation Model */
+int getLossModel(string loss_model, Ptr <PropagationLossModel> & plm)
+{
+    string cfg = CFG("lossModelParam");
+    auto cfgmap = splitKV(cfg);
+
+    INFO << "Using loss model [" << loss_model << "]\n";
+    if (stricmp(loss_model, "LogDistance") == 0) {
+        plm = getLogDistancePLM(cfgmap);
+    } else if (stricmp(loss_model, "Friis") == 0) {
+        plm = getFriisPLM(cfgmap);
+        plm = CreateObject<FriisPropagationLossModel> ();
+    } else {
+        ERROR << "Unknown loss model [" << loss_model << "]\n";
+        return FAILURE;
+    }
+    if (cfgmap.size() != 0) {
+        map<string, string, ci_less>::iterator i;
+        for (i = cfgmap.begin(); i != cfgmap.end(); ++i) {
+            ERROR << "Unprocessed loss model param: " 
+                  << i->first << "=" << i->second << "\n";
+        }
+    }
+    return SUCCESS;
+}
+
+void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 {
 	uint8_t is_set=0;
 	double x, y, z;
@@ -270,17 +358,30 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 	}
 }
 
-void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
+int AirlineManager::setAllNodesParam(NodeContainer & nodes)
 {
-    bool macAdd=CFG_INT("macHeaderAdd", 1);
-    if(macAdd) {
-        return;
+    Ptr<SingleModelSpectrumChannel> channel;
+    static Ptr <PropagationLossModel> plm;
+    string loss_model = CFG("lossModel");
+    bool macAdd = CFG_INT("macHeaderAdd", 1);
+
+    if (!loss_model.empty()) {
+        channel = CreateObject<SingleModelSpectrumChannel> ();
+        if (!channel || getLossModel(loss_model, plm) != SUCCESS) {
+            return FAILURE;
+        }
+        channel->AddPropagationLossModel(plm);
     }
+
 	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
 	{ 
 		Ptr<Node> node = *i; 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-        if(dev) {
+        if (!dev) {
+            ERROR << "Coud not get device\n";
+            continue;
+        }
+        if(!macAdd) {
             dev->GetMac()->SetMacHeaderAdd(macAdd);
 
             //In case where stackline itself add mac header, the airline needs
@@ -288,7 +389,41 @@ void AirlineManager::setMacHeaderAdd(NodeContainer & nodes)
             //headers are transmitted as is to the stackline on reception
             //dev->GetMac()->SetPromiscuousMode(1);
         }
+        if (!loss_model.empty()) {
+            dev->SetChannel (channel);
+        }
 	}
+    return SUCCESS;
+}
+
+int AirlineManager::phyInstall(NodeContainer & nodes)
+{
+    string phy = CFG("PHY");
+
+    if (stricmp(phy, "plc") == 0) {
+#if PLC
+        INFO << "Using PLC as PHY\n";
+        if (plcInstall(nodes) != SUCCESS) {
+            return FAILURE;
+        }
+#else
+        ERROR << "PLC phy is not enabled in NS3\n";
+        return FAILURE;
+#endif
+    } else {
+        static LrWpanHelper lrWpanHelper;
+        static NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
+        lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
+
+        INFO << "Using lr-wpan as PHY\n";
+        string ns3_capfile = CFG("NS3_captureFile");
+        if(!ns3_capfile.empty()) {
+            INFO << "NS3 Capture File:" << ns3_capfile << endl;
+            lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
+        }
+    }
+
+    return setAllNodesParam(nodes);
 }
 
 int AirlineManager::startNetwork(wf::Config & cfg)
@@ -308,17 +443,10 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		setPositionAllocator(nodes);
 
-		LrWpanHelper lrWpanHelper;
-		NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
-		lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
+        if (phyInstall(nodes) != SUCCESS) {
+            return FAILURE;
+        }
 
-		string ns3_capfile = CFG("NS3_captureFile");
-		if(!ns3_capfile.empty()) {
-			INFO << "NS3 Capture File:" << ns3_capfile << endl;
-			lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
-		}
-
-        setMacHeaderAdd(nodes);
 		setNodeSpecificParam(nodes);
 
 		AirlineHelper airlineApp;
@@ -327,6 +455,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		ScheduleCommlineRX();
 		INFO << "NS3 Simulator::Run initiated...\n";
+        fflush(stdout);
 		Simulator::Run ();
 		pause();
 		Simulator::Destroy ();

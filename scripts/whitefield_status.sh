@@ -15,17 +15,6 @@ function get_route_list()
 	echo "Route entries on node $BR_ID: $rtsize"
 }
 
-error_log()
-{
-	ERRCNT=5
-	ERRFILE="$DIR/../log/airline_error.log"
-	[[ ! -f "$ERRFILE" ]] && echo "ERROR FILE NOT FOUND!!\n" && return
-	[[ $(stat -c "%s" $ERRFILE) -le 0 ]] && return
-	echo "----[Airline last $ERRCNT ERRORS]----"
-	tail -$ERRCNT $ERRFILE
-	echo "<<check $ERRFILE for details>>"
-}
-
 function main()
 {
 	elap_time
@@ -50,9 +39,6 @@ function main()
 	echo "Airline CPU:$pcpu%, Memory:$memusage"
 	echo ;
 
-	error_log
-
-	echo ;
 	echo ;
 	echo "Press [Ctrl-C] to Exit, use [$DIR/wfshell] command to use Whitefield Shell..."
 }

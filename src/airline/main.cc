@@ -56,7 +56,9 @@ void exec_forker(void)
 		prctl(PR_SET_PDEATHSIG, SIGINT);
 
 		execv(cmdname, argv);
-		ERROR << "Could not execv " << cmdname << ". Check if the forker cmdname/path is correct.Aborting..." << endl;
+		ERROR << "Could not execv " << cmdname 
+              << ". Check if the forker cmdname/path is correct.Aborting..."
+              << endl;
 		sig_handler(1);
 	}
 }

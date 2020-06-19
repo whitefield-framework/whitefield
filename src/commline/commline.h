@@ -147,7 +147,7 @@ enum {
     }
 #endif
 #define ERROR(...) PRN("ERROR", __VA_ARGS__);  fflush(NULL)
-#define INFO(...)  PRN("INFO ", __VA_ARGS__)
+#define INFO(...)  PRN("INFO ", __VA_ARGS__);  fflush(NULL)
 #define WARN(...)  PRN("WARN " __VA_ARGS__)
 #endif //ERROR
 

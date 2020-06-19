@@ -28,12 +28,15 @@
 #include "ns3/core-module.h"
 #include "ns3/lr-wpan-module.h"
 #include "ns3/mobility-module.h"
+#include "ns3/propagation-loss-model.h"
+#include "ns3/single-model-spectrum-channel.h"
 
 using namespace ns3;
 
 class AirlineManager {
 private:
     void    msgrecvCallback(msg_buf_t *mbuf);
+    int     phyInstall(NodeContainer & nodes);
     int     startNetwork(wf::Config &cfg);
     void    nodePos(NodeContainer const &nodes, uint16_t id, double &x, double &y, double &z);
     int     cmd_node_exec(uint16_t id, char *buf, int buflen);
@@ -44,7 +47,7 @@ private:
     int     cmd_802154_set_panid(uint16_t id, char *buf, int buflen);
     void    setPositionAllocator(NodeContainer &nodes);
     void    setNodeSpecificParam(NodeContainer &nodes);
-    void    setMacHeaderAdd(NodeContainer &nodes);
+    int     setAllNodesParam(NodeContainer &nodes);
     void    msgReader(void);
     void    ScheduleCommlineRX(void);
     EventId m_sendEvent;

@@ -58,3 +58,15 @@ vector<string> split(const string &s, char delim) {
 	return elems;
 }
 
+map<string, string, ci_less> splitKV(string & s)
+{
+    map<string, string, ci_less> m;
+
+    string key, val;
+    istringstream iss(s);
+
+    while(getline(getline(iss, key, '=') >> ws, val, ','))
+        m[key] = val;
+    return m;
+}
+
