@@ -32,13 +32,14 @@ private:
     double  X, Y, Z;
     uint8_t pos_set;
     uint8_t promis_mode;
-    map<string, string> keyval;
+    map<string, string, ci_less> keyval;
 
 public:
     string getkv(string key, string def = std::string())
     {
-        string out = keyval[key];
-        return out.empty() ? def : out;
+        if (keyval.find(key) == keyval.end())
+            return def;
+        return keyval[key];
     };
     void   setkv(string key, string val)
     {

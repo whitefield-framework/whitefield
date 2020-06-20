@@ -70,3 +70,17 @@ map<string, string, ci_less> splitKV(string & s)
     return m;
 }
 
+/* Gets the string for the corr key and removes that map entry */
+string getMapCfg(map<string, string, ci_less> & m, string key)
+{
+    string val;
+
+    if (m.find(key) == m.end()) {
+        return val;
+    }
+    val = m[key];
+    m.erase(key);
+    INFO << "param: " << key << "=" << val << "\n";
+    return val;
+}
+
