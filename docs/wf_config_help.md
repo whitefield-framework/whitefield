@@ -1,8 +1,6 @@
 ## Whitefield Configuration User Manual
 
-Whitefield configuration provides common configuration options across different airlines and stacklines used 
-i.e. the same configuration works whether you use NS3 or Castalia-Omnet++ as Airline or use Contiki/RIOT as 
-stackline.
+Whitefield configuration provides common configuration options across different airlines and stacklines used i.e. the same configuration works whether you use NS3 or Castalia-Omnet++ as Airline or use Contiki/RIOT as stackline.
 
 |Key|Value Range|Remarks|
 |---|-----------|-------|
@@ -12,6 +10,7 @@ stackline.
 |topologyType|randrect|Randomly place nodes in area denoted by fieldX * fieldY|
 | |grid | Grid topology where nodes are separated by distance specified by fieldX * fieldY and the width of the grid is specified by gridWidth|
 |gridWidth| Uint range | Width of the grid. Only applicable when topologyType=grid |
+|txPower[*]| double | Transmit Power in unit dBm |
 |nodePosition[*]|10,20,0|Manually position the node at the given location specified by x,y,z coordinates|
 |nodePromiscuous[*]|1|Set promiscuous mode for the node. Node will receive not only broadcast or unicast packets destined to it but also other packets not destined to it but the node is in receive range.|
 |panID|Ushort range| PAN identifier to be used in LOWPAN |
@@ -22,8 +21,10 @@ stackline.
 |NS3_captureFile|/path/to/pcap_dir|Uses NS3's inbuilt pcap capturing method |
 |include|/path/to/include_file|Include configuration from other file |
 |PHY|[plc,lr-wpan]|Default lr-wpan if this is not specified |
-|lossModel|[LogDistance](#LogDistance),Friis|Default none |
+|lossModel|[supported loss models](#Propagation-Loss-Models-supported)|Default none |
 |lossModelParam|key=value pairs|Dependent on corresponding lossModel |
+|delayModel|[supported delay models](#Propagation-Delay-Models-supported)|Default none |
+|delayModelParam|key=value pairs|Dependent on corresponding delayModel |
 
 The configuration can be applied to only a set of nodes (for configuration options specified with [*]) by specifying the node index range (note, the first node has an index of zero). 
 For e.g.
@@ -33,13 +34,14 @@ nodeExec=/path/to/contiki
 nodeExec[5]=/path/to/scapy
 nodeExec[10-19]=/path/to/riot
 ```
-In the above configuration the first nodeExec=/path/to/contiki will result in the execuatable getting set for all nodes. 
-In the subsequent config statement, nodes[10-19] (inclusive) will override the nodeExec path. 
-Note that the sequence of configuration option is important in this particular case.
+In the above configuration the first nodeExec=/path/to/contiki will result in the execuatable getting set for all nodes. In the subsequent config statement, nodes[10-19] (inclusive) will override the default nodeExec path. 
 
-### LogDistance
+**Note that the sequence of configuration option is important.**
 
-Check NS3 documentation for [LogDistancePropagationLossModel](https://www.nsnam.org/doxygen/classns3_1_1_log_distance_propagation_loss_model.html)
+## Propagation Loss Models supported
+
+### LogDistance (default)
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_log_distance_propagation_loss_model.html)
 
 |Key|Value Range|Remarks|
 |---|-----------|-------|
@@ -50,8 +52,7 @@ Check NS3 documentation for [LogDistancePropagationLossModel](https://www.nsnam.
 Note: RefDist and RefLoss has to be specified together, otherwise individually it is ignored.
 
 ### Friis
-
-Check NS3 documentation for [FriisPropagationLossModel](https://www.nsnam.org/doxygen/classns3_1_1_friis_propagation_loss_model.html)
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_friis_propagation_loss_model.html)
 
 |Key|Value Range|Remarks|
 |---|-----------|-------|
@@ -59,6 +60,59 @@ Check NS3 documentation for [FriisPropagationLossModel](https://www.nsnam.org/do
 |minLoss|double|MinLoss: Check NS3 help|
 |sysLoss|double|SystemLoss: Check NS3 help|
 
-### Sample layout for Grid topology
+### FixedRss
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_fixed_rss_loss_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|rss|double|Check NS3 help|
+
+### Matrix
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_matrix_propagation_loss_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|defLoss|double|Check NS3 help|
+
+### Random
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_random_propagation_loss_model.html)
+
+No additional parameters supported.
+
+### Range
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_range_propagation_loss_model.html)
+
+No additional parameters supported.
+
+### ThreeLogDistance
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_three_log_distance_propagation_loss_model.html)
+
+No additional parameters supported.
+
+### TwoRayGround
+[NS3 help](https://www.nsnam.org/doxygen/classns3_1_1_two_ray_ground_propagation_loss_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|sysLoss|double|Check NS3 help|
+|Freq|double|Frequency: Check NS3 help|
+|HeightAboveZ|double|Check NS3 help|
+|minDist|double|minDistance: Check NS3 help|
+
+## Propagation Delay Models supported
+
+### ConstantSpeed (default)
+[NS3 Help](https://www.nsnam.org/doxygen/classns3_1_1_constant_speed_propagation_delay_model.html)
+
+|Key|Value Range|Remarks|
+|---|-----------|-------|
+|speed|double|Check NS3 help|
+
+### Random
+
+[NS3 Help](https://www.nsnam.org/doxygen/classns3_1_1_random_propagation_delay_model.html)
+No additional parameters supported.
+
+## Sample layout for Grid topology
 
 ![Alt text](res/grid-top-layout.png "Grid Topology Layout")

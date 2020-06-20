@@ -24,11 +24,17 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+
+#include <ns3/single-model-spectrum-channel.h>
+#include <ns3/mobility-module.h>
+#include <ns3/lr-wpan-module.h>
+#include <ns3/spectrum-value.h>
+
 #include "AirlineManager.h"
 #include "Airline.h"
 #include "Command.h"
 #include "mac_stats.h"
-#include "Nodeinfo.h"
+#include "PropagationModel.h"
 #if PLC
 #include "PowerLineCommHandler.h"
 #endif
@@ -253,88 +259,12 @@ void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & 
 	mob.Install(nodes.Get(id));
 }
 
-Ptr <PropagationLossModel> getLogDistancePLM(map<string, string, ci_less> & m)
-{
-    Ptr <LogDistancePropagationLossModel> plm =
-        CreateObject<LogDistancePropagationLossModel> ();
-
-    if (!plm) {
-        ERROR << "Cud not get Log Distance prop loss model\n";
-        return plm;
-    }
-    if (!m["PathLossExp"].empty()) {
-        INFO << "using PathLossExp=" << m["PathLossExp"] << "\n";
-        plm->SetPathLossExponent(stod(m["PathLossExp"]));
-        m.erase("PathLossExp");
-    }
-    if (!m["refDist"].empty() && !m["refLoss"].empty()) {
-        INFO << "using refDist=" << m["refDist"]
-             << "refLoss=" << m["refLoss"] << "\n";
-        plm->SetReference(stod(m["refDist"]), stod(m["refLoss"]));
-        m.erase("refDist");
-        m.erase("refLoss");
-    }
-    return plm;
-}
-
-Ptr <PropagationLossModel> getFriisPLM(map<string, string, ci_less> & m)
-{
-    Ptr <FriisPropagationLossModel> plm =
-        CreateObject<FriisPropagationLossModel> ();
-
-    if (!plm) {
-        ERROR << "Cud not get Friis prop loss model\n";
-        return plm;
-    }
-    if (!m["freq"].empty()) {
-        INFO << "using freq=" << m["freq"] << "\n";
-        plm->SetFrequency(stod(m["freq"]));
-        m.erase("freq");
-    }
-    if (!m["minloss"].empty()) {
-        INFO << "using minloss=" << m["minloss"] << "\n";
-        plm->SetMinLoss(stod(m["minloss"]));
-        m.erase("minloss");
-    }
-    if (!m["sysloss"].empty()) {
-        INFO << "using sysloss=" << m["sysloss"] << "\n";
-        plm->SetSystemLoss(stod(m["sysloss"]));
-        m.erase("sysloss");
-    }
-    return plm;
-}
-
-/* Set Loss and Delay Propagation Model */
-int getLossModel(string loss_model, Ptr <PropagationLossModel> & plm)
-{
-    string cfg = CFG("lossModelParam");
-    auto cfgmap = splitKV(cfg);
-
-    INFO << "Using loss model [" << loss_model << "]\n";
-    if (stricmp(loss_model, "LogDistance") == 0) {
-        plm = getLogDistancePLM(cfgmap);
-    } else if (stricmp(loss_model, "Friis") == 0) {
-        plm = getFriisPLM(cfgmap);
-        plm = CreateObject<FriisPropagationLossModel> ();
-    } else {
-        ERROR << "Unknown loss model [" << loss_model << "]\n";
-        return FAILURE;
-    }
-    if (cfgmap.size() != 0) {
-        map<string, string, ci_less>::iterator i;
-        for (i = cfgmap.begin(); i != cfgmap.end(); ++i) {
-            ERROR << "Unprocessed loss model param: " 
-                  << i->first << "=" << i->second << "\n";
-        }
-    }
-    return SUCCESS;
-}
-
 void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 {
 	uint8_t is_set=0;
 	double x, y, z;
 	wf::Nodeinfo *ni=NULL;
+    string txpower, deftxpower = CFG("txPower");
 
 	for(int i=0;i<(int)nodes.GetN();i++) {
 		ni=WF_config.get_node_info(i);
@@ -342,18 +272,33 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 			ERROR << "GetN doesnt match nodes stored in config!!\n";
 			return;
 		}
+        Ptr<Node> node = nodes.Get(i); 
+        Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
+        if (!dev) {
+            ERROR << "Could not get lrwpan netdev\n";
+            continue;
+        }
+
 		ni->getNodePosition(is_set, x, y, z);
 		if(is_set) {
     		nodePos(nodes, i, x, y, z);
         }
 		if(ni->getPromisMode()) {
             INFO << "Set promiscuous mode for node:" << i << "\n";
-            Ptr<Node> node = nodes.Get(i); 
-            Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
             if (dev) {
                 INFO << "in Set promiscuous mode for node:" << i << "\n";
                 dev->GetMac()->SetPromiscuousMode(1);
             }
+        }
+        txpower = ni->getkv("txPower");
+        if (txpower.empty())
+            txpower = deftxpower;
+        if (!txpower.empty()) {
+            LrWpanSpectrumValueHelper svh;
+            Ptr<SpectrumValue> psd = 
+                 svh.CreateTxPowerSpectralDensity (stod(txpower), 11);
+            INFO << "Node:" << i << " using txpower=" << txpower << "dBm\n";
+            dev->GetPhy()->SetTxPowerSpectralDensity(psd);
         }
 	}
 }
@@ -361,16 +306,34 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 int AirlineManager::setAllNodesParam(NodeContainer & nodes)
 {
     Ptr<SingleModelSpectrumChannel> channel;
-    static Ptr <PropagationLossModel> plm;
     string loss_model = CFG("lossModel");
+    string del_model = CFG("delayModel");
     bool macAdd = CFG_INT("macHeaderAdd", 1);
+    LrWpanSpectrumValueHelper svh;
 
-    if (!loss_model.empty()) {
+    if (!loss_model.empty() || !del_model.empty()) {
         channel = CreateObject<SingleModelSpectrumChannel> ();
-        if (!channel || getLossModel(loss_model, plm) != SUCCESS) {
+        if (!channel) {
             return FAILURE;
         }
-        channel->AddPropagationLossModel(plm);
+        if (!loss_model.empty()) {
+            static Ptr <PropagationLossModel> plm;
+            string loss_model_param = CFG("lossModelParam");
+            plm = getLossModel(loss_model, loss_model_param);
+            if (!plm) {
+                return FAILURE;
+            }
+            channel->AddPropagationLossModel(plm);
+        }
+        if (!del_model.empty()) {
+            static Ptr <PropagationDelayModel> pdm;
+            string del_model_param = CFG("delayModelParam");
+            pdm = getDelayModel(del_model, del_model_param);
+            if (!pdm) {
+                return FAILURE;
+            }
+            channel->SetPropagationDelayModel(pdm);
+        }
     }
 
 	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
@@ -389,7 +352,7 @@ int AirlineManager::setAllNodesParam(NodeContainer & nodes)
             //headers are transmitted as is to the stackline on reception
             //dev->GetMac()->SetPromiscuousMode(1);
         }
-        if (!loss_model.empty()) {
+        if (!loss_model.empty() || !del_model.empty()) {
             dev->SetChannel (channel);
         }
 	}

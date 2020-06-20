@@ -62,6 +62,7 @@ struct ci_less
     }
 };
 map<string, string, ci_less> splitKV(string & s);
+string getMapCfg(map<string, string, ci_less> & m, string key);
 
 //#include <Config.h>
 namespace wf {

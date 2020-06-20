@@ -25,11 +25,8 @@
 #include <Nodeinfo.h>
 #include <Config.h>
 
-#include "ns3/core-module.h"
-#include "ns3/lr-wpan-module.h"
-#include "ns3/mobility-module.h"
-#include "ns3/propagation-loss-model.h"
-#include "ns3/single-model-spectrum-channel.h"
+#include <ns3/node-container.h>
+#include <ns3/core-module.h>
 
 using namespace ns3;
 
