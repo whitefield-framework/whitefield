@@ -21,6 +21,8 @@
 #define _COMMON_CC_
 
 #include <common.h>
+#include <Nodeinfo.h>
+#include <Config.h>
 
 // trim from left
 string& ltrim(string& s, const char* t)
@@ -82,5 +84,48 @@ string getMapCfg(map<string, string, ci_less> & m, string key)
     m.erase(key);
     INFO << "param: " << key << "=" << val << "\n";
     return val;
+}
+
+void SendAckToStackline(uint16_t src_id, uint16_t dst_id,
+        uint8_t status, int retries)
+{
+    DEFINE_MBUF(mbuf);
+
+    mbuf->src_id = src_id;
+    mbuf->dst_id = dst_id;
+    mbuf->info.ack.status = status;
+    if(mbuf->info.ack.status == WF_STATUS_ACK_OK) {
+        mbuf->info.ack.retries = retries;
+    }
+    mbuf->flags |= MBUF_IS_ACK;
+    mbuf->len = 1;
+    wf::Macstats::set_stats(AL_RX, mbuf);
+    cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
+}
+
+void SendPacketToStackline(uint16_t id, uint16_t src_id, uint16_t dst_id,
+                uint8_t lqi, int8_t rssi, const uint8_t *buf, int len)
+{
+    DEFINE_MBUF(mbuf);
+
+    if (len >= COMMLINE_MAX_BUF) {
+        ERROR << "Pkt len" << len << " bigger than\n";
+        return;
+    }
+
+    memcpy(mbuf->buf, buf, len);
+    mbuf->len           = len;
+    mbuf->src_id        = src_id;
+    mbuf->dst_id        = dst_id;
+    mbuf->info.sig.lqi  = lqi;
+    mbuf->info.sig.rssi = rssi;
+    wf::Macstats::set_stats(AL_RX, mbuf);
+    cl_sendto_q(MTYPE(STACKLINE, id), mbuf, sizeof(msg_buf_t) + mbuf->len);
+#if 0
+    INFO << "RX data"
+         << " src_id=" << id << " dst_id=" << mbuf->dst_id
+         << " lqi=" << (int)lqi << " rssi=" << (int)rssi
+         << " len=" << mbuf->len << "\n";
+#endif
 }
 

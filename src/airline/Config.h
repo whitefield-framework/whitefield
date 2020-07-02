@@ -26,8 +26,9 @@
 namespace wf {
 class Config {
 private:
-    Nodeinfo *          nodeArray;
-    int                 numOfNodes;
+    Nodeinfo *nodeArray;
+    int       numOfNodes;
+
     map<string, string, ci_less> keyval;
 
     int setNumberOfNodes(const int value);
@@ -39,7 +40,7 @@ private:
 
     void   clearNodeArray(void);
     string getKeyRange(const string &keystr,
-            int &beg_range, int &end_range, bool & explictRange);
+                       int &beg_range, int &end_range, bool &explictRange);
     void   set(string key, string val)
     {
         keyval[key] = val;

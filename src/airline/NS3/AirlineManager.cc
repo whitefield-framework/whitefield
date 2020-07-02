@@ -27,7 +27,6 @@
 
 #include <ns3/single-model-spectrum-channel.h>
 #include <ns3/mobility-module.h>
-#include <ns3/lr-wpan-module.h>
 #include <ns3/spectrum-value.h>
 
 #include "AirlineManager.h"
@@ -79,12 +78,10 @@ int AirlineManager::cmd_node_position(uint16_t id, char *buf, int buflen)
 	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
 	{ 
 		Ptr<Node> node = *i; 
-		//std::string name = Names::FindName (node);
 		Ptr<MobilityModel> mob = node->GetObject<MobilityModel> (); 
-		if (! mob) continue; // Strange, node has no mobility model installed. Skip. 
+		if (! mob) continue;
 
 		Vector pos = mob->GetPosition (); 
-		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
 		if(id == 0xffff || id == node->GetId()) {
 			if(of.is_open()) {
 				of << "Node " << node->GetId() << " Location= "
@@ -121,62 +118,31 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 				"LayoutType", StringValue("RowFirst"));
 	} else if(CFG("topologyType") == "randrect") {
 		char x_buf[128], y_buf[128];
-		snprintf(x_buf, sizeof(x_buf), "ns3::UniformRandomVariable[Min=0.0|Max=%s]", CFG("fieldX").c_str());
-		snprintf(y_buf, sizeof(y_buf), "ns3::UniformRandomVariable[Min=0.0|Max=%s]", CFG("fieldY").c_str());
+		snprintf(x_buf, sizeof(x_buf),
+                "ns3::UniformRandomVariable[Min=0.0|Max=%s]",
+                CFG("fieldX").c_str());
+		snprintf(y_buf, sizeof(y_buf),
+                "ns3::UniformRandomVariable[Min=0.0|Max=%s]",
+                CFG("fieldY").c_str());
 		INFO << "Using RandomRectanglePositionAllocator\n";
 		mobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
 				"X", StringValue(x_buf),
 				"Y", StringValue(y_buf));
 	} else {
-		ERROR << "Unknown topologyType: " << CFG("topologyType") << " in cfg\n";
+		ERROR << "Unknown topologyType: " 
+              << CFG("topologyType") << " in cfg\n";
 		throw FAILURE;
 	}
 	mobility.Install (nodes);
 }
 
-int AirlineManager::cmd_802154_set_short_addr(uint16_t id, char *buf, int buflen)
-{
-	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
-
-	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
-	if(!nodeApp) {
-		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
-		return snprintf(buf, buflen, "could not get node app");
-	}
-	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-    INFO << "id " << id << " Got a cmd to set SHORT ADDRESS " << buf << "\n";
-	aline->setShortAddress(atoi(buf));
-    return snprintf(buf, buflen, "SUCCESS");
-}
-
 int AirlineManager::cmd_802154_set_ext_addr(uint16_t id, char *buf, int buflen)
 {
-	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
-
-	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
-	if(!nodeApp) {
-		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
-		return snprintf(buf, buflen, "could not get node app");
-	}
-	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-    INFO << "id " << id << " Got a cmd to set EXT ADDRESS " << buf << "\n";
-	aline->setExtendedAddress(buf);
-    return snprintf(buf, buflen, "SUCCESS");
-}
-
-int AirlineManager::cmd_802154_set_panid(uint16_t id, char *buf, int buflen)
-{
-	NodeContainer const & nodes = NodeContainer::GetGlobal (); 
-
-	Ptr<Application> nodeApp = nodes.Get(id)->GetApplication(0);
-	if(!nodeApp) {
-		ERROR << "Could not handle msg_buf_t for node " << (int)id << endl;
-		return snprintf(buf, buflen, "could not get node app");
-	}
-	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-    INFO << "id " << id << " Got a cmd to set PANID " << buf << "\n";
-	aline->setPanID(atoi(buf));
-    return snprintf(buf, buflen, "SUCCESS");
+    int ret = ifaceSetAddress(&g_ifctx, id, buf, buflen);
+    if (ret == SUCCESS) {
+        return snprintf(buf, buflen, "SUCCESS");
+    }
+    return snprintf(buf, buflen, "FAILURE");
 }
 
 int AirlineManager::cmd_set_node_position(uint16_t id, char *buf, int buflen)
@@ -218,14 +184,13 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 		HANDLE_CMD(mbuf, cmd_node_exec)
 		HANDLE_CMD(mbuf, cmd_node_position)
 		HANDLE_CMD(mbuf, cmd_set_node_position)
-		HANDLE_CMD(mbuf, cmd_802154_set_short_addr)
 		HANDLE_CMD(mbuf, cmd_802154_set_ext_addr)	
-		HANDLE_CMD(mbuf, cmd_802154_set_panid)	
 		else {
 			al_handle_cmd(mbuf);
 		}
         if(!(mbuf->flags & MBUF_DO_NOT_RESPOND)) {
-            cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf, mbuf->len+sizeof(msg_buf_t));
+            cl_sendto_q(MTYPE(MONITOR, CL_MGR_ID), mbuf,
+                    mbuf->len+sizeof(msg_buf_t));
         }
 		return;
 	}
@@ -235,11 +200,15 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 	}
     if(mbuf->dst_id == CL_DSTID_MACHDR_PRESENT) {
         if(CFG_INT("macHeaderAdd", 1)) {
-            ERROR << "rcvd a packet from stackline with DSTID_MACHDR_PRESENT set but config file does not have macHeaderAdd=0\n";
-            ERROR << "If you are using openthread, please set macHeaderAdd=0 to prevent Airline from adding its own mac hdr\n";
+            ERROR << "rcvd a packet from stackline with DSTID_MACHDR_PRESENT \
+                set but config file does not have macHeaderAdd=0\n";
+            ERROR << "If you are using openthread, please set macHeaderAdd=0 \
+                to prevent Airline from adding its own mac hdr\n";
             return;
         }
     }
+    ifaceSendPacket(&g_ifctx, mbuf->src_id, mbuf);
+#if 0
 	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
 	if(!nodeApp) {
 		ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
@@ -247,6 +216,7 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 	}
 	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
 	aline->tx(mbuf);
+#endif
 }
 
 void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & x, double & y, double & z)
@@ -272,33 +242,18 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 			ERROR << "GetN doesnt match nodes stored in config!!\n";
 			return;
 		}
-        Ptr<Node> node = nodes.Get(i); 
-        Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-        if (!dev) {
-            ERROR << "Could not get lrwpan netdev\n";
-            continue;
-        }
-
 		ni->getNodePosition(is_set, x, y, z);
 		if(is_set) {
     		nodePos(nodes, i, x, y, z);
         }
 		if(ni->getPromisMode()) {
-            INFO << "Set promiscuous mode for node:" << i << "\n";
-            if (dev) {
-                INFO << "in Set promiscuous mode for node:" << i << "\n";
-                dev->GetMac()->SetPromiscuousMode(1);
-            }
+            ifaceSetPromiscuous(&g_ifctx, i);
         }
         txpower = ni->getkv("txPower");
         if (txpower.empty())
             txpower = deftxpower;
         if (!txpower.empty()) {
-            LrWpanSpectrumValueHelper svh;
-            Ptr<SpectrumValue> psd = 
-                 svh.CreateTxPowerSpectralDensity (stod(txpower), 11);
-            INFO << "Node:" << i << " using txpower=" << txpower << "dBm\n";
-            dev->GetPhy()->SetTxPowerSpectralDensity(psd);
+            ifaceSetTxPower(&g_ifctx, i, stod(txpower));
         }
 	}
 }
@@ -313,7 +268,6 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		wf::Macstats::clear();
 
-		// NodeContainer nodes;
 		g_ifctx.nodes.Create (cfg.getNumberOfNodes());
 		INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
 		SeedManager::SetSeed(stoi(CFG("randSeed", "0xbabe"), nullptr, 0));

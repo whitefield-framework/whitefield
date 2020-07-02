@@ -32,6 +32,7 @@ private:
     double  X, Y, Z;
     uint8_t pos_set;
     uint8_t promis_mode;
+
     map<string, string, ci_less> keyval;
 
 public:
@@ -41,7 +42,7 @@ public:
             return def;
         return keyval[key];
     };
-    void   setkv(string key, string val)
+    void setkv(string key, string val)
     {
         keyval[key] = val;
     };
@@ -83,7 +84,7 @@ public:
     };
     Nodeinfo()
     {
-        pos_set = 0;
+        pos_set     = 0;
         promis_mode = 0;
     };
 };

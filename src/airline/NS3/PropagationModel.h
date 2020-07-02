@@ -28,10 +28,10 @@
 using namespace ns3;
 using namespace std;
 
-Ptr <PropagationLossModel> getLossModel(string loss_model,
-                                        string loss_model_param);
+Ptr<PropagationLossModel> getLossModel(string loss_model,
+                                       string loss_model_param);
 
-Ptr <PropagationDelayModel> getDelayModel(string del_model,
-                                        string del_model_param);
+Ptr<PropagationDelayModel> getDelayModel(string del_model,
+                                         string del_model_param);
 
 #endif //	_PROPAGATIONMODEL_H_

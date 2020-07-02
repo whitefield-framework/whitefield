@@ -25,47 +25,41 @@
 #include <Config.h>
 #include <IfaceHandler.h>
 
-extern iface_t lrwpanIface;
+extern ifaceApi_t lrwpanIface;
+#if PLC
+extern ifaceApi_t plcIface;
+#endif
 
-iface_t g_iflist[IFACE_MAX] = {
+ifaceApi_t g_iflist[IFACE_MAX] = {
     [IFACE_LRWPAN] = lrwpanIface,
+#if PLC
+    [IFACE_PLC]    = plcIface
+#endif
 };
 
-IfaceType getIfaceType(void)
+ifaceApi_t *getIfaceApi(ifaceCtx_t *ctx)
 {
+    IfaceType iftype = IFACE_LRWPAN;
     string phy = CFG("PHY");
 
-    if (stricmp(phy, "plc") == 0)
-        return IFACE_PLC;
-    return IFACE_LRWPAN;
+    if (!stricmp(phy, "plc")) iftype = IFACE_PLC;
+    return &g_iflist[iftype];
 }
 
 int ifaceInstall(ifaceCtx_t *ctx)
 {
-    iface_t *iface = NULL;
-    IfaceType iftype;
+    int ret;
+    ifaceApi_t *iface = NULL;
 
-    iftype = getIfaceType();
-#if 0
-    if (stricmp(phy, "plc") == 0) {
-#if PLC
-        INFO << "Using PLC as PHY\n";
-        if (plcInstall(ctx->nodes) != SUCCESS) {
-            return FAILURE;
-        }
-#else
-        ERROR << "PLC phy is not enabled in NS3\n";
-        return FAILURE;
-#endif
-    } else
-#endif
-    iface = &g_iflist[iftype];
+    iface = getIfaceApi(ctx);
     if (iface->inited) {
         ERROR << "Interface is already inited\n";
         return SUCCESS;
     }
-    iface->setup(ctx);
-    iface->inited = 1;
-    return SUCCESS;
+    ret = iface->setup(ctx);
+    if (ret == SUCCESS) {
+        iface->inited = 1;
+    }
+    return ret;
 }
 

@@ -31,6 +31,6 @@
 
 using namespace ns3;
 
-int plcInstall(PLC_NodeList & nodes);
+int plcInstall(PLC_NodeList &nodes);
 
 #endif //  _POWERLINECOMMHANDLER_H_

@@ -34,7 +34,7 @@ void plcCleanup(ifaceCtx_t *ctx)
 {
 }
 
-iface_t plcIface = {
+ifaceApi_t plcIface = {
     .setup   = plcSetup,
     .cleanup = plcCleanup,
 };
