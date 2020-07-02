@@ -76,7 +76,7 @@ int plcConnectCable(uint16_t n1, uint16_t n2, string cableStr)
     return SUCCESS;
 }
 
-int plcInstall(NodeContainer & nodes)
+int plcInstall(PLC_NodeList & nodes)
 {
 	int numNodes = stoi(CFG("numOfNodes"));
     uint16_t i, j;

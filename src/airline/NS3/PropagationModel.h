@@ -26,6 +26,7 @@
 #include <ns3/propagation-delay-model.h>
 
 using namespace ns3;
+using namespace std;
 
 Ptr <PropagationLossModel> getLossModel(string loss_model,
                                         string loss_model_param);

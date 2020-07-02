@@ -11,26 +11,31 @@
  * @{
  *
  * @file
- * @brief       NS3 PLC Handler
+ * @brief       PLC Interface Handler for NS3
  *
  * @author      Rahul Jadhav <nyrahul@gmail.com>
  *
  * @}
  */
 
-#ifndef _POWERLINECOMMHANDLER_H_
-#define _POWERLINECOMMHANDLER_H_
-
 #include <common.h>
 #include <Nodeinfo.h>
 #include <Config.h>
+#include <IfaceHandler.h>
+#include <PowerLineCommHandler.h>
 
-#include <ns3/core-module.h>
-#include <ns3/node-container.h>
-#include <ns3/plc.h>
+int plcSetup(ifaceCtx_t *ctx)
+{
+    INFO << "setting up plc\n";
+    return plcInstall(ctx->plcNodes);
+}
 
-using namespace ns3;
+void plcCleanup(ifaceCtx_t *ctx)
+{
+}
 
-int plcInstall(PLC_NodeList & nodes);
+iface_t plcIface = {
+    .setup   = plcSetup,
+    .cleanup = plcCleanup,
+};
 
-#endif //  _POWERLINECOMMHANDLER_H_

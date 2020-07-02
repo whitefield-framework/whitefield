@@ -34,10 +34,9 @@
 #include "Airline.h"
 #include "Command.h"
 #include "mac_stats.h"
-#include "PropagationModel.h"
-#if PLC
-#include "PowerLineCommHandler.h"
-#endif
+#include "IfaceHandler.h"
+
+ifaceCtx_t g_ifctx;
 
 int getNodeConfigVal(int id, char *key, char *val, int vallen)
 {
@@ -49,7 +48,8 @@ int getNodeConfigVal(int id, char *key, char *val, int vallen)
         return 0;
     }
     if (!strcmp(key, "nodeexec")) {
-        return snprintf(val, vallen, "%s", (char *)ni->getNodeExecutable().c_str());
+        return snprintf(val, vallen, "%s", 
+                (char *)ni->getNodeExecutable().c_str());
     }
     snprintf(val, vallen, "unknown key [%s]", key);
     ERROR << "Unknown key " << key << "\n";
@@ -303,92 +303,6 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 	}
 }
 
-int AirlineManager::setAllNodesParam(NodeContainer & nodes)
-{
-    Ptr<SingleModelSpectrumChannel> channel;
-    string loss_model = CFG("lossModel");
-    string del_model = CFG("delayModel");
-    bool macAdd = CFG_INT("macHeaderAdd", 1);
-    LrWpanSpectrumValueHelper svh;
-
-    if (!loss_model.empty() || !del_model.empty()) {
-        channel = CreateObject<SingleModelSpectrumChannel> ();
-        if (!channel) {
-            return FAILURE;
-        }
-        if (!loss_model.empty()) {
-            static Ptr <PropagationLossModel> plm;
-            string loss_model_param = CFG("lossModelParam");
-            plm = getLossModel(loss_model, loss_model_param);
-            if (!plm) {
-                return FAILURE;
-            }
-            channel->AddPropagationLossModel(plm);
-        }
-        if (!del_model.empty()) {
-            static Ptr <PropagationDelayModel> pdm;
-            string del_model_param = CFG("delayModelParam");
-            pdm = getDelayModel(del_model, del_model_param);
-            if (!pdm) {
-                return FAILURE;
-            }
-            channel->SetPropagationDelayModel(pdm);
-        }
-    }
-
-	for (NodeContainer::Iterator i = nodes.Begin (); i != nodes.End (); ++i) 
-	{ 
-		Ptr<Node> node = *i; 
-		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
-        if (!dev) {
-            ERROR << "Coud not get device\n";
-            continue;
-        }
-        if(!macAdd) {
-            dev->GetMac()->SetMacHeaderAdd(macAdd);
-
-            //In case where stackline itself add mac header, the airline needs
-            //to be set in promiscuous mode so that all the packets with
-            //headers are transmitted as is to the stackline on reception
-            //dev->GetMac()->SetPromiscuousMode(1);
-        }
-        if (!loss_model.empty() || !del_model.empty()) {
-            dev->SetChannel (channel);
-        }
-	}
-    return SUCCESS;
-}
-
-int AirlineManager::phyInstall(NodeContainer & nodes)
-{
-    string phy = CFG("PHY");
-
-    if (stricmp(phy, "plc") == 0) {
-#if PLC
-        INFO << "Using PLC as PHY\n";
-        if (plcInstall(nodes) != SUCCESS) {
-            return FAILURE;
-        }
-#else
-        ERROR << "PLC phy is not enabled in NS3\n";
-        return FAILURE;
-#endif
-    } else {
-        static LrWpanHelper lrWpanHelper;
-        static NetDeviceContainer devContainer = lrWpanHelper.Install(nodes);
-        lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
-
-        INFO << "Using lr-wpan as PHY\n";
-        string ns3_capfile = CFG("NS3_captureFile");
-        if(!ns3_capfile.empty()) {
-            INFO << "NS3 Capture File:" << ns3_capfile << endl;
-            lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
-        }
-    }
-
-    return setAllNodesParam(nodes);
-}
-
 int AirlineManager::startNetwork(wf::Config & cfg)
 {
 	try {
@@ -399,21 +313,21 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 		wf::Macstats::clear();
 
-		NodeContainer nodes;
-		nodes.Create (cfg.getNumberOfNodes());
+		// NodeContainer nodes;
+		g_ifctx.nodes.Create (cfg.getNumberOfNodes());
 		INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
 		SeedManager::SetSeed(stoi(CFG("randSeed", "0xbabe"), nullptr, 0));
 
-		setPositionAllocator(nodes);
+		setPositionAllocator(g_ifctx.nodes);
 
-        if (phyInstall(nodes) != SUCCESS) {
+        if (ifaceInstall(&g_ifctx) != SUCCESS) {
             return FAILURE;
         }
 
-		setNodeSpecificParam(nodes);
+		setNodeSpecificParam(g_ifctx.nodes);
 
 		AirlineHelper airlineApp;
-		ApplicationContainer apps = airlineApp.Install(nodes);
+		ApplicationContainer apps = airlineApp.Install(g_ifctx.nodes);
 		apps.Start(Seconds(0.0));
 
 		ScheduleCommlineRX();
