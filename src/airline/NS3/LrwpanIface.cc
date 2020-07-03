@@ -29,7 +29,7 @@
 #include <Config.h>
 #include <IfaceHandler.h>
 
-Ptr<LrWpanNetDevice> getDev(ifaceCtx_t *ctx, int id)
+static Ptr<LrWpanNetDevice> getDev(ifaceCtx_t *ctx, int id)
 {
     Ptr<Node> node = ctx->nodes.Get(id); 
     Ptr<LrWpanNetDevice> dev = NULL;
@@ -40,7 +40,7 @@ Ptr<LrWpanNetDevice> getDev(ifaceCtx_t *ctx, int id)
     return dev;
 }
 
-uint8_t wf_ack_status(LrWpanMcpsDataConfirmStatus status)
+static uint8_t wf_ack_status(LrWpanMcpsDataConfirmStatus status)
 {
     switch(status) {
         case IEEE_802_15_4_SUCCESS:
@@ -72,7 +72,7 @@ static uint16_t addr2id(const Mac16Address addr)
     return id;
 }
 
-void DataConfirm (int id, McpsDataConfirmParams params)
+static void DataConfirm (int id, McpsDataConfirmParams params)
 {
     uint16_t dst_id = addr2id(params.m_addrShortDstAddr);
     uint8_t status;
@@ -92,7 +92,8 @@ void DataConfirm (int id, McpsDataConfirmParams params)
     SendAckToStackline(id, dst_id, status, params.m_retries+1);
 }
 
-void DataIndication (int id, McpsDataIndicationParams params, Ptr<Packet> p)
+static void DataIndication (int id, McpsDataIndicationParams params,
+                            Ptr<Packet> p)
 {
     uint8_t buf[4096];
     uint16_t src_id, dst_id;
@@ -107,7 +108,7 @@ void DataIndication (int id, McpsDataIndicationParams params, Ptr<Packet> p)
     SendPacketToStackline(id, src_id, dst_id, lqi, rssi, buf, pkt_len);
 }
 
-void setShortAddress(Ptr<LrWpanNetDevice> dev, uint16_t id)
+static void setShortAddress(Ptr<LrWpanNetDevice> dev, uint16_t id)
 {
     Mac16Address address;
     uint8_t idBuf[2];
@@ -118,7 +119,7 @@ void setShortAddress(Ptr<LrWpanNetDevice> dev, uint16_t id)
     dev->GetMac()->SetShortAddress (address);
 };
 
-int setAllNodesParam(NodeContainer & nodes)
+static int setAllNodesParam(NodeContainer & nodes)
 {
     Ptr<SingleModelSpectrumChannel> channel;
     string loss_model = CFG("lossModel");
@@ -183,7 +184,7 @@ int setAllNodesParam(NodeContainer & nodes)
     return SUCCESS;
 }
 
-int lrwpanSetup(ifaceCtx_t *ctx)
+static int lrwpanSetup(ifaceCtx_t *ctx)
 {
     INFO << "setting up lrwpan\n";
     static LrWpanHelper lrWpanHelper;
@@ -200,7 +201,7 @@ int lrwpanSetup(ifaceCtx_t *ctx)
     return SUCCESS;
 }
 
-int lrwpanSetTxPower(ifaceCtx_t *ctx, int id, double txpow)
+static int lrwpanSetTxPower(ifaceCtx_t *ctx, int id, double txpow)
 {
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
     LrWpanSpectrumValueHelper svh;
@@ -215,7 +216,7 @@ int lrwpanSetTxPower(ifaceCtx_t *ctx, int id, double txpow)
     return SUCCESS;
 }
 
-int lrwpanSetPromiscuous(ifaceCtx_t *ctx, int id)
+static int lrwpanSetPromiscuous(ifaceCtx_t *ctx, int id)
 {
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
 
@@ -228,7 +229,7 @@ int lrwpanSetPromiscuous(ifaceCtx_t *ctx, int id)
     return SUCCESS;
 }
 
-int lrwpanSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
+static int lrwpanSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
 {
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
 
@@ -244,11 +245,11 @@ int lrwpanSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
     return SUCCESS;
 }
 
-void lrwpanCleanup(ifaceCtx_t *ctx)
+static void lrwpanCleanup(ifaceCtx_t *ctx)
 {
 }
 
-Mac16Address id2addr(const uint16_t id)
+static Mac16Address id2addr(const uint16_t id)
 {
     Mac16Address mac;
     uint8_t idstr[2], *ptr=(uint8_t*)&id;
@@ -258,7 +259,7 @@ Mac16Address id2addr(const uint16_t id)
     return mac;
 };
 
-int lrwpanSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
+static int lrwpanSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
 {
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
 

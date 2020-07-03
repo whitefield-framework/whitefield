@@ -24,18 +24,24 @@
 #include <IfaceHandler.h>
 #include <PowerLineCommHandler.h>
 
-int plcSetup(ifaceCtx_t *ctx)
+static int plcSetup(ifaceCtx_t *ctx)
 {
+    extern int plcInstall(ifaceCtx_t *ctx);
+
     INFO << "setting up plc\n";
-    return plcInstall(ctx->plcNodes);
+    return plcInstall(ctx);
 }
 
-void plcCleanup(ifaceCtx_t *ctx)
+static void plcCleanup(ifaceCtx_t *ctx)
 {
 }
 
 ifaceApi_t plcIface = {
     .setup   = plcSetup,
+//    .setTxPower     = lrwpanSetTxPower,
+//    .setPromiscuous = lrwpanSetPromiscuous,
+//    .setAddress     = lrwpanSetAddress,
+//    .sendPacket     = lrwpanSendPacket,
     .cleanup = plcCleanup,
 };
 
