@@ -42,7 +42,7 @@ int cl_bind(const long my_mtype)
 #ifdef USE_UNIX_SOCKETS
     return CL_INIT(my_mtype, 0);
 #else
-    return CL_SUCCESS;
+    return SUCCESS;
 #endif
 }
 
@@ -55,7 +55,7 @@ int cl_sendto_q(const long mtype, msg_buf_t *mbuf, uint16_t len)
 {
     if (!mbuf || !len) {
         ERROR("sendto invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
-        return CL_FAILURE;
+        return FAILURE;
     }
     return CL_SENDTO(mtype, mbuf, len);
 }
@@ -64,7 +64,7 @@ int cl_recvfrom_q(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flag
 {
     if (!mbuf || !len) {
         ERROR("invalid parameters passed buf:%p, buflen:%d\n", mbuf, len);
-        return CL_FAILURE;
+        return FAILURE;
     }
     memset(mbuf, 0, sizeof(msg_buf_t));
     return CL_RECVFROM(mtype, mbuf, len, flags);
@@ -76,6 +76,6 @@ int cl_get_descriptor(const long mtype)
     return CL_GET_DESCRIPTOR(mtype);
 #else
     ERROR("Get descriptor not supported for used IPC\n");
-    return CL_FAILURE;
+    return FAILURE;
 #endif
 }

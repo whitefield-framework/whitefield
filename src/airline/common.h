@@ -31,15 +31,16 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+
+#include <commline/commline.h>
+
 using namespace std;
 
-#define SUCCESS      0
-#define FAILURE      -1
 #define ERR_NOT_SUPP -2
 
-#define INFO  cout << "INFO  "
-#define ERROR cerr << "ERROR "
-#define WARN  cerr << "WARN  "
+#define CINFO  cout << "INFO  "
+#define CERROR cerr << "ERROR "
+#define CWARN  cerr << "WARN  "
 
 string &ltrim(string &s, const char *t = " \t\n\r\f\v");
 string &rtrim(string &s, const char *t = " \t\n\r\f\v");
@@ -84,7 +85,6 @@ static inline int stricmp(string s1, string s2)
 
 void SendAckToStackline(uint16_t src_id, uint16_t dst_id,
                         uint8_t status, int retries);
-void SendPacketToStackline(uint16_t id, uint16_t src_id, uint16_t dst_id,
-                           uint8_t lqi, int8_t rssi, const uint8_t *buf, int len);
+void SendPacketToStackline(uint16_t id, msg_buf_t *mbuf);
 
 #endif //_COMMON_H_

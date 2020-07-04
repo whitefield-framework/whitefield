@@ -32,10 +32,10 @@ extern "C" {
 void sig_handler(int signum)
 {
 	if(signum > 1) {
-		INFO << "Airline Caught signal " << signum << endl;
+		CINFO << "Airline Caught signal " << signum << endl;
 	}
 	cl_cleanup();
-	INFO << "Sayonara " << signum << "...\n";
+	CINFO << "Sayonara " << signum << "...\n";
 	exit(signum);
 }
 
@@ -43,7 +43,7 @@ void exec_forker(void)
 {
 	char *cmdname=getenv("FORKER");
 	if(!cmdname) {
-		ERROR << "Could not find forker env var\n";
+		CERROR << "Could not find forker env var\n";
 		sig_handler(1);
 	}
 	if(0 == fork()) {
@@ -56,7 +56,7 @@ void exec_forker(void)
 		prctl(PR_SET_PDEATHSIG, SIGINT);
 
 		execv(cmdname, argv);
-		ERROR << "Could not execv " << cmdname 
+		CERROR << "Could not execv " << cmdname 
               << ". Check if the forker cmdname/path is correct.Aborting..."
               << endl;
 		sig_handler(1);
@@ -82,7 +82,7 @@ int main(const int argc, const char *argv[])
 {
 	if(argc<2)
 	{
-		INFO << "Usage: " << argv[0] << " <config_file>\n";
+		CINFO << "Usage: " << argv[0] << " <config_file>\n";
 		return 0;
 	}
 	signal(SIGINT, sig_handler);
@@ -91,12 +91,12 @@ int main(const int argc, const char *argv[])
 	//signal(SIGSEGV, sig_handler);
 	signal(SIGCHLD, sig_handler);
 
-	if(CL_SUCCESS != cl_init(MTYPE(AIRLINE, CL_MGR_ID), CL_CREATEQ)) {
-		ERROR << "Whitefield is already running\n";
+	if(SUCCESS != cl_init(MTYPE(AIRLINE, CL_MGR_ID), CL_CREATEQ)) {
+		CERROR << "Whitefield is already running\n";
 		sig_handler(1);
 	}
 	if(SUCCESS != WF_config.setConfigurationFromFile(argv[1])) {
-		ERROR << "Terminating...\n"; 
+		CERROR << "Terminating...\n"; 
 		sig_handler(1);
 	}
 	//redirect_log();

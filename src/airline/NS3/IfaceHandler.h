@@ -67,7 +67,7 @@ typedef enum {
         return FAILURE;                          \
     }                                            \
     if (!IFACE->API) {                           \
-        ERROR << "Iface does not support API %s" \
+        CERROR << "Iface does not support API %s"\
               << __FUNCTION__ << "\n";           \
         return ERR_NOT_SUPP;                     \
     }

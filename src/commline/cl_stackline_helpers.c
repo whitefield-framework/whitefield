@@ -35,11 +35,11 @@ int cl_get_id2longaddr(const uint16_t id, uint8_t *addr, const int addrlen)
 {
     if (addrlen != 8) {
         ERROR("Invalid addrlen:%d\n", addrlen);
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (id == 0xffff) {
         memset(addr, 0, addrlen);
-        return CL_SUCCESS;
+        return SUCCESS;
     }
 
     char *ptr = (char *)&id;
@@ -47,7 +47,7 @@ int cl_get_id2longaddr(const uint16_t id, uint8_t *addr, const int addrlen)
     memcpy(addr, g_serial_id, 8);
     addr[6] = ptr[1];
     addr[7] = ptr[0];
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 uint16_t cl_get_longaddr2id(const uint8_t *addr)

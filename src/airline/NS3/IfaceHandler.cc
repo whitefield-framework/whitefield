@@ -53,7 +53,7 @@ int ifaceInstall(ifaceCtx_t *ctx)
 
     iface = getIfaceApi(ctx);
     if (iface->inited) {
-        ERROR << "Interface is already inited\n";
+        ERROR("Interface is already inited\n");
         return SUCCESS;
     }
     ret = iface->setup(ctx);

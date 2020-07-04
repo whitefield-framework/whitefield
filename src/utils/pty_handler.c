@@ -64,9 +64,9 @@ int handle_pty_event(int nodeid, int ismaster)
     }
     if (n <= 0) {
         ERROR("[%m] nodeid:%d, write failed ismaster:%d n=%d\n", nodeid, ismaster, n);
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 #define MAXEVENTS 32
@@ -101,9 +101,9 @@ int pty_add_fd(int nodeid, int fd, int ismaster)
     ev.data.u32 = ((uint32_t)nodeid | (ismaster ? 0x80000000 : 0));
     if (epoll_ctl(g_pty_epollfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
         ERROR("epoll_ctl failed nodeid:%d, fd:%d %m\n", nodeid, fd);
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 int start_pty_thread(void)
@@ -113,16 +113,16 @@ int start_pty_thread(void)
     g_pty_epollfd = epoll_create1(0);
     if (g_pty_epollfd < 0) {
         ERROR("failed creating epollfd %m\n");
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     if (pthread_create(&tid, NULL, pty_handler_thread, NULL)) {
         ERROR("failure creating pty handler thread %m\n");
         CLOSE(g_pty_epollfd);
-        return CL_FAILURE;
+        return FAILURE;
     }
     pthread_detach(tid);
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 int uds_get_path(int nodeid, char *path, int maxlen)
@@ -143,7 +143,7 @@ int uds_open(int nodeid)
     fd = socket(AF_UNIX, SOCK_DGRAM, 0);
     if (fd == -1) {
         ERROR("UDS socket failed %m\n");
-        return CL_FAILURE;
+        return FAILURE;
     }
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
@@ -154,7 +154,7 @@ int uds_open(int nodeid)
     if (bind(fd, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
         CLOSE(fd);
         ERROR("UDS bind error %m");
-        return CL_FAILURE;
+        return FAILURE;
     }
     return fd;
 }

@@ -28,20 +28,54 @@ static int plcSetup(ifaceCtx_t *ctx)
 {
     extern int plcInstall(ifaceCtx_t *ctx);
 
-    INFO << "setting up plc\n";
+    INFO("setting up plc\n");
     return plcInstall(ctx);
+}
+
+static int plcSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
+{
+    Ptr<PLC_NetDevice> dev;
+    Mac48Address addr;
+
+    if (sz == 6) {
+        addr.CopyFrom((const uint8_t *)buf);
+//    } else if(sz == 2) {
+//        addr = getMacAddress((uint16_t)id);
+    } else {
+        CERROR << "PLC Invalid address size=" << sz << "\n";
+        return FAILURE;
+    }
+    dev = getPlcNetDev(id);
+    dev->GetMac()->SetAddress(addr);
+    return SUCCESS;
+}
+
+static int plcSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
+{
+    Ptr<Packet> pkt;
+    Mac48Address dst;
+
+    pkt = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
+    dst = getMacAddress(mbuf->dst_id);
+
+    CINFO << "Sending PLC pkt id=" << id
+         << " dst=" << dst
+         << " len=" << pkt->GetSize() << "\n";
+    fflush(stdout);
+    return plcSend(id, dst, pkt);
 }
 
 static void plcCleanup(ifaceCtx_t *ctx)
 {
+    INFO("PLC Cleanup called\n");
 }
 
 ifaceApi_t plcIface = {
     .setup   = plcSetup,
 //    .setTxPower     = lrwpanSetTxPower,
 //    .setPromiscuous = lrwpanSetPromiscuous,
-//    .setAddress     = lrwpanSetAddress,
-//    .sendPacket     = lrwpanSendPacket,
+    .setAddress     = plcSetAddress,
+    .sendPacket     = plcSendPacket,
     .cleanup = plcCleanup,
 };
 

@@ -95,17 +95,18 @@ static void DataConfirm (int id, McpsDataConfirmParams params)
 static void DataIndication (int id, McpsDataIndicationParams params,
                             Ptr<Packet> p)
 {
-    uint8_t buf[4096];
-    uint16_t src_id, dst_id;
-    int pkt_len;
-    uint8_t lqi;
-    int8_t rssi = 0;
+    DEFINE_MBUF(mbuf);
 
-    pkt_len = p->CopyData(buf, sizeof(buf));
-    src_id  = addr2id(params.m_srcAddr);
-    dst_id  = addr2id(params.m_dstAddr);
-    lqi     = params.m_mpduLinkQuality;
-    SendPacketToStackline(id, src_id, dst_id, lqi, rssi, buf, pkt_len);
+    if (p->GetSize() >= COMMLINE_MAX_BUF) {
+        CERROR << "Pkt len" << p->GetSize() << " bigger than\n";
+        return;
+    }
+
+    mbuf->len           = p->CopyData(mbuf->buf, COMMLINE_MAX_BUF);
+    mbuf->src_id        = addr2id(params.m_srcAddr);
+    mbuf->dst_id        = addr2id(params.m_dstAddr);
+    mbuf->info.sig.lqi  = params.m_mpduLinkQuality;
+    SendPacketToStackline(id, mbuf);
 }
 
 static void setShortAddress(Ptr<LrWpanNetDevice> dev, uint16_t id)
@@ -157,7 +158,7 @@ static int setAllNodesParam(NodeContainer & nodes)
 		Ptr<Node> node = *i; 
 		Ptr<LrWpanNetDevice> dev = node->GetDevice(0)->GetObject<LrWpanNetDevice>();
         if (!dev) {
-            ERROR << "Coud not get device\n";
+            CERROR << "Coud not get device\n";
             continue;
         }
 		dev->GetMac()->SetMacMaxFrameRetries(CFG_INT("macMaxRetry", 3));
@@ -186,15 +187,15 @@ static int setAllNodesParam(NodeContainer & nodes)
 
 static int lrwpanSetup(ifaceCtx_t *ctx)
 {
-    INFO << "setting up lrwpan\n";
+    INFO("setting up lrwpan\n");
     static LrWpanHelper lrWpanHelper;
     static NetDeviceContainer devContainer = lrWpanHelper.Install(ctx->nodes);
     lrWpanHelper.AssociateToPan (devContainer, CFG_PANID);
 
-    INFO << "Using lr-wpan as PHY\n";
+    INFO("Using lr-wpan as PHY\n");
     string ns3_capfile = CFG("NS3_captureFile");
     if(!ns3_capfile.empty()) {
-        INFO << "NS3 Capture File:" << ns3_capfile << endl;
+        INFO("NS3 Capture File:%s\n", ns3_capfile.c_str());
         lrWpanHelper.EnablePcapAll (ns3_capfile, false /*promiscuous*/);
     }
     setAllNodesParam(ctx->nodes);
@@ -208,10 +209,10 @@ static int lrwpanSetTxPower(ifaceCtx_t *ctx, int id, double txpow)
     Ptr<SpectrumValue> psd = svh.CreateTxPowerSpectralDensity (txpow, 11);
 
     if (!dev || !psd) {
-        ERROR << "set tx power failed for lrwpan\n";
+        CERROR << "set tx power failed for lrwpan\n";
         return FAILURE;
     }
-    INFO << "Node:" << id << " using txpower=" << txpow << "dBm\n";
+    INFO("Node:%d txpower:%f\n", id, txpow);
     dev->GetPhy()->SetTxPowerSpectralDensity(psd);
     return SUCCESS;
 }
@@ -221,10 +222,10 @@ static int lrwpanSetPromiscuous(ifaceCtx_t *ctx, int id)
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
 
     if (!dev) {
-        ERROR << "get dev failed for lrwpan\n";
+        CERROR << "get dev failed for lrwpan\n";
         return FAILURE;
     }
-    INFO << "Set promis mode for lr-wpan iface node:" << id << "\n";
+    INFO("Set promis mode for lr-wpan iface node:%d\n", id);
     dev->GetMac()->SetPromiscuousMode(1);
     return SUCCESS;
 }
@@ -234,12 +235,12 @@ static int lrwpanSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
     Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
 
     if (!dev) {
-        ERROR << "get dev failed for lrwpan\n";
+        CERROR << "get dev failed for lrwpan\n";
         return FAILURE;
     }
     if (sz == 8) {
 		Mac64Address address(buf);
-        INFO << "Setting Ext Addr:" << buf << "\n";
+        INFO("Setting Ext Addr:%s\n", buf);
 		dev->GetMac()->SetExtendedAddress (address);
     }
     return SUCCESS;
@@ -261,22 +262,22 @@ static Mac16Address id2addr(const uint16_t id)
 
 static int lrwpanSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
 {
-    Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
-
-    if (!dev) {
-        ERROR << "get dev failed for lrwpan\n";
-        return FAILURE;
-    }
     int numNodes = stoi(CFG("numOfNodes"));
     McpsDataRequestParams params;
+    Ptr<LrWpanNetDevice> dev = getDev(ctx, id);
+    Ptr<Packet> p0;
 
-    if(mbuf->flags & MBUF_IS_CMD) {
-        ERROR << "MBUF CMD not handled in Airline... No need!" << endl;
+    if (!dev) {
+        CERROR << "get dev failed for lrwpan\n";
         return FAILURE;
     }
-    wf::Macstats::set_stats(AL_TX, mbuf);
 
-    Ptr<Packet> p0 = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
+    if(mbuf->flags & MBUF_IS_CMD) {
+        CERROR << "MBUF CMD not handled in Airline... No need!" << endl;
+        return FAILURE;
+    }
+
+    p0 = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
     params.m_srcAddrMode = SHORT_ADDR;
     params.m_dstAddrMode = SHORT_ADDR;
     params.m_dstPanId    = CFG_PANID;

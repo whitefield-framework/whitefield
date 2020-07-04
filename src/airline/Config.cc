@@ -51,7 +51,7 @@ char *Config::getNextCmdToken(char *ptr, char **state, char *tok, int tok_len)
 		ptr++;
 		endptr = strchr(ptr, '"');
 		if(!endptr) {
-			ERROR << "Invalid command token\n";
+			CERROR << "Invalid command token\n";
 			return NULL;
 		}
 		copyBetweenPtr(ptr, endptr, tok, tok_len);
@@ -112,13 +112,13 @@ void Config::cmdParser(string & cmd, uint16_t nodeID)
 		}
 		buflen += snprintf(buf+buflen, sizeof(buf)-buflen, "%s", tok);
 		if(buflen >= sizeof(buf)-10) {
-			ERROR << "cmdParser: buf completely full\n";
+			CERROR << "cmdParser: buf completely full\n";
 			WF_STOP;
 		}
 	}
 	string str(buf);
 	cmd = str;
-    //INFO << str << "\n";
+    //CINFO << str << "\n";
 }
 
 void Config::spawnStackline(const uint16_t nodeID)
@@ -129,22 +129,22 @@ void Config::spawnStackline(const uint16_t nodeID)
 	string cmd = nodeArray[nodeID].getNodeExecutable();
 
 	if(cmd.empty()) {
-		ERROR << "No Stackline executable configured for nodeID:" << nodeID << endl;
+		CERROR << "No Stackline executable configured for nodeID:" << nodeID << endl;
 		WF_STOP;
 	}
 
 	cmdParser(cmd, nodeID);
-	INFO << "spawning node:" << nodeID 
+	CINFO << "spawning node:" << nodeID 
 		 << " Exec: " << cmd
 		 << "\n";
 	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s", cmd.c_str());
 	mbuf->len = len;
 	mbuf->src_id = nodeID;
-	if(CL_SUCCESS != cl_sendto_q(MTYPE(FORKER, CL_MGR_ID), mbuf, len + sizeof(msg_buf_t))) {
-		ERROR << "Failure sending command to forker\n";
+	if(SUCCESS != cl_sendto_q(MTYPE(FORKER, CL_MGR_ID), mbuf, len + sizeof(msg_buf_t))) {
+		CERROR << "Failure sending command to forker\n";
 	}
 	if(nodeID == getNumberOfNodes()-1) {
-		INFO << "\nAll nodes started.\n";
+		CINFO << "\nAll nodes started.\n";
 	}
 }
 
@@ -169,7 +169,7 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 	ptr++;
 	end_range = atoi(ptr);
 	if(end_range <= beg_range) {
-		ERROR << "invalid range:" << keystr << endl;
+		CERROR << "invalid range:" << keystr << endl;
 		return "";
 	}
 	if(end_range >= numOfNodes) {
@@ -201,7 +201,7 @@ int Config::setNodePosition(const string position, int beg, int end)
 	int i;
 	vector<string> pos=split(position, ',');
 	if(pos.size() < 3) {
-		ERROR << "Incorrect position supplied in config file\n";
+		CERROR << "Incorrect position supplied in config file\n";
 		return FAILURE;
 	}
 	for(i=beg;i<=end;i++) {
@@ -237,7 +237,7 @@ int Config::setConfigurationFromFile(const char *fname)
 	{
 		ifstream infile(fname);
 		if(!infile) {
-			ERROR << "Could not open file " << fname << endl;
+			CERROR << "Could not open file " << fname << endl;
 			return FAILURE;
 		}
 		while(getline(infile, line))
@@ -251,17 +251,17 @@ int Config::setConfigurationFromFile(const char *fname)
 			value = trim(value);
 			key = trim(key);
 			key = getKeyRange(key, beg_range, end_range, explictRange);
-			//INFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
+			//CINFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
 				set(key, value);
 			} else {
 				if(!numOfNodes) {
-					ERROR << "Configuration should first contain the numOfNodes cfg\n";
+					CERROR << "Configuration should first contain the numOfNodes cfg\n";
 					return FAILURE;
 				}
                 if(end_range >= getNumberOfNodes()) {
-                    ERROR << "node index " << end_range << " out of bounds. Max nodes:" << getNumberOfNodes() << "\n";
+                    CERROR << "node index " << end_range << " out of bounds. Max nodes:" << getNumberOfNodes() << "\n";
                     return FAILURE;
                 }
 				if(key == "nodeExec") {
@@ -275,7 +275,7 @@ int Config::setConfigurationFromFile(const char *fname)
 				} else if(key == "include") {
                     if(setConfigurationFromFile((const char *)value.c_str()) 
                             == FAILURE) {
-                        ERROR << "include file processing failed"
+                        CERROR << "include file processing failed"
                               << value << "\n";
                         return FAILURE;
                     }
@@ -289,7 +289,7 @@ int Config::setConfigurationFromFile(const char *fname)
 			}
 		}
 	} catch(exception & e) {
-		ERROR << "Got exception " << e.what() << endl;
+		CERROR << "Got exception " << e.what() << endl;
 		return FAILURE;
 	}
 	return SUCCESS;

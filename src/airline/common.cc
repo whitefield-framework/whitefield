@@ -82,7 +82,7 @@ string getMapCfg(map<string, string, ci_less> & m, string key)
     }
     val = m[key];
     m.erase(key);
-    INFO << "param: " << key << "=" << val << "\n";
+    CINFO << "param: " << key << "=" << val << "\n";
     return val;
 }
 
@@ -103,26 +103,12 @@ void SendAckToStackline(uint16_t src_id, uint16_t dst_id,
     cl_sendto_q(MTYPE(STACKLINE, mbuf->src_id), mbuf, sizeof(msg_buf_t));
 }
 
-void SendPacketToStackline(uint16_t id, uint16_t src_id, uint16_t dst_id,
-                uint8_t lqi, int8_t rssi, const uint8_t *buf, int len)
+void SendPacketToStackline(uint16_t id, msg_buf_t *mbuf)
 {
-    DEFINE_MBUF(mbuf);
-
-    if (len >= COMMLINE_MAX_BUF) {
-        ERROR << "Pkt len" << len << " bigger than\n";
-        return;
-    }
-
-    memcpy(mbuf->buf, buf, len);
-    mbuf->len           = len;
-    mbuf->src_id        = src_id;
-    mbuf->dst_id        = dst_id;
-    mbuf->info.sig.lqi  = lqi;
-    mbuf->info.sig.rssi = rssi;
     wf::Macstats::set_stats(AL_RX, mbuf);
     cl_sendto_q(MTYPE(STACKLINE, id), mbuf, sizeof(msg_buf_t) + mbuf->len);
 #if 0
-    INFO << "RX data"
+    CINFO << "RX data"
          << " src_id=" << id << " dst_id=" << mbuf->dst_id
          << " lqi=" << (int)lqi << " rssi=" << (int)rssi
          << " len=" << mbuf->len << "\n";

@@ -43,7 +43,7 @@ int getNodeConfigVal(int id, char *key, char *val, int vallen)
     ni=WF_config.get_node_info(id);
     if (!ni) {
         snprintf(val, vallen, "cudnot get nodeinfo id=%d", id);
-        ERROR << "Unable to get node config\n";
+        CERROR << "Unable to get node config\n";
         return 0;
     }
     if (!strcmp(key, "nodeexec")) {
@@ -51,7 +51,7 @@ int getNodeConfigVal(int id, char *key, char *val, int vallen)
                 (char *)ni->getNodeExecutable().c_str());
     }
     snprintf(val, vallen, "unknown key [%s]", key);
-    ERROR << "Unknown key " << key << "\n";
+    CERROR << "Unknown key " << key << "\n";
     return 0;
 }
 
@@ -108,7 +108,7 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 
 	if(CFG("topologyType") == "grid") {
 		int gw=stoi(CFG("gridWidth"));
-		INFO << "Using GridPositionAllocator\n";
+		CINFO << "Using GridPositionAllocator\n";
 		mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
 				"MinX", DoubleValue(.0),
 				"MinY", DoubleValue(.0),
@@ -124,12 +124,12 @@ void AirlineManager::setPositionAllocator(NodeContainer & nodes)
 		snprintf(y_buf, sizeof(y_buf),
                 "ns3::UniformRandomVariable[Min=0.0|Max=%s]",
                 CFG("fieldY").c_str());
-		INFO << "Using RandomRectanglePositionAllocator\n";
+		CINFO << "Using RandomRectanglePositionAllocator\n";
 		mobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
 				"X", StringValue(x_buf),
 				"Y", StringValue(y_buf));
 	} else {
-		ERROR << "Unknown topologyType: " 
+		CERROR << "Unknown topologyType: " 
               << CFG("topologyType") << " in cfg\n";
 		throw FAILURE;
 	}
@@ -195,34 +195,28 @@ void AirlineManager::msgrecvCallback(msg_buf_t *mbuf)
 		return;
 	}
 	if(!IN_RANGE(mbuf->src_id, 0, numNodes)) {
-        ERROR << "rcvd src id=" << mbuf->src_id << " out of range!!\n";
+        CERROR << "rcvd src id=" << mbuf->src_id << " out of range!!\n";
 		return;
 	}
     if(mbuf->dst_id == CL_DSTID_MACHDR_PRESENT) {
         if(CFG_INT("macHeaderAdd", 1)) {
-            ERROR << "rcvd a packet from stackline with DSTID_MACHDR_PRESENT \
+            CERROR << "rcvd a packet from stackline with DSTID_MACHDR_PRESENT \
                 set but config file does not have macHeaderAdd=0\n";
-            ERROR << "If you are using openthread, please set macHeaderAdd=0 \
+            CERROR << "If you are using openthread, please set macHeaderAdd=0 \
                 to prevent Airline from adding its own mac hdr\n";
             return;
         }
     }
     ifaceSendPacket(&g_ifctx, mbuf->src_id, mbuf);
-#if 0
-	Ptr<Application> nodeApp = n.Get(mbuf->src_id)->GetApplication(0);
-	if(!nodeApp) {
-		ERROR << "Could not handle msg_buf_t for node " << (int)mbuf->src_id << endl;
-		return;
-	}
-	Ptr<Airline> aline = DynamicCast<Airline> (nodeApp);
-	aline->tx(mbuf);
-#endif
+    wf::Macstats::set_stats(AL_TX, mbuf);
 }
 
-void AirlineManager::nodePos(NodeContainer const & nodes, uint16_t id, double & x, double & y, double & z)
+void AirlineManager::nodePos(NodeContainer const & nodes, 
+        uint16_t id, double & x, double & y, double & z)
 {
 	MobilityHelper mob;
-	Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+	Ptr<ListPositionAllocator> positionAlloc = 
+        CreateObject<ListPositionAllocator> ();
 	positionAlloc->Add (Vector (x, y, z));
 	mob.SetPositionAllocator (positionAlloc);
 	mob.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -239,7 +233,7 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
 	for(int i=0;i<(int)nodes.GetN();i++) {
 		ni=WF_config.get_node_info(i);
 		if(!ni) {
-			ERROR << "GetN doesnt match nodes stored in config!!\n";
+			CERROR << "GetN doesnt match nodes stored in config!!\n";
 			return;
 		}
 		ni->getNodePosition(is_set, x, y, z);
@@ -269,7 +263,7 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 		wf::Macstats::clear();
 
 		g_ifctx.nodes.Create (cfg.getNumberOfNodes());
-		INFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
+		CINFO << "Creating " << cfg.getNumberOfNodes() << " nodes..\n";
 		SeedManager::SetSeed(stoi(CFG("randSeed", "0xbabe"), nullptr, 0));
 
 		setPositionAllocator(g_ifctx.nodes);
@@ -285,13 +279,13 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 		apps.Start(Seconds(0.0));
 
 		ScheduleCommlineRX();
-		INFO << "NS3 Simulator::Run initiated...\n";
+		CINFO << "NS3 Simulator::Run initiated...\n";
         fflush(stdout);
 		Simulator::Run ();
 		pause();
 		Simulator::Destroy ();
 	} catch (int e) {
-		ERROR << "Configuration failed\n";
+		CERROR << "Configuration failed\n";
 		return FAILURE;
 	}
 	return SUCCESS;
@@ -299,14 +293,16 @@ int AirlineManager::startNetwork(wf::Config & cfg)
 
 void AirlineManager::ScheduleCommlineRX(void)
 {
-	m_sendEvent = Simulator::Schedule (Seconds(0.001), &AirlineManager::msgReader, this);
+	m_sendEvent = Simulator::Schedule (Seconds(0.001),
+                        &AirlineManager::msgReader, this);
 }
 
 void AirlineManager::msgReader(void)
 {
 	DEFINE_MBUF(mbuf);
 	while(1) {
-		cl_recvfrom_q(MTYPE(AIRLINE,CL_MGR_ID), mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
+		cl_recvfrom_q(MTYPE(AIRLINE,CL_MGR_ID),
+                mbuf, sizeof(mbuf_buf), CL_FLAG_NOWAIT);
 		if(mbuf->len) {
 			msgrecvCallback(mbuf);
 			usleep(1);
@@ -321,7 +317,7 @@ AirlineManager::AirlineManager(wf::Config & cfg)
 {
 	m_sendEvent = EventId ();
 	startNetwork(cfg);
-	INFO << "AirlineManager started" << endl;
+	CINFO << "AirlineManager started" << endl;
 }
 
 AirlineManager::~AirlineManager() 

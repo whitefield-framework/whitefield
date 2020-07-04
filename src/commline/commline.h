@@ -27,6 +27,9 @@
 extern "C" {
 #endif
 
+#define SUCCESS 0
+#define FAILURE -1
+
 #define CL_SUCCESS 0
 #define CL_FAILURE -1
 

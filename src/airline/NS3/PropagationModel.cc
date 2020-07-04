@@ -37,7 +37,7 @@ Ptr <PropagationLossModel> getLogDistancePLM(map<string, string, ci_less> & m)
     string refloss = getMapCfg(m, "refLoss");
 
     if (!plm) {
-        ERROR << "Cud not get Log Distance prop loss model\n";
+        CERROR << "Cud not get Log Distance prop loss model\n";
         return plm;
     }
     if (!ple.empty()) {
@@ -46,7 +46,7 @@ Ptr <PropagationLossModel> getLogDistancePLM(map<string, string, ci_less> & m)
     if (!refdist.empty() && !refloss.empty()) {
         plm->SetReference(stod(refdist), stod(refloss));
     } else if(!refdist.empty() || !refloss.empty()) {
-        ERROR << "refDist and refLoss both are needed for LogDistancePropagationLossModel\n";
+        CERROR << "refDist and refLoss both are needed for LogDistancePropagationLossModel\n";
     }
     return plm;
 }
@@ -60,7 +60,7 @@ Ptr <PropagationLossModel> getFriisPLM(map<string, string, ci_less> & m)
     string sysloss = getMapCfg(m, "sysloss");
 
     if (!plm) {
-        ERROR << "Cud not get Friis prop loss model\n";
+        CERROR << "Cud not get Friis prop loss model\n";
         return plm;
     }
     if (!freq.empty()) {
@@ -81,7 +81,7 @@ Ptr <PropagationLossModel> getFixedRssPLM(map<string, string, ci_less> & m)
     string rss = getMapCfg(m, "rss");
 
     if (!plm) {
-        ERROR << "Cud not get FixedRss loss model\n";
+        CERROR << "Cud not get FixedRss loss model\n";
         return plm;
     }
     if (!rss.empty()) {
@@ -97,7 +97,7 @@ Ptr <PropagationLossModel> getMatrixPLM(map<string, string, ci_less> & m)
     string defloss = getMapCfg(m, "defloss");
 
     if (!plm) {
-        ERROR << "Cud not get matrix loss model\n";
+        CERROR << "Cud not get matrix loss model\n";
         return plm;
     }
     if (!defloss.empty()) {
@@ -116,7 +116,7 @@ Ptr <PropagationLossModel> getTwoRayGroundPLM(map<string, string, ci_less> & m)
     string mindist = getMapCfg(m, "minDist");
 
     if (!plm) {
-        ERROR << "Cud not get matrix loss model\n";
+        CERROR << "Cud not get matrix loss model\n";
         return plm;
     }
     if (!sysloss.empty()) {
@@ -141,7 +141,7 @@ Ptr <PropagationLossModel> getLossModel(string loss_model,
     Ptr <PropagationLossModel> plm;
     auto cfgmap = splitKV(loss_model_param);
 
-    INFO << "Using loss model [" << loss_model
+    CINFO << "Using loss model [" << loss_model
          << "] param [" << loss_model_param << "]\n";
     if (stricmp(loss_model, "LogDistance") == 0) {
         plm = getLogDistancePLM(cfgmap);
@@ -160,17 +160,17 @@ Ptr <PropagationLossModel> getLossModel(string loss_model,
     } else if (stricmp(loss_model, "ThreeLogDistance") == 0) {
         plm = CreateObject<ThreeLogDistancePropagationLossModel> ();
     } else {
-        ERROR << "Unknown loss model [" << loss_model << "]\n";
+        CERROR << "Unknown loss model [" << loss_model << "]\n";
         return NULL;
     }
     if (!plm) {
-        ERROR << "Cud not get " << loss_model << " loss model\n";
+        CERROR << "Cud not get " << loss_model << " loss model\n";
         return plm;
     }
     if (cfgmap.size() != 0) {
         map<string, string, ci_less>::iterator i;
         for (i = cfgmap.begin(); i != cfgmap.end(); ++i) {
-            ERROR << "Unprocessed loss model param: " 
+            CERROR << "Unprocessed loss model param: " 
                   << i->first << "=" << i->second << "\n";
         }
     }
@@ -184,7 +184,7 @@ Ptr <PropagationDelayModel> getConstantSpeedPDM(map<string, string, ci_less> & m
     string speed = getMapCfg(m, "speed");
 
     if (!pdm) {
-        ERROR << "Cud not get Log Distance prop loss model\n";
+        CERROR << "Cud not get Log Distance prop loss model\n";
         return pdm;
     }
     if (!speed.empty()) {
@@ -200,24 +200,24 @@ Ptr <PropagationDelayModel> getDelayModel(string del_model,
     Ptr <PropagationDelayModel> pdm;
     auto cfgmap = splitKV(del_model_param);
 
-    INFO << "Using delay model [" << del_model
+    CINFO << "Using delay model [" << del_model
          << "] param [" << del_model_param << "]\n";
     if (stricmp(del_model, "ConstantSpeed") == 0) {
         pdm = getConstantSpeedPDM(cfgmap);
     } else if (stricmp(del_model, "Random") == 0) {
         pdm = CreateObject<RandomPropagationDelayModel> ();
     } else {
-        ERROR << "Unknown delay model [" << del_model << "]\n";
+        CERROR << "Unknown delay model [" << del_model << "]\n";
         return NULL;
     }
     if (!pdm) {
-        ERROR << "Cud not get " << del_model << " delay model\n";
+        CERROR << "Cud not get " << del_model << " delay model\n";
         return pdm;
     }
     if (cfgmap.size() != 0) {
         map<string, string, ci_less>::iterator i;
         for (i = cfgmap.begin(); i != cfgmap.end(); ++i) {
-            ERROR << "Unprocessed delay model param: " 
+            CERROR << "Unprocessed delay model param: " 
                   << i->first << "=" << i->second << "\n";
         }
     }

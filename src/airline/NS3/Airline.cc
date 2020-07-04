@@ -55,7 +55,7 @@ namespace ns3
 
 	void Airline::StopApplication()
 	{
-		INFO << "Airline application stopped\n";
+		CINFO << "Airline application stopped\n";
 	};
 
 	Airline::Airline() {

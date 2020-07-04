@@ -62,9 +62,9 @@ int chk_executable(char *bin)
     struct stat st;
     if (stat(bin, &st)) {
         ERROR("Binary:[%s] DOES NOT EXIST!\n", bin);
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 #define SET_ARG_ENV(BUF)        \
@@ -96,7 +96,7 @@ int fork_n_exec(uint16_t nodeid, char *buf)
 
     if (i < 1) {
         ERROR("Insufficient command exec info i=%d, e=%d\n", i, e);
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     if (chk_executable(argv[0]))
@@ -109,7 +109,7 @@ int fork_n_exec(uint16_t nodeid, char *buf)
     }
     if (g_child_info[nodeid].pid < 0) {
         ERROR("fork failed!!!pty:%d\n", pty);
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (0 == g_child_info[nodeid].pid) {
         prctl(PR_SET_PDEATHSIG, SIGKILL); //If forker dies then it should send SIGKILL to all kids i.e. stackline processes
@@ -129,13 +129,13 @@ int fork_n_exec(uint16_t nodeid, char *buf)
         if(g_child_info[nodeid].uds_fd < 0) {
             ERROR("Failed to open unix domain sock\n");
             //Dont bother to cleanup since everything will stop after this failure
-            return CL_FAILURE;
+            return FAILURE;
         }
         pty_add_fd(nodeid, g_child_info[nodeid].uds_fd, 0);
         pty_add_fd(nodeid, g_child_info[nodeid].master, 1);
     }
 #endif
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 void killall_childprocess(void)
@@ -158,7 +158,7 @@ void wait_on_q(void)
             break;
         }
         if (mbuf->len) {
-            if ((CL_SUCCESS != fork_n_exec(mbuf->src_id, (char *)mbuf->buf)))
+            if ((SUCCESS != fork_n_exec(mbuf->src_id, (char *)mbuf->buf)))
                 break;
         }
     }
@@ -170,19 +170,19 @@ int main(void)
 {
     redirect_stdout_to_log(-1);
     INFO("Starting forker...\n");
-    if (CL_SUCCESS != cl_init(MTYPE(FORKER, CL_MGR_ID), CL_ATTACHQ)) {
+    if (SUCCESS != cl_init(MTYPE(FORKER, CL_MGR_ID), CL_ATTACHQ)) {
         ERROR("forker: failure to cl_init()\n");
         return 1;
     }
-    if (CL_SUCCESS != cl_bind(MTYPE(MONITOR, CL_MGR_ID))) {
+    if (SUCCESS != cl_bind(MTYPE(MONITOR, CL_MGR_ID))) {
         ERROR("forker: failure to cl_bind()\n");
         return 1;
     }
-    if (CL_SUCCESS != start_pty_thread()) {
+    if (SUCCESS != start_pty_thread()) {
         ERROR("start_monitor_thread failed... exiting process!!\n");
         return 1;
     }
-    if (CL_SUCCESS != start_monitor_thread()) {
+    if (SUCCESS != start_monitor_thread()) {
         ERROR("start_monitor_thread failed... exiting process!!\n");
         return 1;
     }
