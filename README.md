@@ -5,33 +5,26 @@
 [![Doc status](https://readthedocs.org/projects/whitefield/badge/?version=latest)](https://whitefield.readthedocs.io/en/latest/)
 [![Join the chat at https://gitter.im/whitefield-fw](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/whitefield-fw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Whitefield provides a simulation environment for wireless sensor network by
-combining realistic RF simulation with the native mode use of popular IoT
-stacks/OSes such as
-[Contiki]/[RIOT]/[OpenThread]/[Zephyr]/[FreeRTOS]/[OT-RTOS]. Thus one can use
-existing stack implementation as is and test it on top of realistic RF
-simulation.
+Whitefield provides a simulation environment for sensor networks by
+combining realistic PHY/MAC layer simulation with the native mode use of popular IoT
+stacks/OSes such as [Contiki]/[RIOT]/[OpenThread]/[Zephyr]/[FreeRTOS]/[OT-RTOS]. 
+Thus one can use existing stack implementation as is and test it on top of
+realistic RF simulation.
 
 Whitefield uses PHY/MAC layer provided by popular simulators (such as
-[NS3-lrwpan]) and loosely couples it with the constrained network stacks
-supported by popular IoT OSes, thus providing the best of both worlds by simply
-glueing things. It provides common visualization and OAM tools (logs, pcap,
-shell) which simplifies monitoring and troubleshooting.
+[NS3-lrwpan]/PLC) and loosely couples it with the constrained network stacks
+supported by popular IoT OSes, thus providing the best of both worlds.
+It provides common visualization and OAM tools (logs, pcap, shell) which
+simplifies monitoring and troubleshooting.
 
 Typical use-cases of Whitefield:
-1. Large scale interop testing between multitudes of stacks in same wireless
-   environment. It can scale to thousands of nodes on general purpose server
-   (even laptops).
-2. Validate RF physical/mac simulation against each other. For e.g. compare results
-   in NS3 vs Castalia
-3. Regression tests using IdealAir(future).
-4. Help in creating reproducible work. Most of the experiments mentioned in the
-   papers are difficult to be reproduced. Whitefield could help alleviate this
+1. Large scale realistic testing with real-world embedded stacks. Test
+   thousands of nodes with realistic 802.15.4 and Power Line Communication
+   interfaces.
+2. Large scale interop testing between different network stacks in same environment.
+3. Create reproducible work/experiments. Most of the experiments mentioned in the
+   papers are difficult to be reproduced. Whitefield helps alleviate this
    issue.
-
-In the future, would like to create standard topology harnesses for various
-scenarios and make it possible to test various implementations/protocols
-against each other.
 
 ![Alt text](docs/res/Whitefield%20-%20HLD.png "Whitefield-High Level design")
 
@@ -63,9 +56,8 @@ Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-ud
 ```
 git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
-git submodule update --init
-git submodule foreach git pull origin master
-./scripts/setup.sh
+./scripts/setup.sh #This may take a while...
+make
 ```
 **Execute Instructions**:
 ```
