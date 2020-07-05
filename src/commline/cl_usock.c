@@ -53,13 +53,13 @@ int usock_init(const long my_mtype, const uint8_t flags)
 
     if (!IN_RANGE(line, 1, MAX_CL_LINE)) {
         ERROR("my_mtype:%08lx not in range!\n", my_mtype);
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     g_usock_fd[line] = socket(AF_UNIX, SOCK_DGRAM, 0);
     if (g_usock_fd[line] < 0) {
         ERROR("socket failure errno=%d\n", errno);
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     slen = usock_setabsaddr(my_mtype, &addr);
@@ -68,12 +68,12 @@ int usock_init(const long my_mtype, const uint8_t flags)
     if (bind(g_usock_fd[line], (struct sockaddr *)&addr, slen)) {
         CLOSE(g_usock_fd[line]);
         ERROR("bind failed errno=%d\n", errno);
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (g_def_line < 0) {
         g_def_line = line;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 void usock_cleanup(void)
@@ -92,7 +92,7 @@ int usock_recvfrom(const long my_mtype, msg_buf_t *mbuf, uint16_t len, uint16_t 
 
     if (!IN_RANGE(line, 1, MAX_CL_LINE)) {
         ERROR("my_mtype:%08lx not in range!\n", my_mtype);
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     mbuf->len = 0;
@@ -101,7 +101,7 @@ int usock_recvfrom(const long my_mtype, msg_buf_t *mbuf, uint16_t len, uint16_t 
     if (ret > 0 && ret + 4 < sizeof(msg_buf_t)) //Rahul: +4 is added for bins compiled with -m32. sizeof(long) issue.
     {
         ERROR("problem ... recvfrom len(%d) not enough sizeof:%zu\n", ret, sizeof(msg_buf_t));
-        return CL_FAILURE;
+        return FAILURE;
     }
     return ret;
 }
@@ -118,9 +118,9 @@ int usock_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
     ret  = sendto(g_usock_fd[g_def_line], (void *)mbuf, len, 0, (struct sockaddr *)&addr, slen);
     if (ret != len) {
         ERROR("usock sendto failed! errno=%d\n", errno);
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 int usock_get_descriptor(const long mtype)
@@ -129,11 +129,11 @@ int usock_get_descriptor(const long mtype)
 
     if (!IN_RANGE(line, 1, MAX_CL_LINE)) {
         ERROR("my_mtype:%08lx not in range!\n", mtype);
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (g_usock_fd[line] <= 0) {
         ERROR("mtype:%08lx line:%d no fd here\n", mtype, line);
-        return CL_FAILURE;
+        return FAILURE;
     }
 
     return g_usock_fd[line];

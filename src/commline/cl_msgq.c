@@ -50,7 +50,7 @@ int msgq_init(const long my_mtype, const uint8_t flags)
     key = get_msgq_key();
     if (-1 == key) {
         ERROR("could not get a valid msgq key\n");
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (flags & CL_CREATEQ) {
         msgflag |= IPC_EXCL;
@@ -58,9 +58,9 @@ int msgq_init(const long my_mtype, const uint8_t flags)
     gMsgQ_id = msgget(key, msgflag);
     if (-1 == gMsgQ_id) {
         ERROR("could not get msgq key:0x%x\n", key);
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }
 
 void msgq_cleanup(void)
@@ -81,7 +81,7 @@ int msgq_recvfrom(const long mtype, msg_buf_t *mbuf, uint16_t len, uint16_t flag
     if (ret > 0 && ret + 4 < sizeof(msg_buf_t)) //Rahul: +4 is added for bins compiled with -m32. sizeof(long) issue.
     {
         ERROR("some problem ... msgrcv length(%d) not enough sizeof:%zu\n", ret, sizeof(msg_buf_t));
-        return CL_FAILURE;
+        return FAILURE;
     }
     return ret;
 }
@@ -91,7 +91,7 @@ int msgq_sendto(const long mtype, msg_buf_t *mbuf, uint16_t len)
     mbuf->mtype = mtype;
     if (msgsnd(gMsgQ_id, (void *)mbuf, len, 0) < 0) {
         ERROR("msgsend failed!\n");
-        return CL_FAILURE;
+        return FAILURE;
     }
-    return CL_SUCCESS;
+    return SUCCESS;
 }

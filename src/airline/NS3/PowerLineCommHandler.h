@@ -27,9 +27,24 @@
 
 #include <ns3/core-module.h>
 #include <ns3/node-container.h>
+#include <ns3/plc.h>
 
 using namespace ns3;
 
-int plcInstall(NodeContainer & nodes);
+static inline int getDevName(uint16_t id, char *name, size_t len)
+{
+    return snprintf(name, len, "node%d", id);
+}
+
+int plcSend(uint16_t id, Mac48Address dst, Ptr<Packet> pkt);
+Mac48Address getMacAddress(uint16_t id);
+
+static inline Ptr<PLC_NetDevice> getPlcNetDev(int id)
+{
+    extern PLC_NetdeviceMap g_devMap;
+    char name[64];
+    getDevName(id, name, sizeof(name));
+    return g_devMap[name];
+}
 
 #endif //  _POWERLINECOMMHANDLER_H_

@@ -29,33 +29,15 @@
 #include <ns3/application-container.h>
 #include <ns3/node-container.h>
 #include <ns3/object-factory.h>
-#include <ns3/lr-wpan-module.h>
-extern "C" {
-#include "commline/commline.h"
-}
-#include "mac_stats.h"
 
 namespace ns3 {
 class Airline : public Application {
 public:
-    static void   DataIndication(Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataIndicationParams params, Ptr<Packet> p);
-    static void   DataConfirm(Airline *airline, Ptr<LrWpanNetDevice> dev, McpsDataConfirmParams params);
     static TypeId GetTypeId();
     Airline();
     virtual ~Airline(){};
-    void setShortAddress(int shaddr = -1);
-    void setPanID(const uint16_t panid);
-    void setExtendedAddress(const char *buf);
-    void tx(msg_buf_t *mbuf);
 
 private:
-    uint8_t      m_macpktqlen;
-    void         SendSamplePacket(void);
-    Mac16Address id2addr(const uint16_t id);
-    uint16_t     addr2id(const Mac16Address addr);
-    void         SendPacketToStackline(McpsDataIndicationParams &params, Ptr<Packet> p);
-    uint8_t      wf_ack_status(LrWpanMcpsDataConfirmStatus status);
-    void         SendAckToStackline(McpsDataConfirmParams &params);
     /**
 			 * \brief Start the application.
 			 */

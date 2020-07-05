@@ -47,7 +47,7 @@ namespace wf {
 				if(IN_RANGE(mbuf->info.ack.retries, 1, MAX_MAC_TX_RETRY_CNT)) {
 					stats.rx_ack_ok[mbuf->info.ack.retries]++;
 				} else {
-					ERROR << "Stats failure since ACK_OK with retry:" 
+					CERROR << "Stats failure since ACK_OK with retry:" 
 						  << (int)mbuf->info.ack.retries << endl;
 					return;
 				}
@@ -94,7 +94,7 @@ namespace wf {
 		} else {
 			ni=WF_config.get_node_info(id);
 			if(!ni) {
-				ERROR << "Could not retry Nodeinfo for id:" << (int)id << endl;
+				CERROR << "Could not retry Nodeinfo for id:" << (int)id << endl;
 				return snprintf(buf, buflen, "INTERNAL_ERROR");
 			}
 			st=ni->get_stats();
@@ -127,14 +127,14 @@ namespace wf {
 		} else if(AL_RX == dir) {
 			set_rx_stats(mbuf);
 		} else {
-			ERROR << "UNKNOW DIR " << dir << endl;
+			CERROR << "UNKNOW DIR " << dir << endl;
 		}
 	};
 
 	void Macstats::set_stats(int dir, const msg_buf_t *mbuf) {
 		Nodeinfo *ni=WF_config.get_node_info(mbuf->src_id);
 		if(!ni) {
-			ERROR << "Invalida src_id in set_stats: " << (int)mbuf->src_id << endl;
+			CERROR << "Invalida src_id in set_stats: " << (int)mbuf->src_id << endl;
 			return;
 		}
 		ni->set(dir, mbuf);

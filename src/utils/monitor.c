@@ -56,7 +56,7 @@ failure:
     if (fd > 0) {
         close(fd);
     }
-    return CL_FAILURE;
+    return FAILURE;
 }
 
 int fwd_cmd_on_commline(char *cmd, size_t cmdlen, char *rsp, size_t rsplen)
@@ -142,13 +142,13 @@ int start_monitor_thread(void)
     gMonitorFD = start_udp_server(ptr ? atoi(ptr) : 61616);
     if (gMonitorFD < 0) {
         ERROR("Failure starting UDP server\n");
-        return CL_FAILURE;
+        return FAILURE;
     }
     if (pthread_create(&tid, NULL, monitor_thread, NULL) < 0) {
         ERROR("failure creating monitor thread %m\n");
         CLOSE(gMonitorFD);
-        return CL_FAILURE;
+        return FAILURE;
     }
     pthread_detach(tid);
-    return CL_SUCCESS;
+    return SUCCESS;
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FMT=clang-format-9
+FMT=clang-format-10
 
 function handle_file()
 {

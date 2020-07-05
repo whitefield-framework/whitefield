@@ -31,38 +31,40 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+
+#include <commline/commline.h>
+
 using namespace std;
 
-#define SUCCESS 0
-#define FAILURE -1
+#define ERR_NOT_SUPP -2
 
-#define INFO  cout << "INFO  "
-#define ERROR cerr << "ERROR "
-#define WARN  cerr << "WARN  "
+#define CINFO  cout << "INFO  "
+#define CERROR cerr << "ERROR "
+#define CWARN  cerr << "WARN  "
 
 string &ltrim(string &s, const char *t = " \t\n\r\f\v");
 string &rtrim(string &s, const char *t = " \t\n\r\f\v");
 string &trim(string &s, const char *t = " \t\n\r\f\v");
 
 vector<string> split(const string &s, char delim);
-struct ci_less
-{
+struct ci_less {
     // case-independent (ci) compare_less binary function
-    struct nocase_compare
-    {
-        bool operator() (const unsigned char& c1, const unsigned char& c2) const {
-            return tolower (c1) < tolower (c2);
+    struct nocase_compare {
+        bool operator()(const unsigned char &c1, const unsigned char &c2) const
+        {
+            return tolower(c1) < tolower(c2);
         }
     };
-    bool operator() (const std::string & s1, const std::string & s2) const {
-        return std::lexicographical_compare
-            (s1.begin (), s1.end (),   // source range
-             s2.begin (), s2.end (),   // dest range
-             nocase_compare ());  // comparison
+    bool operator()(const std::string &s1, const std::string &s2) const
+    {
+        return std::lexicographical_compare(s1.begin(), s1.end(), // source range
+                                            s2.begin(), s2.end(), // dest range
+                                            nocase_compare());    // comparison
     }
 };
-map<string, string, ci_less> splitKV(string & s);
-string getMapCfg(map<string, string, ci_less> & m, string key);
+map<string, string, ci_less> splitKV(string &s);
+
+string getMapCfg(map<string, string, ci_less> &m, string key);
 
 //#include <Config.h>
 namespace wf {
@@ -80,5 +82,9 @@ static inline int stricmp(string s1, string s2)
 {
     return strcasecmp(s1.c_str(), s2.c_str());
 }
+
+void SendAckToStackline(uint16_t src_id, uint16_t dst_id,
+                        uint8_t status, int retries);
+void SendPacketToStackline(uint16_t id, msg_buf_t *mbuf);
 
 #endif //_COMMON_H_
