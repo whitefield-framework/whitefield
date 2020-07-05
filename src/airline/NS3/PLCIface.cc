@@ -69,11 +69,11 @@ static void plcCleanup(ifaceCtx_t *ctx)
 }
 
 ifaceApi_t plcIface = {
-    .setup   = plcSetup,
-//    .setTxPower     = lrwpanSetTxPower,
-//    .setPromiscuous = lrwpanSetPromiscuous,
-    .setAddress     = plcSetAddress,
-    .sendPacket     = plcSendPacket,
-    .cleanup = plcCleanup,
+    setup          : plcSetup,
+    setTxPower     : NULL,
+    setPromiscuous : NULL,
+    setAddress     : plcSetAddress,
+    sendPacket     : plcSendPacket,
+    cleanup        : plcCleanup,
 };
 

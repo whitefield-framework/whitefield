@@ -311,11 +311,11 @@ static int lrwpanSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
 }
 
 ifaceApi_t lrwpanIface = {
-    .setup          = lrwpanSetup,
-    .setTxPower     = lrwpanSetTxPower,
-    .setPromiscuous = lrwpanSetPromiscuous,
-    .setAddress     = lrwpanSetAddress,
-    .sendPacket     = lrwpanSendPacket,
-    .cleanup        = lrwpanCleanup,
+    setup          : lrwpanSetup,
+    setTxPower     : lrwpanSetTxPower,
+    setPromiscuous : lrwpanSetPromiscuous,
+    setAddress     : lrwpanSetAddress,
+    sendPacket     : lrwpanSendPacket,
+    cleanup        : lrwpanCleanup,
 };
 
