@@ -27,7 +27,21 @@ chk_prerequisite()
 	chk_cmd_present dot graphviz
 }
 
+git_download()
+{
+    git submodule update --init --progress
+    git submodule foreach git pull origin master
+
+    cd thirdparty/ns-3-dev-git
+    git submodule update --init --progress
+    git submodule foreach git pull origin master
+
+    cd -
+}
+
 chk_prerequisite
+
+git_download
 
 if [ "$AIRLINE_NS3" != "" ]; then #Build NS3
 	cd $AIRLINE_NS3
