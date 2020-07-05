@@ -51,7 +51,7 @@ char *Config::getNextCmdToken(char *ptr, char **state, char *tok, int tok_len)
 		ptr++;
 		endptr = strchr(ptr, '"');
 		if(!endptr) {
-			CERROR << "Invalid command token\n";
+			ERROR("Invalid command token\n");
 			return NULL;
 		}
 		copyBetweenPtr(ptr, endptr, tok, tok_len);
@@ -112,13 +112,12 @@ void Config::cmdParser(string & cmd, uint16_t nodeID)
 		}
 		buflen += snprintf(buf+buflen, sizeof(buf)-buflen, "%s", tok);
 		if(buflen >= sizeof(buf)-10) {
-			CERROR << "cmdParser: buf completely full\n";
+			ERROR("cmdParser: buf completely full\n");
 			WF_STOP;
 		}
 	}
 	string str(buf);
 	cmd = str;
-    //CINFO << str << "\n";
 }
 
 void Config::spawnStackline(const uint16_t nodeID)
@@ -129,22 +128,20 @@ void Config::spawnStackline(const uint16_t nodeID)
 	string cmd = nodeArray[nodeID].getNodeExecutable();
 
 	if(cmd.empty()) {
-		CERROR << "No Stackline executable configured for nodeID:" << nodeID << endl;
+		ERROR("No Stackline exec configured for nodeID:%d\n", nodeID);
 		WF_STOP;
 	}
 
 	cmdParser(cmd, nodeID);
-	CINFO << "spawning node:" << nodeID 
-		 << " Exec: " << cmd
-		 << "\n";
+	INFO("spawning node:%d Exec:%s\n", nodeID, cmd.c_str());
 	len = snprintf((char *)mbuf->buf, COMMLINE_MAX_BUF, "%s", cmd.c_str());
 	mbuf->len = len;
 	mbuf->src_id = nodeID;
 	if(SUCCESS != cl_sendto_q(MTYPE(FORKER, CL_MGR_ID), mbuf, len + sizeof(msg_buf_t))) {
-		CERROR << "Failure sending command to forker\n";
+		ERROR("Failure sending command to forker\n");
 	}
 	if(nodeID == getNumberOfNodes()-1) {
-		CINFO << "\nAll nodes started.\n";
+		INFO("All nodes started.\n");
 	}
 }
 
@@ -169,7 +166,7 @@ string Config::getKeyRange(const string & keystr, int & beg_range, int & end_ran
 	ptr++;
 	end_range = atoi(ptr);
 	if(end_range <= beg_range) {
-		CERROR << "invalid range:" << keystr << endl;
+		ERROR("invalid range:%s\n", keystr.c_str());
 		return "";
 	}
 	if(end_range >= numOfNodes) {
@@ -201,11 +198,12 @@ int Config::setNodePosition(const string position, int beg, int end)
 	int i;
 	vector<string> pos=split(position, ',');
 	if(pos.size() < 3) {
-		CERROR << "Incorrect position supplied in config file\n";
+		ERROR("Incorrect position supplied in config file\n");
 		return FAILURE;
 	}
 	for(i=beg;i<=end;i++) {
-		nodeArray[i].setNodePosition(stod(pos.at(0)), stod(pos.at(1)), stod(pos.at(2)));
+		nodeArray[i].setNodePosition(stod(pos.at(0)),
+                stod(pos.at(1)), stod(pos.at(2)));
 	}
 	return SUCCESS;
 }
@@ -237,7 +235,7 @@ int Config::setConfigurationFromFile(const char *fname)
 	{
 		ifstream infile(fname);
 		if(!infile) {
-			CERROR << "Could not open file " << fname << endl;
+			ERROR("Could not open file %s\n", fname);
 			return FAILURE;
 		}
 		while(getline(infile, line))
@@ -251,17 +249,17 @@ int Config::setConfigurationFromFile(const char *fname)
 			value = trim(value);
 			key = trim(key);
 			key = getKeyRange(key, beg_range, end_range, explictRange);
-			//CINFO << "--- key=" << key << " beg=" << beg_range << " end=" << end_range << " val=" << value << endl;
 			if(key == "numOfNodes") {
 				setNumberOfNodes(stoi(value));
 				set(key, value);
 			} else {
 				if(!numOfNodes) {
-					CERROR << "Configuration should first contain the numOfNodes cfg\n";
+					ERROR("cfg should first contain the numOfNodes cfg\n");
 					return FAILURE;
 				}
                 if(end_range >= getNumberOfNodes()) {
-                    CERROR << "node index " << end_range << " out of bounds. Max nodes:" << getNumberOfNodes() << "\n";
+                    ERROR("node idx(%d) out of bounds. Max nodes:%d\n",
+                            end_range, getNumberOfNodes());
                     return FAILURE;
                 }
 				if(key == "nodeExec") {
@@ -275,8 +273,8 @@ int Config::setConfigurationFromFile(const char *fname)
 				} else if(key == "include") {
                     if(setConfigurationFromFile((const char *)value.c_str()) 
                             == FAILURE) {
-                        CERROR << "include file processing failed"
-                              << value << "\n";
+                        ERROR("include file processing failed %s\n",
+                              value.c_str());
                         return FAILURE;
                     }
 				} else {

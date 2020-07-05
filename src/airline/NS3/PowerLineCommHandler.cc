@@ -106,7 +106,7 @@ int getNodePosition(ifaceCtx_t *ctx, uint16_t id, Vector & pos)
     Ptr<MobilityModel> mob = n ? n->GetObject<MobilityModel> () : NULL;
 
     if (!n || !mob) {
-        CERROR << "Cudnot get node/mobmodel at id=" << id << "\n";
+        ERROR("Cudnot get node/mobmodel at id=%d\n", id);
         return FAILURE;
     }
     pos = mob->GetPosition (); 
@@ -161,7 +161,7 @@ int plcAddNode(ifaceCtx_t *ctx, uint16_t id)
     char name[32];
 
     if (getNodePosition(ctx, id, pos) != SUCCESS) {
-        CERROR << "failed getting node pos\n";
+        ERROR("failed getting node pos\n");
         return FAILURE;;
     }
 
@@ -214,18 +214,12 @@ int plcAddChannel(ifaceCtx_t *ctx)
     }
     channel = channelHelper.GetChannel();
     if (!channel) {
-        CERROR << "cudnot get PLC channel\n";
+        ERROR("cudnot get PLC channel\n");
         return FAILURE;
     }
     channel->InitTransmissionChannels();
     channel->CalcTransmissionChannels();
     return SUCCESS;
-}
-
-void plcHandleAck(uint16_t id)
-{
-    INFO("PLC rcvd ACK id=%d\n", id);
-    fflush(stdout);
 }
 
 static uint16_t getIdFromMacAddr(Mac48Address addr)
@@ -245,6 +239,26 @@ static uint16_t getIdFromMacAddr(Mac48Address addr)
     }
     CINFO << "Mac48Address=" << addr << " converted to id=" << id << "\n";
     return id;
+}
+
+void plcHandleAck(uint16_t id, uint32_t retries, Ptr<Packet> p,
+        Mac48Address snd, Mac48Address rcv)
+{
+    uint16_t dst_id;
+
+    dst_id = getIdFromMacAddr(rcv);
+    INFO("PLC rcvd ACK id=%d dst_id=%d retries=%d\n", id, dst_id, retries);
+    SendAckToStackline(id, dst_id, WF_STATUS_ACK_OK, retries+1);
+}
+
+void plcHandleTxFail(uint16_t id, Ptr<const Packet> p,
+                Mac48Address sndr, Mac48Address rcvr)
+{
+    uint16_t dst_id;
+
+    dst_id = getIdFromMacAddr(rcvr);
+    INFO("PLC TX FAILED %d -> %d len:%d\n", id, dst_id, p->GetSize());
+    SendAckToStackline(id, dst_id, WF_STATUS_NO_ACK, 0);
 }
 
 void plcHandleData(uint16_t id, Ptr<Packet> pin,
@@ -268,15 +282,13 @@ void plcHandleData(uint16_t id, Ptr<Packet> pin,
     mbuf->info.sig.rssi = 0;
     INFO("PLC DATA %d -> %d len:%d\n", mbuf->src_id, mbuf->dst_id, mbuf->len);
     SendPacketToStackline(id, mbuf);
-    fflush(stdout);
 }
 
 int plcConfigMac(uint16_t id, Ptr<PLC_NetDevice> dev)
 {
     Ptr<PLC_Mac> mac = dev->GetMac();
 
-    CINFO << "Configuring mac for id=" << id
-         << " dev=" << dev << "\n";
+    INFO("Configuring PLC MAC for id=%d\n", id);
 #if 0
     string macstr = CFG("plc_mac");
 
@@ -305,6 +317,8 @@ int plcConfigMac(uint16_t id, Ptr<PLC_NetDevice> dev)
             MakeBoundCallback(plcHandleAck, id));
     mac->SetMacDataCallback(
             MakeBoundCallback(plcHandleData, id));
+    mac->SetTransmissionFailedCallback(
+            MakeBoundCallback(plcHandleTxFail, id));
 
     return SUCCESS;
 }
@@ -317,12 +331,25 @@ int plcConfigAllNodes(void)
     for (i = 0; i < g_devMap.size(); ++i) {
         dev = getPlcNetDev(i);
         if (!dev) {
-            CERROR << "cudnot get dev at id=" << i << "\n";
+            ERROR("cudnot get dev at id=%d\n", i);
             return FAILURE;
         }
         plcConfigMac(i, dev);
     }
     return SUCCESS;
+}
+
+void plcEnableLog(void)
+{
+	string modstr = CFG("plc_log_enable");
+    vector<string> mods = split(modstr, ',');
+    const char *modname;
+
+    for (uint32_t i = 0; i < mods.size(); ++i) {
+        modname = mods.at(i).c_str();
+        INFO("Enabling NS3-PLC log for mod [%s]\n", modname);
+        LogComponentEnable(modname, LOG_LEVEL_INFO);
+    }
 }
 
 int plcInstall(ifaceCtx_t *ctx)
@@ -333,18 +360,17 @@ int plcInstall(ifaceCtx_t *ctx)
     string plc_link, cableStr;
     Ptr<const SpectrumModel> sm;
 
-    LogComponentEnable("PLC_Mac", LOG_LEVEL_INFO);
-    // Packet::EnablePrinting();
+    plcEnableLog();
 
     sm = plcGetSpectrumModel(CFG("plc_spectrum_model"));
     if (!sm) {
-        CERROR << "Get Spectrum model failed\n";
+        ERROR("Get Spectrum model failed\n");
         return FAILURE;
     }
 
     for (i = 0; i < numNodes; i++) {
         if (plcAddNode(ctx, i) != SUCCESS) {
-            CERROR << "PLC Node addition failed\n";
+            ERROR("PLC Node addition failed\n");
             return FAILURE;
         }
     }
@@ -352,7 +378,7 @@ int plcInstall(ifaceCtx_t *ctx)
     for (i = 0; i < numNodes; i++) {
         ni = WF_config.get_node_info((uint16_t)i);
         if (!ni) {
-            CERROR << "cudnot get nodeinfo\n";
+            ERROR("cudnot get nodeinfo\n");
             continue;
         }
 
@@ -362,23 +388,23 @@ int plcInstall(ifaceCtx_t *ctx)
         }
         vector<string> arr = split(plc_link, ',');
         if (arr.size() < 1) {
-            CERROR << "Invalid plc_link format\n";
+            ERROR("Invalid plc_link format\n");
             return FAILURE;
         }
         j = (uint16_t)stoi(arr.at(0));
         if (!IN_RANGE(j, 0, numNodes)) {
-            CERROR << "Invalid dst node in plc_link\n";
+            ERROR("Invalid dst node(%d) in plc_link\n", j);
             return FAILURE;
         }
         ret = plcConnectLink(ctx, i, j,
                 arr.size() > 1 ? arr.at(1) : "NAYY150SE");
         if (ret != SUCCESS) {
-            CERROR << "PLC Link setup failed\n";
+            ERROR("PLC Link setup failed\n");
             return FAILURE;
         }
     }
     if (plcAddChannel(ctx) != SUCCESS) {
-        CERROR << "plcAddChannel failed\n";
+        ERROR("plcAddChannel failed\n");
         return FAILURE;
     }
 

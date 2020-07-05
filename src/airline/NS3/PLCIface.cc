@@ -58,10 +58,8 @@ static int plcSendPacket(ifaceCtx_t *ctx, int id, msg_buf_t *mbuf)
     pkt = Create<Packet> (mbuf->buf, (uint32_t)mbuf->len);
     dst = getMacAddress(mbuf->dst_id);
 
-    CINFO << "Sending PLC pkt id=" << id
-         << " dst=" << dst
-         << " len=" << pkt->GetSize() << "\n";
-    fflush(stdout);
+    INFO("Sending PLC pkt id=%d dst=%d len=%d\n",
+            id, mbuf->dst_id, pkt->GetSize());
     return plcSend(id, dst, pkt);
 }
 
