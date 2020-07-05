@@ -1,0 +1,9 @@
+#!/bin/bash
+
+testcase()
+{
+    CFG=$TC_DIR/wf_plc.cfg
+    $WF_CMD $CFG
+	[[ $? -ne 0 ]] && tc_set_msg "invoke failed with $CFG" && return 1
+	wait4sec 60 "$WFSH cmd_rtsize 0" "9"
+}
