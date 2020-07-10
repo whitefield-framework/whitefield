@@ -63,7 +63,7 @@ dump_config()
 create_config()
 {
     [[ "$1" == "" ]] && dump_config && return
-    OPTS=`getopt --long riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
+    OPTS=`getopt -o h --long help,riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
         -n 'parse-options' -- "$@"`
     [[ $? -ne 0 ]] && usage
     eval set -- "$OPTS"
@@ -75,6 +75,7 @@ create_config()
             --ns3 )        NS="$2";            shift 2;;
             --monport )    MONITOR_PORT="$2";  shift 2;;
             --mode )       REL="$2";           shift 2;;
+            -h | --help )  usage;;
             -- ) shift; break ;;
             * ) break ;;
         esac
@@ -130,10 +131,10 @@ git_download()
     fi
 }
 
-chk_prerequisite
-
 create_config $*
 . $CFG_INC
+
+chk_prerequisite
 
 git_download
 
