@@ -63,7 +63,7 @@ dump_config()
 create_config()
 {
     [[ "$1" == "" ]] && dump_config && return
-    OPTS=`getopt --long riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
+    OPTS=`getopt -o h --long help,riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
         -n 'parse-options' -- "$@"`
     [[ $? -ne 0 ]] && usage
     eval set -- "$OPTS"
@@ -75,6 +75,7 @@ create_config()
             --ns3 )        NS="$2";            shift 2;;
             --monport )    MONITOR_PORT="$2";  shift 2;;
             --mode )       REL="$2";           shift 2;;
+            -h | --help )  usage;;
             -- ) shift; break ;;
             * ) break ;;
         esac
@@ -84,17 +85,17 @@ create_config()
 
 chk_cmd_present()
 {
-	pkgname=$2
-	[[ "$2" == "" ]] && pkgname=${1}
-	echo -en "checking [$pkgname] ... "
-	which $1>/dev/null
-	[[ $? -ne 0 ]] && echo "Please install [$pkgname] and restart install" && exit 1
+	echo -en "checking [$1] ... "
+	dpkg -S $1 >/dev/null 2>&1
+	[[ $? -ne 0 ]] && sudo apt install -y $1
 	echo -en "done\n"
 }
 
 chk_prerequisite()
 {
-	sudo apt -y install libc6-dev-i386 git make gcc g++ automake m4 libtool graphviz jq python unzip libboost-all-dev
+	chk_cmd_present libc6-dev-i386
+	chk_cmd_present libboost-all-dev
+	chk_cmd_present unzip
 	chk_cmd_present git
 	chk_cmd_present make
 	chk_cmd_present gcc
@@ -103,28 +104,39 @@ chk_prerequisite()
 	chk_cmd_present automake
 	chk_cmd_present m4
 	chk_cmd_present jq
-	chk_cmd_present libtoolize libtool
-	chk_cmd_present dot graphviz
+	chk_cmd_present libtool
+	chk_cmd_present graphviz
+}
+
+git_submodule_dload()
+{
+    [[ $1 -eq 1 ]] && echo "Submodule init [$2] ..." && \
+        git submodule update --progress --init -- $2 && \
+        cd $2 && git checkout master && cd -
 }
 
 git_download()
 {
-    git submodule update --init --progress
-    git submodule foreach git pull origin master
+    git_submodule_dload $NS $AIRLINE_NS3
+    git_submodule_dload $RIOT_EN $STACKLINE_RIOT
+    git_submodule_dload $CTK_EN $STACKLINE_CONTIKI
+    git_submodule_dload $CTKNG_EN $STACKLINE_CONTIKING
+    git_submodule_dload $OT_EN $STACKLINE_OPENTHREAD
 
-    cd thirdparty/ns-3-dev-git
-    git submodule update --init --progress
-    git submodule foreach git pull origin master
-
-    cd -
+    if [ $NS -eq 1 ]; then
+        cd thirdparty/ns-3-dev-git
+        git submodule update --init --progress
+        git submodule foreach git pull origin master
+        cd -
+    fi
 }
+
+create_config $*
+. $CFG_INC
 
 chk_prerequisite
 
 git_download
-
-create_config $*
-. $CFG_INC
 
 if [ "$AIRLINE_NS3" != "" ]; then #Build NS3
 	cd $AIRLINE_NS3
