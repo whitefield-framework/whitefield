@@ -110,7 +110,8 @@ chk_prerequisite()
 git_submodule_dload()
 {
     [[ $1 -eq 1 ]] && echo "Submodule init [$2] ..." && \
-        git submodule update --progress --init --checkout -- $2
+        git submodule update --progress --init -- $2 && \
+        cd $2 && git checkout master && cd -
 }
 
 git_download()
