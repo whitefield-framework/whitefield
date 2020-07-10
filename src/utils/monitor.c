@@ -139,7 +139,12 @@ int start_monitor_thread(void)
     pthread_t tid;
     char *    ptr = getenv("MONITOR_PORT");
 
-    gMonitorFD = start_udp_server(ptr ? atoi(ptr) : 61616);
+    if (!ptr) {
+        ERROR("MONITOR_PORT is not defined. (Chk config.inc)\n");
+        return FAILURE;
+    }
+
+    gMonitorFD = start_udp_server(atoi(ptr));
     if (gMonitorFD < 0) {
         ERROR("Failure starting UDP server\n");
         return FAILURE;

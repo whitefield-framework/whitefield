@@ -1,6 +1,86 @@
 #!/bin/bash
 
-. config.inc
+CFG_INC=config.inc
+
+RIOT_EN=0
+STACKLINE_RIOT=thirdparty/RIOT
+
+CTK_EN=1
+STACKLINE_CONTIKI=thirdparty/contiki
+
+CTKNG_EN=0
+STACKLINE_CONTIKING=thirdparty/contiki-ng
+
+OT_EN=0
+STACKLINE_OPENTHREAD=thirdparty/openthread
+
+NS=1
+AIRLINE_NS3=thirdparty/ns-3-dev-git
+
+REL=debug
+
+get_def_monitor_port()
+{
+    let MONITOR_PORT=65536-`id -u`
+    [[ $MONITOR_PORT -lt 1024 ]] && 
+        echo "MONITOR_PORT=$MONITOR_PORT is inappropriate!" &&
+        exit 1
+}
+
+get_def_monitor_port
+
+usage()
+{
+    echo "Usage: $0 <options>"
+    echo \
+"Options:
+    --riot <0/1> ... enable RIOT OS <def: 0>
+    --contiki <0/1> ... enable Contiki OS <def: 1>
+    --contiki-ng <0/1> ... enable Contiki-ng OS <def: 0>
+    --openthread <0/1> ... enable Openthread <def: 0>
+    --ns3 <0/1> ... enable NS3 <def: 1>
+    --monport <port-num> ... Monitor Port, (def: linux user-id)
+    --mode <debug/release> ... build type <def: debug>
+"
+    exit 2
+}
+
+dump_config()
+{
+    echo "# Auto-generated file from setup.sh script. Do not modify manually." > $CFG_INC
+    [[ $NS -eq 1 ]] && echo -en "AIRLINE=NS3\nAIRLINE_NS3=$AIRLINE_NS3\n" >> $CFG_INC
+    [[ $CTK_EN -eq 1 ]] && echo "STACKLINE_CONTIKI=$STACKLINE_CONTIKI" >> $CFG_INC
+    [[ $CTKNG_EN -eq 1 ]] && echo "STACKLINE_CONTIKING=$STACKLINE_CONTIKING" >> $CFG_INC
+    [[ $RIOT_EN -eq 1 ]] && echo "STACKLINE_RIOT=$STACKLINE_RIOT" >> $CFG_INC
+    [[ $OT_EN -eq 1 ]] && echo "STACKLINE_OPENTHREAD=$STACKLINE_OPENTHREAD" >> $CFG_INC
+    echo "REL=$REL" >> $CFG_INC
+    echo "BINDIR=bin" >> $CFG_INC
+    echo "MONITOR_PORT=$MONITOR_PORT" >> $CFG_INC
+
+    cat $CFG_INC
+}
+
+create_config()
+{
+    [[ "$1" == "" ]] && dump_config && return
+    OPTS=`getopt --long riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
+        -n 'parse-options' -- "$@"`
+    [[ $? -ne 0 ]] && usage
+    eval set -- "$OPTS"
+    while true; do
+        case "$1" in
+            --riot )       RIOT_EN="$2";       shift 2;;
+            --contiki )    CTK_EN="$2";        shift 2;;
+            --contiki-ng ) CTKNG_EN="$2";      shift 2;;
+            --ns3 )        NS="$2";            shift 2;;
+            --monport )    MONITOR_PORT="$2";  shift 2;;
+            --mode )       REL="$2";           shift 2;;
+            -- ) shift; break ;;
+            * ) break ;;
+        esac
+    done
+    dump_config
+}
 
 chk_cmd_present()
 {
@@ -42,6 +122,9 @@ git_download()
 chk_prerequisite
 
 git_download
+
+create_config $*
+. $CFG_INC
 
 if [ "$AIRLINE_NS3" != "" ]; then #Build NS3
 	cd $AIRLINE_NS3

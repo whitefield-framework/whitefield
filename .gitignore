@@ -4,6 +4,7 @@ log/
 tags
 thirdparty/
 regression/testcase_report.log
+config.inc
 docs/_build/
 *.swp
 compile_commands.json
