@@ -18,6 +18,8 @@
  * @}
  */
 
+#if PLC
+
 #include <common.h>
 #include <Nodeinfo.h>
 #include <Config.h>
@@ -77,3 +79,4 @@ ifaceApi_t plcIface = {
     cleanup        : plcCleanup,
 };
 
+#endif

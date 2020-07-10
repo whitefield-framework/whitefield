@@ -38,10 +38,11 @@ int g_def_line              = -1;
 socklen_t usock_setabsaddr(const long mtype, struct sockaddr_un *addr)
 {
     int len;
+    uid_t uid = getuid();
 
     addr->sun_family  = AF_UNIX;
     addr->sun_path[0] = 0;
-    len               = snprintf(&addr->sun_path[1], sizeof(addr->sun_path) - 1, "/WHITEFIELD_%08lx", mtype);
+    len               = snprintf(&addr->sun_path[1], sizeof(addr->sun_path) - 1, "/WHITEFIELD_%d_%08lx", uid, mtype);
     return sizeof(sa_family_t) + len + 1;
 }
 
