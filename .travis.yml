@@ -16,5 +16,5 @@ before_script:
   - git submodule foreach git pull origin master
 
 script:
-  - ./scripts/setup.sh
+  - ./scripts/setup.sh --riot 1 --contiki-ng 1
   - timeout 600 ./regression/regress.sh regression/full.set
