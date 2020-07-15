@@ -78,7 +78,7 @@ $./scripts/wfshell help
 $./scripts/wfshell stop_whitefield
 ```
 
-* ### [Configuration manual](docs/wf_config_help.md "Whitefield Configuration")
+* ### [Configuration manual](docs/wf-config-help.rst "Whitefield Configuration")
 * ### [OAM/Monitor command manual](docs/wf_oam_help.md "Whitefield OAM commands")
 * ### [Using RIOT/Contiki with Whitefield](docs/wf_using_riot_contiki.md "Whitefield with Contiki/RIOT")
 * ### [Using OpenThread with Whitefield](docs/OpenThread.md "Whitefield with OpenThread")

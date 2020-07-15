@@ -60,6 +60,39 @@ dump_config()
     cat $CFG_INC
 }
 
+NC='\033[0m' # No Color
+RED='\033[0;31m'
+LRED='\033[0;33m'
+GREEN='\033[0;32m'
+echoc()
+{
+    clr="$1"; shift;
+    printf "${clr}$*${NC}"
+}
+
+show_module()
+{
+    if [ $2 -eq 0 ]; then
+        echoc $LRED "$1 Disabled"
+        echo " ... use \"$3 1\" to enable"
+    else
+        echoc $GREEN "$1 Enabled"
+        echo " ... use \"$3 0\" to disable"
+    fi
+}
+
+show_config()
+{
+    echo -en "\n---=[Setup Configuration]=---\n"
+    show_module "NS3" $NS "--ns3"
+    show_module "Contiki" $CTK_EN "--contiki"
+    show_module "Contiki-NG" $CTKNG_EN "--contiki-ng"
+    show_module "RIOT" $RIOT_EN "--riot"
+    show_module "OpenThread" $OT_EN "--openthread"
+    echo "REL=$REL"
+    echo -en "-----------------------------\n"
+}
+
 create_config()
 {
     [[ "$1" == "" ]] && dump_config && return
@@ -142,7 +175,7 @@ if [ "$AIRLINE_NS3" != "" ]; then #Build NS3
 	cd $AIRLINE_NS3
 	./waf configure
 	if [ $? -ne 0 ]; then
-		echo "********* NS3 Compilation failed *********"
+		echoc $RED "********* NS3 Compilation failed *********"
 		exit 1
 	fi
 	cd -
@@ -151,7 +184,10 @@ fi
 #Build Whitefield
 make
 if [ $? -ne 0 ]; then
-	echo "********* Whitefield Compilation failed *********"
+	echoc $RED "********* Whitefield Compilation failed *********"
 	exit 1
 fi
 
+show_config
+
+echo "---=[Setup Success]=---"
