@@ -128,8 +128,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'WhitefieldFramework.tex', u'Whitefield Framework Documentation',
-     u'Rahul Jadhav, Anmol Sarma', 'manual'),
+    (master_doc, 'WhitefieldFramework.tex', u'Whitefield Documentation',
+     u'Rahul Jadhav', 'manual'),
 ]
 
 
@@ -138,7 +138,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'whitefieldframework', u'Whitefield Framework Documentation',
+    (master_doc, 'whitefieldframework', u'Whitefield Documentation',
      [author], 1)
 ]
 
@@ -149,7 +149,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'WhitefieldFramework', u'Whitefield Framework Documentation',
+    (master_doc, 'WhitefieldFramework', u'Whitefield Documentation',
      author, 'WhitefieldFramework', 'One line description of project.',
      'Miscellaneous'),
 ]
