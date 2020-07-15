@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Whitefield Framework'
-copyright = u'2018, Rahul Jadhav, Anmol Sarma'
-author = u'Rahul Jadhav, Anmol Sarma'
+copyright = u'2018, Rahul Jadhav'
+author = u'Rahul Jadhav'
 
 # The short X.Y version
 version = u''
