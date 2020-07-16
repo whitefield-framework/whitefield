@@ -21,7 +21,7 @@ REL=debug
 
 get_def_monitor_port()
 {
-    let MONITOR_PORT=65536-`id -u`
+    let MONITOR_PORT=65536-`id -u`-6
     [[ $MONITOR_PORT -lt 1024 ]] && 
         echo "MONITOR_PORT=$MONITOR_PORT is inappropriate!" &&
         exit 1
