@@ -231,7 +231,7 @@ void AirlineManager::setNodeSpecificParam(NodeContainer & nodes)
     string txpower, deftxpower = CFG("txPower");
 
 	for(int i=0;i<(int)nodes.GetN();i++) {
-		ni=WF_config.get_node_info(i);
+		ni = WF_config.get_node_info(i);
 		if(!ni) {
 			CERROR << "GetN doesnt match nodes stored in config!!\n";
 			return;

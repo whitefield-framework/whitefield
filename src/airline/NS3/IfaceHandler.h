@@ -61,15 +61,15 @@ typedef enum {
     IFACE_MAX
 } IfaceType;
 
-#define GET_IFACE(CTX, IFACE, API)               \
-    IFACE = getIfaceApi(CTX);                    \
-    if (!IFACE) {                                \
-        return FAILURE;                          \
-    }                                            \
-    if (!IFACE->API) {                           \
-        CERROR << "Iface does not support API %s"\
-              << __FUNCTION__ << "\n";           \
-        return ERR_NOT_SUPP;                     \
+#define GET_IFACE(CTX, IFACE, API)                \
+    IFACE = getIfaceApi(CTX);                     \
+    if (!IFACE) {                                 \
+        return FAILURE;                           \
+    }                                             \
+    if (!IFACE->API) {                            \
+        CERROR << "Iface does not support API %s" \
+               << __FUNCTION__ << "\n";           \
+        return ERR_NOT_SUPP;                      \
     }
 
 int               ifaceInstall(ifaceCtx_t *ctx);

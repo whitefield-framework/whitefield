@@ -301,6 +301,18 @@ Nodeinfo *Config::get_node_info(uint16_t id)
 	return &nodeArray[id];
 }
 
+string Config::getNodeCfg(uint16_t id, string key)
+{
+    Nodeinfo *ni;
+
+    ni = get_node_info(id);
+    if (!ni) {
+        return string();
+    }
+
+    return ni->getkv(key);
+}
+
 int Config::setNumberOfNodes(const int value)
 {
 	clearNodeArray();

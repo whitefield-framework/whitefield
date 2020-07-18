@@ -35,6 +35,8 @@
 
 PLC_SpectrumModelHelper g_smHelper;
 PLC_NetdeviceMap g_devMap;
+Ptr<PLC_Channel> g_channel;
+Ptr<PLC_Graph> g_plcGraph;
 
 Ptr<const SpectrumModel>  plcGetSpectrumModel(string str)
 {
@@ -143,6 +145,49 @@ Mac48Address getMacAddress(uint16_t id)
     return Mac48Address(buf);
 }
 
+int plcAddOutlet(Ptr<PLC_Node> n, uint16_t id)
+{
+    Ptr<PLC_Outlet> outlet;
+    string outletimp;
+
+    outletimp = WF_config.getNodeCfg(id, "plc_outlet_impedance");
+    if (outletimp.empty()) {
+        outlet = CreateObject<PLC_Outlet> (n);
+    } else {
+        INFO("Adding outlet with impedance=%s\n", outletimp.c_str());
+        outlet = CreateObject<PLC_Outlet> (n,
+                    Create<PLC_ConstImpedance> (plcGetSpectrumModel(), stod(outletimp)));
+    }
+    return outlet ? SUCCESS : FAILURE;
+}
+
+int plcAddInterface(Ptr<PLC_Node> n, uint16_t id)
+{
+    string intf;
+    bool tx = true, rx = true;
+
+    intf = WF_config.getNodeCfg(id, "plc_interface");
+    if (!intf.empty()) {
+        if (!stricmp(intf, "none")) {
+            tx = rx = false;
+        } else if (!stricmp(intf, "rx")) {
+            tx = false;
+        } else if (!stricmp(intf, "tx")) {
+            rx = false;
+        } else {
+            ERROR("PLC Interface unknown dir:%s\n", intf.c_str());
+            return FAILURE;
+        }
+    }
+    if (tx) g_channel->AddTxInterface(CreateObject<PLC_TxInterface> (n, plcGetSpectrumModel()));
+    if (rx) {
+        Ptr<PLC_RxInterface> ri = CreateObject<PLC_RxInterface> (n, plcGetSpectrumModel());
+        ri->AggregateObject(CreateObject<Node> ());
+        g_channel->AddRxInterface(ri);
+    }
+    return SUCCESS;
+}
+
 /*
  * PLC Node has an outlet which has an interface.
  */
@@ -150,14 +195,6 @@ int plcAddNode(ifaceCtx_t *ctx, uint16_t id)
 {
     Vector pos;
     Ptr<PLC_Node> n;
-#if 0
-    Ptr<const SpectrumModel> sm = plcGetSpectrumModel();
-    Ptr<PLC_InformationRatePhy> phy;
-    Ptr<SpectrumValue> txPsd = getTxPsd();
-    Ptr<PLC_Outlet> outlet;
-    Ptr<SpectrumValue> noiseFloor;
-    Ptr<PLC_ArqMac> mac;
-#endif
     char name[32];
 
     if (getNodePosition(ctx, id, pos) != SUCCESS) {
@@ -166,15 +203,6 @@ int plcAddNode(ifaceCtx_t *ctx, uint16_t id)
     }
 
     n      = CreateObject<PLC_Node> ();
-#if 0
-    phy    = CreateObject<PLC_InformationRatePhy> ();
-    outlet = CreateObject<PLC_Outlet> (n);
-    mac    = CreateObject<PLC_ArqMac> ();
-    if (!n || !phy || !txPsd || !outlet || !mac) {
-        CERROR << "Cudnot create node/phy/txPsd/outlet\n";
-        return FAILURE;
-    }
-#endif
     // convert to cm
     pos.x *= 100;
     pos.y *= 100;
@@ -185,24 +213,26 @@ int plcAddNode(ifaceCtx_t *ctx, uint16_t id)
     n->SetPosition(pos.x, pos.y, pos.z); // convert to cm
     getDevName(id, name, sizeof(name));
     n->SetName(name);
-    ctx->plcNodes.push_back(n);
+
+    if (plcAddOutlet(n, id) != SUCCESS) {
+        ERROR("cudnot create PLC outlet\n");
+        return FAILURE;
+    }
 
 #if 0
-    noiseFloor = CreateWorstCaseBgNoise(sm)->GetNoisePsd();
-    phy->SetNoiseFloor(noiseFloor);
-    phy->SetHeaderModulationAndCodingScheme(
-            ModulationAndCodingScheme(BPSK_1_2,0));
-    phy->SetPayloadModulationAndCodingScheme(
-            ModulationAndCodingScheme(BPSK_RATELESS,0));
-    mac->SetPhy(phy);
-    mac->SetAddress(getMacAddress(id));
-
-    phy->CreateInterfaces(outlet, txPsd);
-    phy->GetRxInterface()->AggregateObject(CreateObject<Node> ());
+    if (plcAddInterface(n, id) != SUCCESS) {
+        ERROR("cudnot add PLC interface\n");
+        return FAILURE;
+    }
 #endif
+
+    g_plcGraph->AddNode(n);
+    ctx->plcNodes.push_back(n);
+
     return SUCCESS;
 }
 
+#if 0
 int plcAddChannel(ifaceCtx_t *ctx)
 {
     Ptr<const SpectrumModel> sm = plcGetSpectrumModel();
@@ -219,6 +249,37 @@ int plcAddChannel(ifaceCtx_t *ctx)
     }
     channel->InitTransmissionChannels();
     channel->CalcTransmissionChannels();
+    return SUCCESS;
+}
+#endif
+
+int plcAddChannel(ifaceCtx_t *ctx)
+{
+    Ptr<const SpectrumModel> sm = plcGetSpectrumModel();
+
+    if (!g_plcGraph) {
+        g_plcGraph = CreateObject<PLC_Graph> ();
+    }
+    if (!g_channel) {
+        g_channel = CreateObject<PLC_Channel> ();
+        g_channel->SetGraph(g_plcGraph);
+    }
+
+    if (!g_plcGraph || !g_channel) {
+        ERROR("cudnot get create PLC channel\n");
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+int plcInitChannel(void)
+{
+    if (!g_channel) {
+        ERROR("Channel not created!\n");
+        return FAILURE;
+    }
+    g_channel->InitTransmissionChannels();
+    g_channel->CalcTransmissionChannels();
     return SUCCESS;
 }
 
@@ -323,13 +384,23 @@ int plcConfigMac(uint16_t id, Ptr<PLC_NetDevice> dev)
     return SUCCESS;
 }
 
-int plcConfigAllNodes(void)
+Ptr<PLC_NetDevice> getPlcNetDev(void *arg, int id)
+{
+    ifaceCtx_t *ctx = (ifaceCtx_t *)arg;
+    extern PLC_NetdeviceMap g_devMap;
+    char name[64];
+    (void)ctx;
+    getDevName(id, name, sizeof(name));
+    return g_devMap[name];
+}
+
+int plcConfigAllNodes(ifaceCtx_t *ctx)
 {
     uint16_t i;
     Ptr<PLC_NetDevice> dev;
 
     for (i = 0; i < g_devMap.size(); ++i) {
-        dev = getPlcNetDev(i);
+        dev = getPlcNetDev(ctx, i);
         if (!dev) {
             ERROR("cudnot get dev at id=%d\n", i);
             return FAILURE;
@@ -356,7 +427,6 @@ int plcInstall(ifaceCtx_t *ctx)
 {
 	int numNodes = stoi(CFG("numOfNodes")), ret;
     uint16_t i, j;
-    wf::Nodeinfo *ni = NULL;
     string plc_link, cableStr;
     Ptr<const SpectrumModel> sm;
 
@@ -368,6 +438,11 @@ int plcInstall(ifaceCtx_t *ctx)
         return FAILURE;
     }
 
+    if (plcAddChannel(ctx) != SUCCESS) {
+        ERROR("plc Add Channel failed\n");
+        return FAILURE;
+    }
+
     for (i = 0; i < numNodes; i++) {
         if (plcAddNode(ctx, i) != SUCCESS) {
             ERROR("PLC Node addition failed\n");
@@ -376,13 +451,7 @@ int plcInstall(ifaceCtx_t *ctx)
     }
 
     for (i = 0; i < numNodes; i++) {
-        ni = WF_config.get_node_info((uint16_t)i);
-        if (!ni) {
-            ERROR("cudnot get nodeinfo\n");
-            continue;
-        }
-
-        plc_link = ni->getkv("plc_link");
+        plc_link = WF_config.getNodeCfg((uint16_t)i, "plc_link");
         if (plc_link.empty()) {
             continue;
         }
@@ -403,19 +472,15 @@ int plcInstall(ifaceCtx_t *ctx)
             return FAILURE;
         }
     }
-    if (plcAddChannel(ctx) != SUCCESS) {
-        ERROR("plcAddChannel failed\n");
-        return FAILURE;
-    }
 
     static PLC_NetDeviceHelper deviceHelper(sm, getTxPsd(), ctx->plcNodes);
     deviceHelper.SetNoiseFloor(CreateWorstCaseBgNoise(sm)->GetNoisePsd());
     deviceHelper.Setup();
     g_devMap = deviceHelper.GetNetdeviceMap();
 
-    plcAddChannel(NULL); // if NULL then only init/calc channel
+    plcInitChannel();
 
-    return plcConfigAllNodes();
+    return plcConfigAllNodes(ctx);
 }
 
 int plcSend(uint16_t id, Mac48Address dst, Ptr<Packet> pkt)
