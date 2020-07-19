@@ -37,7 +37,7 @@ int g_def_line              = -1;
 
 socklen_t usock_setabsaddr(const long mtype, struct sockaddr_un *addr)
 {
-    int len;
+    int   len;
     uid_t uid = getuid();
 
     addr->sun_family  = AF_UNIX;

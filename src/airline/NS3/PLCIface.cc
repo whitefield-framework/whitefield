@@ -47,7 +47,7 @@ static int plcSetAddress(ifaceCtx_t *ctx, int id, const char *buf, int sz)
         CERROR << "PLC Invalid address size=" << sz << "\n";
         return FAILURE;
     }
-    dev = getPlcNetDev(id);
+    dev = getPlcNetDev(ctx, id);
     dev->GetMac()->SetAddress(addr);
     return SUCCESS;
 }
