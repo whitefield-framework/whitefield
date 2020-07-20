@@ -16,12 +16,27 @@ import tempfile
 
 import bottle
 
-MONITOR_PORT = 61616
 BOTTLE_PORT = 8080
 BOTTLE_HOST = '0.0.0.0'
+CFGINC = {}
+MONITOR_PORT = 0
 ASSETS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'assets'))
 bottle.TEMPLATE_PATH.insert(0, ASSETS_PATH)
 
+def get_config():
+    global MONITOR_PORT
+    if len(CFGINC) > 0:
+        return CFGINC
+    with open("config.inc") as myfile:
+        for line in myfile:
+            name, var = line.partition("=")[::2]
+            if name.startswith('#'):
+                continue
+            CFGINC[name.strip()] = var.strip()
+    MONITOR_PORT = int(CFGINC['MONITOR_PORT'])
+    if MONITOR_PORT <= 0:
+        print("MONITOR PORT not defined in config.inc")
+        sys.exit()
 
 def query_nodes():
     fd, path = tempfile.mkstemp(text=True)
@@ -79,6 +94,7 @@ def index():
 
 if __name__ == '__main__':
     try:
+        get_config()
         query_edges(query_nodes())
     except socket.timeout:
         print('No response received form StackLine/AirLine\nIs Whitefield running?', file=sys.stderr)
