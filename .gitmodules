@@ -18,3 +18,7 @@
 	path = thirdparty/contiki-ng
 	url = https://github.com/whitefield-framework/contiki-ng
 	branch = master
+[submodule "thirdparty/contiki-RFC6551"]
+	path = thirdparty/contiki-RFC6551
+	url = https://github.com/Amrican10/contiki_RPL_RFC6551
+	branch = master
