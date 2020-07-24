@@ -17,6 +17,11 @@ STACKLINE_DEP+=contiking
 STACKLINE_DEPCLEAN+=contiking_clean
 endif
 
+ifneq ($(STACKLINE_CONTIKI6551),)
+STACKLINE_DEP+=contiki6551
+STACKLINE_DEPCLEAN+=contiki6551_clean
+endif
+
 ifneq ($(STACKLINE_OPENTHREAD),)
 STACKLINE_DEP+=openthread
 STACKLINE_DEPCLEAN+=openthread_clean
@@ -47,11 +52,17 @@ contiki:
 contiking:
 	$(MAKE) -C $(STACKLINE_CONTIKING)/examples/rpl-udp TARGET=whitefield
 
+contiki6551:
+	$(MAKE) -C $(STACKLINE_CONTIKI6551)/examples/containers TARGET=whitefield
+
 contiki_clean:
 	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield clean
 
 contiking_clean:
 	$(MAKE) -C $(STACKLINE_CONTIKING)/examples/rpl-udp TARGET=whitefield clean
+	
+contiki6551_clean:
+	$(MAKE) -C $(STACKLINE_CONTIKI6551)/examples/containers TARGET=whitefield clean	
 
 openthread:
 	@if [ -d $(STACKLINE_OPENTHREAD) ]; then \
