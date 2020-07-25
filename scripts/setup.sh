@@ -11,6 +11,9 @@ STACKLINE_CONTIKI=thirdparty/contiki
 CTKNG_EN=0
 STACKLINE_CONTIKING=thirdparty/contiki-ng
 
+CTK6551_EN=0
+STACKLINE_CONTIKI6551=thirdparty/contiki-RFC6551
+
 OT_EN=0
 STACKLINE_OPENTHREAD=thirdparty/openthread
 
@@ -37,6 +40,7 @@ usage()
     --riot <0/1> ... enable RIOT OS <def: 0>
     --contiki <0/1> ... enable Contiki OS <def: 1>
     --contiki-ng <0/1> ... enable Contiki-ng OS <def: 0>
+    --contiki-RFC6551 <0/1> ... enable Contiki-RFC6551 OS <def: 0>
     --openthread <0/1> ... enable Openthread <def: 0>
     --ns3 <0/1> ... enable NS3 <def: 1>
     --monport <port-num> ... Monitor Port, (def: linux user-id)
@@ -51,6 +55,7 @@ dump_config()
     [[ $NS -eq 1 ]] && echo -en "AIRLINE=NS3\nAIRLINE_NS3=$AIRLINE_NS3\n" >> $CFG_INC
     [[ $CTK_EN -eq 1 ]] && echo "STACKLINE_CONTIKI=$STACKLINE_CONTIKI" >> $CFG_INC
     [[ $CTKNG_EN -eq 1 ]] && echo "STACKLINE_CONTIKING=$STACKLINE_CONTIKING" >> $CFG_INC
+    [[ $CTK6551_EN -eq 1 ]] && echo "STACKLINE_CONTIKI6551=$STACKLINE_CONTIKI6551" >> $CFG_INC
     [[ $RIOT_EN -eq 1 ]] && echo "STACKLINE_RIOT=$STACKLINE_RIOT" >> $CFG_INC
     [[ $OT_EN -eq 1 ]] && echo "STACKLINE_OPENTHREAD=$STACKLINE_OPENTHREAD" >> $CFG_INC
     echo "REL=$REL" >> $CFG_INC
@@ -87,6 +92,7 @@ show_config()
     show_module "NS3" $NS "--ns3"
     show_module "Contiki" $CTK_EN "--contiki"
     show_module "Contiki-NG" $CTKNG_EN "--contiki-ng"
+    show_module "Contiki-RFC6551" $CTK6551_EN "--contiki-RFC6551"
     show_module "RIOT" $RIOT_EN "--riot"
     show_module "OpenThread" $OT_EN "--openthread"
     echo "REL=$REL"
@@ -96,7 +102,7 @@ show_config()
 create_config()
 {
     [[ "$1" == "" ]] && dump_config && return
-    OPTS=`getopt -o h --long help,riot:,contiki:,contiki-ng:,ns3:,monport:,mode: \
+    OPTS=`getopt -o h --long help,riot:,contiki:,contiki-ng:,ns3:,contiki-RFC6551:,monport:,mode: \
         -n 'parse-options' -- "$@"`
     [[ $? -ne 0 ]] && usage
     eval set -- "$OPTS"
@@ -105,6 +111,7 @@ create_config()
             --riot )       RIOT_EN="$2";       shift 2;;
             --contiki )    CTK_EN="$2";        shift 2;;
             --contiki-ng ) CTKNG_EN="$2";      shift 2;;
+            --contiki-RFC6551 ) CTK6551_EN="$2";      shift 2;;
             --ns3 )        NS="$2";            shift 2;;
             --monport )    MONITOR_PORT="$2";  shift 2;;
             --mode )       REL="$2";           shift 2;;
@@ -154,6 +161,7 @@ git_download()
     git_submodule_dload $RIOT_EN $STACKLINE_RIOT
     git_submodule_dload $CTK_EN $STACKLINE_CONTIKI
     git_submodule_dload $CTKNG_EN $STACKLINE_CONTIKING
+    git_submodule_dload $CTK6551_EN $STACKLINE_CONTIKI6551
     git_submodule_dload $OT_EN $STACKLINE_OPENTHREAD
 
     if [ $NS -eq 1 ]; then
