@@ -43,12 +43,13 @@ riot_clean:
 
 contiki:
 	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield
-
+	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/containers TARGET=whitefield
 contiking:
 	$(MAKE) -C $(STACKLINE_CONTIKING)/examples/rpl-udp TARGET=whitefield
 
 contiki_clean:
 	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/ipv6/rpl-udp TARGET=whitefield clean
+	$(MAKE) -C $(STACKLINE_CONTIKI)/examples/containers TARGET=whitefield clean
 
 contiking_clean:
 	$(MAKE) -C $(STACKLINE_CONTIKING)/examples/rpl-udp TARGET=whitefield clean
