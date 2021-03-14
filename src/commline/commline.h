@@ -157,7 +157,7 @@ enum {
 #define INFO(...)              \
     PRN("INFO ", __VA_ARGS__); \
     fflush(NULL)
-#define WARN(...) PRN("WARN " __VA_ARGS__)
+#define WARN(...) PRN("WARN ", __VA_ARGS__)
 #endif //ERROR
 
 /* MAC DataConfirmation status */

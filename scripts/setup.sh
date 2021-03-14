@@ -2,7 +2,7 @@
 
 CFG_INC=config.inc
 
-RIOT_EN=0
+RIOT_EN=1
 STACKLINE_RIOT=thirdparty/RIOT
 
 CTK_EN=1
@@ -22,7 +22,7 @@ REL=debug
 get_def_monitor_port()
 {
     let MONITOR_PORT=65536-`id -u`-6
-    [[ $MONITOR_PORT -lt 1024 ]] && 
+    [[ $MONITOR_PORT -lt 1024 ]] &&
         echo "MONITOR_PORT=$MONITOR_PORT is inappropriate!" &&
         exit 1
 }
@@ -119,9 +119,7 @@ create_config()
 chk_cmd_present()
 {
 	echo -en "checking [$1] ... "
-	dpkg -S $1 >/dev/null 2>&1
-	[[ $? -ne 0 ]] && sudo apt install -y $1
-	echo -en "done\n"
+	sudo apt install -y $1
 }
 
 chk_prerequisite()
