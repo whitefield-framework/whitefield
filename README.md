@@ -83,7 +83,7 @@ $./scripts/wfshell stop_whitefield
 * ### [Using RIOT/Contiki with Whitefield](docs/wf_using_riot_contiki.md "Whitefield with Contiki/RIOT")
 * ### [Using OpenThread with Whitefield](docs/OpenThread.md "Whitefield with OpenThread")
 * ### [Whitefield compared to Cooja/NS3](docs/wf-vs-cooja.md "Whitefield compared to Cooja/NS3")
-* ### [Module support table](docs/README.md "Module support table")
+* ### [Module support table](docs/wf-module-support.rst "Module support table")
 * ### [Forum](https://groups.google.com/forum/?pli=1#!forum/whitefield-fw "Mailing List")
 
 ### Work done in Whitefield
