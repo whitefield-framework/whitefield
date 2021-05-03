@@ -3,7 +3,7 @@
 [![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/nyrahul/whitefield)
 [![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
 [![Doc status](https://readthedocs.org/projects/whitefield/badge/?version=latest)](https://whitefield.readthedocs.io/en/latest/)
-[![Join the chat at https://gitter.im/whitefield-fw](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/whitefield-fw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/whitefield-fw](https://img.shields.io/badge/Got%20Questions%3F-Chat-Violet)](https://github.com/whitefield-framework/whitefield/discussions)
 
 Whitefield provides a simulation environment for sensor networks by
 combining realistic PHY/MAC layer simulation with the native mode use of popular IoT
