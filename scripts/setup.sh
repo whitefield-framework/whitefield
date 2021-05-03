@@ -119,7 +119,7 @@ create_config()
 chk_cmd_present()
 {
 	echo -en "checking [$1] ... "
-	sudo apt install -y $1
+	sudo apt install -f -y $1
 }
 
 chk_prerequisite()
