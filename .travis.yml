@@ -8,7 +8,7 @@ cache:
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -q
-  - sudo apt-get install git -y
+  - sudo apt-get install git libc6-dev-i386 libboost-all-dev gcc-multilib gcc g++ python make automake m4 libtool -y
 
 before_script:
   - git submodule update --init

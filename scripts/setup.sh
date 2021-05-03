@@ -124,18 +124,16 @@ chk_cmd_present()
 
 chk_prerequisite()
 {
-	sudo apt update
-	sudo apt upgrade
-	chk_cmd_present libc6-dev-i386
-	chk_cmd_present libboost-all-dev
+	# chk_cmd_present libc6-dev-i386
+	# chk_cmd_present libboost-all-dev
 	chk_cmd_present unzip
-	chk_cmd_present git
-	chk_cmd_present make
-	chk_cmd_present gcc
-	chk_cmd_present gcc-9-multilib
-	chk_cmd_present gcc-multilib
-	chk_cmd_present python
-	chk_cmd_present g++
+	# chk_cmd_present git
+	# chk_cmd_present make
+	# chk_cmd_present gcc
+	# chk_cmd_present gcc-9-multilib
+	# chk_cmd_present gcc-multilib
+	# chk_cmd_present python
+	# chk_cmd_present g++
 	chk_cmd_present automake
 	chk_cmd_present m4
 	chk_cmd_present jq
