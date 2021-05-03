@@ -124,6 +124,8 @@ chk_cmd_present()
 
 chk_prerequisite()
 {
+	sudo apt update
+	sudo apt upgrade
 	chk_cmd_present libc6-dev-i386
 	chk_cmd_present libboost-all-dev
 	chk_cmd_present unzip
