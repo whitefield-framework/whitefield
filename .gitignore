@@ -10,3 +10,5 @@ docs/_build/
 compile_commands.json
 *.out
 tmp/
+ubuntu-bionic-*.log
+.vagrant
