@@ -58,13 +58,24 @@ make
 </details>
 
 <details>
-  <summary>Build Instructions (Vagrant Install)</summary>
+  <summary>Build Instructions (Vagrant Install with Ubuntu 18.04)</summary>
 
 ```
 git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
 vagrant up	# <- step takes time
 vagrant ssh
+```
+</details>
+
+<details>
+  <summary>Build Instructions (Vagrant Install with Ubuntu 20.04)</summary>
+
+```
+git clone https://github.com/whitefield-framework/whitefield
+cd whitefield
+IMG=focal64 vagrant up	# <- step takes time
+IMG=focal64 vagrant ssh
 ```
 </details>
 

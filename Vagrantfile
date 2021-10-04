@@ -1,7 +1,12 @@
 Vagrant.require_version ">= 2.0.0"
 
-VM_IMG = "ubuntu/bionic64"
-VM_NAME = "whitefield-dev"
+if ENV['IMG'] == "focal64" then
+  VM_IMG = "ubuntu/focal64"
+  VM_NAME = "whitefield-focal64"
+else
+  VM_IMG = "ubuntu/bionic64"
+  VM_NAME = "whitefield-dev"
+end
 
 system("
     if [ #{ARGV[0]} = 'up' ]; then
