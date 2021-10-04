@@ -45,37 +45,47 @@ in such OSes to interface with Whitefield. The protocol stack with application
 will be used as-is from these OSes.
 
 ### Setup Instructions
-Tested on: Ubuntu >=16.04 (xenial), Debian GNU/Linux 8.7 (jessie)
 
-**System Requirements**:
+<details>
+  <summary>Build Instructions (Native Install)</summary>
 
-Disk Space: ~1.5GB
-**Build Instructions**:
-
-Assumes Airline=NS3, Stackline=Contiki (example app=contiki/examples/ipv6/rpl-udp)
 ```
 git clone https://github.com/whitefield-framework/whitefield
 cd whitefield
 ./scripts/setup.sh #This may take a while...
 make
 ```
+</details>
+
+<details>
+  <summary>Build Instructions (Vagrant Install)</summary>
+
+```
+git clone https://github.com/whitefield-framework/whitefield
+cd whitefield
+vagrant up	# <- step takes time
+vagrant ssh
+```
+</details>
+
 **Execute Instructions**:
 ```
+$ cd whitefield
+
 #Start Whitefield
-$./invoke_whitefield.sh config/wf.cfg
+$ ./invoke_whitefield.sh config/wf.cfg
 
 #Monitor whitefield status
-$./scripts/monitor.sh
+$ ./scripts/monitor.sh
 
-#View live network toplogy
-$./canvas/canvas.py
-#open http://localhost:8080/ in a browser
+#View live network toplogy open http://localhost:8080/ in a browser
+$ ./canvas/canvas.py
 
 #Whitefield shell
-$./scripts/wfshell help
+$ ./scripts/wfshell help
 
 #Stop whitefield
-$./scripts/wfshell stop_whitefield
+$ ./scripts/wfshell stop_whitefield
 ```
 
 * ### [Configuration manual](docs/wf-config-help.rst "Whitefield Configuration")
