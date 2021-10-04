@@ -1,0 +1,20 @@
+name: Setup & Regress
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup
+      run: ./scripts/setup.sh
+    - name: Regression
+      run: timeout 600 ./regression/regress.sh regression/full.set
+    
