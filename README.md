@@ -1,7 +1,7 @@
 ![Alt text](docs/res/Logo.png "Whitefield Logo")
 
 [![GitPitch](https://img.shields.io/badge/What%20is%20Whitefield%3F-Slides-Violet)](https://docs.google.com/presentation/d/e/2PACX-1vRE-8g-tyh7MwECHnWwYGC9mJWKVOCQnWWwUjD-5wnvu_fW1w75h_K91UM1FV9QOMcNWYW2mdFxds9J/pub?start=false&loop=false&delayms=3000)
-[![Build Status](https://travis-ci.org/whitefield-framework/whitefield.svg?branch=master)](https://travis-ci.org/whitefield-framework/whitefield)
+[![Setup & Regress](https://github.com/whitefield-framework/whitefield/actions/workflows/setup_regress.yml/badge.svg)
 [![Doc status](https://readthedocs.org/projects/whitefield/badge/?version=latest)](https://whitefield.readthedocs.io/en/latest/)
 [![Join the chat at https://gitter.im/whitefield-fw](https://img.shields.io/badge/Got%20Questions%3F-Chat-Violet)](https://github.com/whitefield-framework/whitefield/discussions)
 
